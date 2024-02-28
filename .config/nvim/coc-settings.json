@@ -1,0 +1,25 @@
+{
+  "coc.preferences.formatOnSave": true,
+  "snippets.ultisnips.directories": [
+    "UltiSnips",
+    "~/.config/nvim/utils/snips"
+  ],
+  "languageserver": {
+    "dockerfile": {
+      "command": "docker-langserver",
+      "filetypes": [
+        "dockerfile"
+      ],
+      "args": [
+        "--stdio"
+      ]
+    }
+  },
+  "eslint.enable": true,
+  "explorer.icon.source": "vim-devicons",
+  "cSpellExt.enableDictionaries": [
+    "spanish"
+  ],
+  "cSpell.language": "en,es",
+  "colors.enable": true
+}

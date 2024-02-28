@@ -1,0 +1,67 @@
+[font]
+size = 12.0
+
+[font.bold]
+family = "UbuntuMono Nerd Font"
+style = "Bold"
+
+[font.bold_italic]
+family = "UbuntuMono Nerd Font"
+style = "Bold Italic"
+
+[font.italic]
+family = "UbuntuMono Nerd Font"
+style = "Italic"
+
+[font.normal]
+family = "UbuntuMono Nerd Font"
+style = "Regulari"
+
+[env]
+WINIT_X11_SCALE_FACTOR = "1.45"
+
+[window]
+padding = { x = 10, y = 10 }
+opacity = 0.90
+decorations = "None"
+
+[bell]
+animation = "Linear"
+duration = 0
+
+[shell]
+program = "/bin/zsh"
+args = ["-l"]
+
+[keyboard]
+bindings = [
+  { key = "Return", mods = "Super|Shift", action = "SpawnNewInstance" },
+]
+
+[colors]
+# Default colors
+[colors.primary]
+background = '#212121'
+foreground = '#c5c9de'
+
+# Normal colors
+[colors.normal]
+black = '#181a29'
+red = '#F07178'
+green = '#cdea9f'
+yellow = '#ffd47e'
+blue = '#93bbff'
+magenta = '#d3a7ee'
+cyan = '#98e4ff'
+white = '#bfd5de'
+
+# Bright colors
+[colors.bright]
+black = '#282a40'
+red = '#eb7f84'
+green = '#e0ffad'
+yellow = '#ffee7e'
+blue = '#a3c5ff'
+magenta = '#d6afed'
+cyan = '#98fffd'
+white = '#d1e5ed'

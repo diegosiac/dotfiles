@@ -1,0 +1,77 @@
+background-opacity = 0.9
+background-blur-radius = 20
+
+palette = 0=#27272a
+palette = 1=#ea83a5
+palette = 2=#90b99f
+palette = 3=#e6b99d
+palette = 4=#9ca2cf
+palette = 5=#aca1cf
+palette = 6=#85b5ba
+palette = 7=#c9c7cd
+palette = 8=#353539
+palette = 9=#ED96B3
+palette = 10=#a7c8b3
+palette = 11=#eac5ae
+palette = 12=#acb1d7
+palette = 13=#b7aed5
+palette = 14=#97c0c4
+palette = 15=#d3d1d7
+background = #161617
+foreground = #c9c7cd
+cursor-color = #c9c7cd
+selection-background = #3C3B3E
+selection-foreground = #c9c7cd
+
+# Config
+font-family = Cascadia Code NF
+font-size = 14
+window-padding-color = extend
+window-step-resize = true
+window-padding-balance = true
+window-decoration = none
+gtk-wide-tabs = false
+gtk-tabs-location = top
+
+### Mac Alt Fix
+macos-option-as-alt = left
+
+keybind = alt+left=unbind
+keybind = alt+right=unbind
+
+### KeyBindings
+# Toggle commands
+keybind = global:alt+f=toggle_quick_terminal
+keybind = alt+z=toggle_split_zoom
+
+# Tab Management
+keybind = alt+t=new_tab
+keybind = alt+w=close_tab
+
+keybind = alt+1=goto_tab:1
+keybind = alt+2=goto_tab:2
+keybind = alt+3=goto_tab:3
+keybind = alt+4=goto_tab:4
+keybind = alt+5=goto_tab:5
+
+# Split Management
+keybind = alt+v=new_split:right
+keybind = alt+d=new_split:down
+
+# Resize Split
+keybind = ctrl+shift+j=resize_split:up,10
+keybind = ctrl+shift+k=resize_split:down,10
+keybind = ctrl+shift+h=resize_split:left,10
+keybind = ctrl+shift+l=resize_split:right,10
+
+# Navigation
+keybind = alt+k=goto_split:up
+keybind = alt+j=goto_split:down
+keybind = alt+h=goto_split:left
+keybind = alt+l=goto_split:right
+
+# Miscellaneous
+keybind = cmd+k=clear_screen
+
+# Use it by writing 'nvim' first and then the keybinding to open the file with nvim
+keybind = alt+s=write_screen_file:paste

@@ -1,0 +1,47 @@
+# Env vars
+export PATH=$HOME/.local/bin:$PATH
+# export _JAVA_AWT_WM_NONREPARENTING=1
+export QT_STYLE_OVERRIDE=kvantum
+
+# Screens
+hdmi=$(xrandr | grep ' connected' | grep 'HDMI' | awk '{print $1}')
+
+if [ "$hdmi" = "HDMI1" ]; then
+  xrandr --output eDP1 --mode 1366x768 --pos 0x0 --rotate normal --output HDMI1 --primary --mode 1360x768 --dpi 118 --scale 1x1 --brightness 1 --gamma 1 --pos 1366x0 --rotate normal &
+
+else
+  xrandr --output eDP1 --primary --mode 1366x768 --pos 0x0 --rotate normal --output HDMI1 --off --output DP1 --off &
+fi
+
+# Polybar
+pkill -x polybar
+
+while pgrep -x polybar >/dev/null; do sleep 1; done
+
+if type "xrandr"; then
+  for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
+    MONITOR=$m polybar --reload example &
+  done
+else
+  polybar --reload example &
+fi
+
+# Notifications
+dunst &
+# Composer
+picom --config ~/.config/picom/picom.conf &
+# Network
+nm-applet &
+# Keyboard Layout
+setxkbmap latam &
+# Automount Devices
+udiskie -t &
+# Java Fonts
+xsettingsd &
+# Wallpaper
+feh --bg-scale ~/wallpapers/backiee-295134-landscape.jpg &
+# Overlay Bar
+xob-pulse-py | xob -s pulse &
+xob-brightness-js | xob -s brightness &
+# Clipboard manager
+clipster -d &

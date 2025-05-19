@@ -94,7 +94,7 @@ family = "Cascadia Code NF"
 
 [window]
 option_as_alt = "Both"
-opacity = 0.96
+opacity = 0.85
 
 [env]
 TERM = "xterm-256color"

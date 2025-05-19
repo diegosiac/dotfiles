@@ -1012,8 +1012,8 @@ alias lm = ls -m
  use ~/.cache/starship/init.nu
  use ~/.config/bash-env.nu
 
-let MULTIPLEXER = "tmux" 
-let MULTIPLEXER_ENV_PREFIX = "TMUX"
+let MULTIPLEXER = "zellij" 
+let MULTIPLEXER_ENV_PREFIX = "ZELLIJ"
 
 def start_multiplexer [] {
   if $MULTIPLEXER_ENV_PREFIX not-in ($env | columns) {

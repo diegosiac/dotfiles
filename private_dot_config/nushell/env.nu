@@ -131,3 +131,8 @@ starship init nu | save -f ~/.cache/starship/init.nu
 zoxide init nushell | save -f ~/.zoxide.nu
 atuin init nu | save -f ~/.local/share/atuin/init.nu
 carapace _carapace nushell | save --force ~/.cache/carapace/init.nu
+
+# pnpm
+$env.PNPM_HOME = "/home/diegosiac/.local/share/pnpm"
+$env.PATH = ($env.PATH | split row (char esep) | prepend $env.PNPM_HOME )
+# pnpm end

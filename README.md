@@ -21,15 +21,7 @@ sudo usermod -aG docker $USER
 
 ## Cambiar fondo en Hyprland
 
-🛠️ Paso 1: Crea la configuración de hyprpaper
-
-Crea el directorio si no existe:
-
-```sh
-mkdir -p ~/.config/hypr
-```
-
-Y luego edita o crea el archivo hyprpaper.conf:
+Edita el archivo hyprpaper.conf:
 
 ```sh
 nano ~/.config/hypr/hyprpaper.conf
@@ -48,14 +40,6 @@ wallpaper = eDP-1,/home/diegosi/Pictures/wallpapers/fondo.jpg
 
 ```sh
 hyprctl monitors
-```
-
-🛠️ Paso 2: Inicia hyprpaper en tu hyprland.conf
-
-Abre ~/.config/hypr/hyprland.conf y busca la sección exec-once. Agrega:
-
-```ini
-exec-once = hyprpaper
 ```
 
 añadir qt6-multimedia

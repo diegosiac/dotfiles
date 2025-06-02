@@ -90,7 +90,7 @@ unfocused_hollow = true
 size = 14
 
 [font.normal]
-family = "Cascadia Code NF"
+family = "JetBrainsMono Nerd Font"
 
 [window]
 option_as_alt = "Both"

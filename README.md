@@ -30,8 +30,8 @@ nano ~/.config/hypr/hyprpaper.conf
 Contenido de ejemplo:
 
 ```sh
-preload = /home/diegosi/Pictures/wallpapers/fondo.jpg
-wallpaper = eDP-1,/home/diegosi/Pictures/wallpapers/fondo.jpg
+preload = /home/user/Pictures/wallpapers/fondo.jpg
+wallpaper = eDP-1,/home/user/Pictures/wallpapers/fondo.jpg
 ```
 
 - Asegúrate de reemplazar eDP-1 por el nombre real de tu pantalla.

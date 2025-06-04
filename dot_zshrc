@@ -23,12 +23,12 @@ export BROWSER='zen-browser'
 export SUDO_PROMPT='Deploying root access for %u. Password pls: '
 export BAT_THEME='base16'
 
-WM_VAR="/$ZELLIJ"
-WM_CMD="zellij"
-
-if [[ -z "$ZELLIJ" ]]; then
-    exec zellij
-fi
+# WM_VAR="/$ZELLIJ"
+# WM_CMD="zellij"
+#
+# if [[ -z "$ZELLIJ" ]]; then
+#     exec zellij
+# fi
 
 # Plugins
 
@@ -117,4 +117,4 @@ esac
 # pnpm end
 
 # Set up Node Version Manager
-source /usr/share/nvm/init-nvm.sh
+# source /usr/share/nvm/init-nvm.sh

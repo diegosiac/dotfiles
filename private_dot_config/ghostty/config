@@ -1,5 +1,5 @@
-background-opacity = 0.9
-background-blur-radius = 20
+background-opacity = 0.8
+#background-blur-radius = 20
 
 palette = 0=#16161d
 palette = 1=#c34043
@@ -25,8 +25,8 @@ selection-background = 2d4f67
 selection-foreground = c8c093
 
 # Config
-font-family = Cascadia Code NF
-font-size = 14
+font-family = JetBrainsMono Nerd Font
+font-size = 12
 window-padding-color = extend
 window-step-resize = true
 window-padding-balance = true

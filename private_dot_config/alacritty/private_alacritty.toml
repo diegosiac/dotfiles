@@ -87,14 +87,14 @@ style = "Block"
 unfocused_hollow = true
 
 [font]
-size = 14
+size = 12
 
 [font.normal]
 family = "JetBrainsMono Nerd Font"
 
 [window]
 option_as_alt = "Both"
-opacity = 0.85
+opacity = 0.80
 
 [env]
 TERM = "xterm-256color"

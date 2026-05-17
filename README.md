@@ -41,6 +41,22 @@ The shell aliases `npm` to `pnpm` and `npx` to `pnpm dlx`.
 
 Python uses the system `python` package plus `uv` for Python tooling and virtual environments. Avoid global `pip install`; use `uv` or project-local virtual environments instead.
 
+## JavaScript package security
+
+Global npm-compatible package installs disable lifecycle scripts by default through `~/.npmrc`:
+
+```ini
+ignore-scripts=true
+```
+
+This reduces supply-chain risk from malicious `preinstall`, `install`, or `postinstall` scripts in npm packages. If a trusted package genuinely needs lifecycle scripts, allow them explicitly for that install:
+
+```sh
+pnpm install --ignore-scripts=false
+```
+
+Reference: [npm ignore scripts best practices as security mitigation for malicious packages](https://www.nodejs-security.com/blog/npm-ignore-scripts-best-practices-as-security-mitigation-for-malicious-packages).
+
 ## Vendored configurations
 
 Some tool configurations are copied from external dotfile repositories as reviewed snapshots.

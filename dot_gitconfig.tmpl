@@ -1,0 +1,15 @@
+[user]
+    name = {{ .name | quote }}
+    email = {{ .email | quote }}
+
+[init]
+    defaultBranch = main
+
+[core]
+    editor = nvim
+
+[pull]
+    ff = only
+
+[push]
+    autoSetupRemote = true

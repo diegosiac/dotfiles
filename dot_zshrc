@@ -41,3 +41,19 @@ command -v atuin >/dev/null 2>&1 && eval "$(atuin init zsh)"
 
 # Starship prompt
 command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
+
+# Terminal multiplexer
+TERMINAL_MULTIPLEXER="${TERMINAL_MULTIPLEXER:-zellij}"
+
+start_terminal_multiplexer_if_needed() {
+    [[ $- != *i* ]] && return
+    [[ ! -t 1 ]] && return
+    [[ -n "$TMUX" || -n "$ZELLIJ" ]] && return
+    [[ "$TERMINAL_MULTIPLEXER" == "none" ]] && return
+
+    if command -v "$TERMINAL_MULTIPLEXER" >/dev/null 2>&1; then
+        exec "$TERMINAL_MULTIPLEXER"
+    fi
+}
+
+start_terminal_multiplexer_if_needed

@@ -10,3 +10,5 @@ fzf
 ripgrep
 zoxide
 atuin
+tmux
+zellij

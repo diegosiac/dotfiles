@@ -40,6 +40,6 @@ Vendored configs currently planned or used:
 | --- | --- | --- |
 | Zellij | `GentlemanZellij/zellij` | `dot_config/zellij` |
 | Tmux | `GentlemanTmux/tmux.conf` | `dot_tmux.conf` |
-| Neovim | `GentlemanNvim/nvim` | pending |
+| Neovim | `GentlemanNvim/nvim` | `dot_config/nvim` |
 
 Tmux plugins are installed through TPM by the chezmoi script `run_once_after_20-install-tmux-plugins.sh`.

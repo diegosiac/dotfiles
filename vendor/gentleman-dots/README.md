@@ -25,3 +25,10 @@ They are copied as reviewed snapshots, not auto-updated during bootstrap or `che
 - Destination path: `dot_tmux.conf`
 - Sync script: `vendor/gentleman-dots/sync-tmux.sh`
 - Plugin install: `run_once_after_20-install-tmux-plugins.sh`
+
+## Neovim
+
+- Source path: `GentlemanNvim/nvim`
+- Destination path: `dot_config/nvim`
+- Sync script: `vendor/gentleman-dots/sync-nvim.sh`
+- Plugin/dependency install: handled by Neovim/Lazy on first launch; validate in the VM before committing updates.

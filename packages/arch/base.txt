@@ -27,3 +27,8 @@ python
 python-pip
 python-pynvim
 uv
+alacritty
+wezterm
+ghostty
+ttf-iosevkaterm-nerd
+ttf-cascadia-code-nerd

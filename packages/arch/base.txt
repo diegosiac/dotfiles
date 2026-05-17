@@ -3,3 +3,10 @@ chezmoi
 zsh
 neovim
 starship
+eza
+bat
+fd
+fzf
+ripgrep
+zoxide
+atuin

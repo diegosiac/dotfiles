@@ -1,3 +1,11 @@
 carapace-bin
 fzf-tab
 zsh-fast-syntax-highlighting
+walker
+elephant-clipboard
+ttf-geist-variable
+ttf-geist-mono-variable
+whitesur-icon-theme
+bibata-cursor-theme
+apple_cursor
+whitesur-gtk-theme

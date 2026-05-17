@@ -41,6 +41,8 @@ The shell aliases `npm` to `pnpm` and `npx` to `pnpm dlx`.
 
 Python uses the system `python` package plus `uv` for Python tooling and virtual environments. Avoid global `pip install`; use `uv` or project-local virtual environments instead.
 
+`inshellisense` is intentionally not installed through AUR because the AUR package pulls system `nodejs`, which conflicts with the `fnm` runtime strategy. If we use it later, install it through the user-managed Node.js runtime instead.
+
 ## Arch packages
 
 Official repository packages are listed in:

@@ -1,4 +1,3 @@
 carapace-bin
 fzf-tab
-nodejs-inshellisense
 zsh-fast-syntax-highlighting

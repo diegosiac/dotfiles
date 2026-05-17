@@ -1,4 +1,4 @@
 carapace-bin
-fzf-tab-git
-inshellisense
-fast-syntax-highlighting
+fzf-tab
+nodejs-inshellisense
+zsh-fast-syntax-highlighting

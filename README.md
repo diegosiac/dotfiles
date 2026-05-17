@@ -24,6 +24,23 @@ Zellij is the default terminal multiplexer. Tmux is also installed and can be se
 
 The shell skips auto-start when already inside tmux or zellij, so nested sessions are avoided by default.
 
+## Runtime managers
+
+Node.js is managed with `fnm`, not with the system `nodejs` package. JavaScript package commands should use `pnpm`.
+
+After installing the base packages on a new machine, initialize Node.js with:
+
+```sh
+fnm install --lts
+fnm default lts-latest
+corepack enable
+corepack prepare pnpm@latest --activate
+```
+
+The shell aliases `npm` to `pnpm` and `npx` to `pnpm dlx`.
+
+Python uses the system `python` package plus `uv` for Python tooling and virtual environments. Avoid global `pip install`; use `uv` or project-local virtual environments instead.
+
 ## Vendored configurations
 
 Some tool configurations are copied from external dotfile repositories as reviewed snapshots.

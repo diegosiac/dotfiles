@@ -1,4 +1,5 @@
 git
+base-devel
 chezmoi
 zsh
 neovim
@@ -12,3 +13,13 @@ zoxide
 atuin
 tmux
 zellij
+curl
+wget
+unzip
+gzip
+tar
+fnm
+python
+python-pip
+python-pynvim
+uv

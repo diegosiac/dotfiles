@@ -32,6 +32,12 @@ alias l='eza -lah --group-directories-first'
 alias ll='ls -lah'
 alias gs='git status'
 alias cat='bat --style=plain --paging=never'
+alias npm='pnpm'
+alias npx='pnpm dlx'
+
+# FNM / Node.js
+export FNM_DIR="$HOME/.local/share/fnm"
+command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell zsh)"
 
 # Zoxide
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"

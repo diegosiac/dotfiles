@@ -67,6 +67,14 @@ Install them with an AUR helper, for example:
 paru -S --needed - < packages/arch/aur.txt
 ```
 
+If `paru` is not installed yet, install the binary AUR package manually:
+
+```sh
+scripts/install-paru.sh
+```
+
+This uses `paru-bin`, so Rust is not required for bootstrapping. Building the source `paru` package would require Rust/Cargo.
+
 ## JavaScript package security
 
 Global npm-compatible package installs disable lifecycle scripts by default through `~/.npmrc`:

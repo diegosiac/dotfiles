@@ -1,17 +1,16 @@
-# Ignore everything
-/*
-!.gitignore
-!.gitmodules
+# Local/private files
+.env
+.env.*
+*.local
+*.secret
+*.secrets
 
-# Except for the files and folders we want to track
-!README.md
-!README.es.md
-!.pkgs
-!.screenshots
-!.bashrc
-!.zshrc
-!.tmux.conf.local
-!.xprofile
-!.Xresources
-!.config
-!.local
+# Chezmoi local state must never be committed
+.chezmoidata.*
+.chezmoitemplates/*secret*
+
+# Editor and OS noise
+.DS_Store
+*.swp
+*.swo
+*~

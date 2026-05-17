@@ -23,6 +23,10 @@ compinit
 zstyle ':completion:*' menu select
 
 # FZF
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+export FZF_DEFAULT_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+
 [[ -f /usr/share/fzf/key-bindings.zsh ]] && source /usr/share/fzf/key-bindings.zsh
 [[ -f /usr/share/fzf/completion.zsh ]] && source /usr/share/fzf/completion.zsh
 
@@ -34,6 +38,16 @@ alias gs='git status'
 alias cat='bat --style=plain --paging=never'
 alias npm='pnpm'
 alias npx='pnpm dlx'
+
+fzfbat() {
+    fzf --preview='bat --theme=gruvbox-dark --color=always {}'
+}
+
+fzfnvim() {
+    local file
+    file="$(fzf --preview='bat --theme=gruvbox-dark --color=always {}')" || return
+    [[ -n "$file" ]] && nvim "$file"
+}
 
 # FNM / Node.js
 export FNM_DIR="$HOME/.local/share/fnm"

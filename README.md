@@ -23,3 +23,21 @@ Zellij is the default terminal multiplexer. Tmux is also installed and can be se
 | Start without a multiplexer | `TERMINAL_MULTIPLEXER=none zsh` |
 
 The shell skips auto-start when already inside tmux or zellij, so nested sessions are avoided by default.
+
+## Vendored configurations
+
+Some tool configurations are copied from external dotfile repositories as reviewed snapshots.
+
+Current external source:
+
+- `https://github.com/Gentleman-Programming/Gentleman.Dots`
+
+These configurations are not auto-updated during bootstrap or `chezmoi apply`. Updates must be pulled manually with the scripts under `vendor/gentleman-dots/`, reviewed with `git diff`, tested in the VM, and then committed.
+
+Vendored configs currently planned or used:
+
+| Tool | Source path | Local path |
+| --- | --- | --- |
+| Zellij | `GentlemanZellij/zellij` | `dot_config/zellij` |
+| Tmux | `GentlemanTmux` | pending |
+| Neovim | `GentlemanNvim/nvim` | pending |

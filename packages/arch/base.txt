@@ -2,3 +2,4 @@ git
 chezmoi
 zsh
 neovim
+starship

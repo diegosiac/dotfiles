@@ -1,0 +1,5 @@
+repo=https://github.com/Gentleman-Programming/Gentleman.Dots.git
+source_path=GentlemanTmux/tmux.conf
+destination_path=dot_tmux.conf
+commit=c26f89c6c7216b771528309328b5582ea5a0da89
+synced_at=2026-05-17T04:34:58Z

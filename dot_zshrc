@@ -17,10 +17,20 @@ setopt hist_ignore_space
 setopt hist_verify
 
 # Completion
+fpath=(/usr/share/zsh/site-functions $fpath)
+
 autoload -Uz compinit
 compinit
 
 zstyle ':completion:*' menu select
+
+# Carapace completions
+export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
+command -v carapace >/dev/null 2>&1 && source <(carapace _carapace)
+
+# FZF tab completion UI
+[[ -f /usr/share/fzf-tab/fzf-tab.plugin.zsh ]] && source /usr/share/fzf-tab/fzf-tab.plugin.zsh
+[[ -f /usr/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh ]] && source /usr/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
 
 # FZF
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
@@ -58,6 +68,15 @@ command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 
 # Atuin
 command -v atuin >/dev/null 2>&1 && eval "$(atuin init zsh)"
+
+# Zsh suggestions and syntax highlighting
+[[ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+if [[ -f /usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh ]]; then
+    source /usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+elif [[ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+    source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 # Starship prompt
 command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"

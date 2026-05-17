@@ -1,0 +1,4 @@
+carapace-bin
+fzf-tab-git
+inshellisense
+fast-syntax-highlighting

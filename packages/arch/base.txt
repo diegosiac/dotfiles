@@ -2,6 +2,9 @@ git
 base-devel
 chezmoi
 zsh
+zsh-completions
+zsh-autosuggestions
+zsh-syntax-highlighting
 neovim
 starship
 eza

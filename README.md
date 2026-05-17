@@ -16,10 +16,10 @@ This repository is intentionally being rebuilt from zero. Configuration will be 
 
 Zellij is the default terminal multiplexer. Tmux is also installed and can be selected per shell session.
 
-| Goal | Command |
-| --- | --- |
-| Use the default multiplexer | `zsh` |
-| Start with tmux instead | `TERMINAL_MULTIPLEXER=tmux zsh` |
+| Goal                        | Command                         |
+| --------------------------- | ------------------------------- |
+| Use the default multiplexer | `zsh`                           |
+| Start with tmux instead     | `TERMINAL_MULTIPLEXER=tmux zsh` |
 | Start without a multiplexer | `TERMINAL_MULTIPLEXER=none zsh` |
 
 The shell skips auto-start when already inside tmux or zellij, so nested sessions are avoided by default.
@@ -40,6 +40,32 @@ corepack prepare pnpm@latest --activate
 The shell aliases `npm` to `pnpm` and `npx` to `pnpm dlx`.
 
 Python uses the system `python` package plus `uv` for Python tooling and virtual environments. Avoid global `pip install`; use `uv` or project-local virtual environments instead.
+
+## Arch packages
+
+Official repository packages are listed in:
+
+```sh
+packages/arch/base.txt
+```
+
+Install them with:
+
+```sh
+sudo pacman -S --needed - < packages/arch/base.txt
+```
+
+AUR packages are listed separately so `pacman` installs do not fail:
+
+```sh
+packages/arch/aur.txt
+```
+
+Install them with an AUR helper, for example:
+
+```sh
+paru -S --needed - < packages/arch/aur.txt
+```
 
 ## JavaScript package security
 
@@ -69,10 +95,10 @@ These configurations are not auto-updated during bootstrap or `chezmoi apply`. U
 
 Vendored configs currently planned or used:
 
-| Tool | Source path | Local path |
-| --- | --- | --- |
-| Zellij | `GentlemanZellij/zellij` | `dot_config/zellij` |
-| Tmux | `GentlemanTmux/tmux.conf` | `dot_tmux.conf` |
-| Neovim | `GentlemanNvim/nvim` | `dot_config/nvim` |
+| Tool   | Source path               | Local path          |
+| ------ | ------------------------- | ------------------- |
+| Zellij | `GentlemanZellij/zellij`  | `dot_config/zellij` |
+| Tmux   | `GentlemanTmux/tmux.conf` | `dot_tmux.conf`     |
+| Neovim | `GentlemanNvim/nvim`      | `dot_config/nvim`   |
 
 Tmux plugins are installed through TPM by the chezmoi script `run_once_after_20-install-tmux-plugins.sh`.

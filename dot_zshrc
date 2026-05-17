@@ -1,0 +1,27 @@
+# Only run interactive shell configuration for interactive sessions.
+[[ $- != *i* ]] && return
+
+# Editor
+export EDITOR="nvim"
+export VISUAL="$EDITOR"
+
+# History
+HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"
+HISTSIZE=10000
+SAVEHIST=10000
+
+setopt append_history
+setopt share_history
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt hist_verify
+
+# Completion
+autoload -Uz compinit
+compinit
+
+zstyle ':completion:*' menu select
+
+# Aliases
+alias ll='ls -lah'
+alias gs='git status'

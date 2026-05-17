@@ -12,7 +12,7 @@ if command -v paru >/dev/null 2>&1; then
 fi
 
 missing=()
-for command in git makepkg; do
+for command in git makepkg cargo rustc; do
     if ! command -v "$command" >/dev/null 2>&1; then
         missing+=("$command")
     fi
@@ -25,9 +25,9 @@ if (( ${#missing[@]} > 0 )); then
     exit 1
 fi
 
-work_dir="${TMPDIR:-/tmp}/paru-bin"
+work_dir="${TMPDIR:-/tmp}/paru"
 rm -rf "$work_dir"
-git clone https://aur.archlinux.org/paru-bin.git "$work_dir"
+git clone https://aur.archlinux.org/paru.git "$work_dir"
 
 cd "$work_dir"
 makepkg -si

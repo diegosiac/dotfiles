@@ -73,7 +73,7 @@ If `paru` is not installed yet, install the binary AUR package manually:
 scripts/install-paru.sh
 ```
 
-This uses `paru-bin`, so Rust is not required for bootstrapping. Building the source `paru` package would require Rust/Cargo.
+This builds `paru` from source, so Rust/Cargo must be installed first through `packages/arch/base.txt`.
 
 ## JavaScript package security
 

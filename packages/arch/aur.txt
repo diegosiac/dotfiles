@@ -2,7 +2,12 @@ carapace-bin
 fzf-tab
 zsh-fast-syntax-highlighting
 walker
+elephant
+elephant-providerlist
+elephant-desktopapplications
+elephant-runner
 elephant-clipboard
+elephant-bluetooth
 ttf-geist-variable
 ttf-geist-mono-variable
 whitesur-icon-theme

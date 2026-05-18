@@ -29,8 +29,8 @@ PopupWindow {
         confirmResetTimer.restart();
     }
 
-    width: 330
-    height: content.implicitHeight + 28
+    implicitWidth: 330
+    implicitHeight: content.implicitHeight + 28
     color: "transparent"
     grabFocus: true
     onVisibleChanged: {

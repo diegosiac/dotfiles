@@ -68,3 +68,8 @@ qt6-svg
 greetd
 greetd-tuigreet
 greetd-regreet
+discord
+obsidian
+anki
+proton-vpn-gtk-app
+obs-studio

@@ -1,6 +1,12 @@
 carapace-bin
 fzf-tab
 zsh-fast-syntax-highlighting
+gh-dash
+slack-desktop
+claude-code
+pi
+claude-desktop-bin
+1password-cli
 walker
 elephant
 elephant-providerlist

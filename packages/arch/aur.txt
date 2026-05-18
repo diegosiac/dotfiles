@@ -8,6 +8,8 @@ elephant-desktopapplications
 elephant-runner
 elephant-clipboard
 elephant-bluetooth
+brave-bin
+zen-browser-bin
 ttf-geist-variable
 ttf-geist-mono-variable
 whitesur-icon-theme

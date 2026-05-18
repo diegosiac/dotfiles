@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+wallpaper="${1:-$HOME/Pictures/Wallpapers/current}"
+
+if [[ ! -e "$wallpaper" ]]; then
+    exit 0
+fi
+
+wallpaper="$(readlink -f "$wallpaper")"
+
+for _ in {1..20}; do
+    if awww query >/dev/null 2>&1; then
+        break
+    fi
+
+    sleep 0.1
+done
+
+if ! awww query >/dev/null 2>&1; then
+    echo "awww-daemon is not ready; skipping wallpaper." >&2
+    exit 0
+fi
+
+awww img "$wallpaper" \
+    --resize crop \
+    --transition-type fade \
+    --transition-duration 0.8 \
+    --transition-fps 60

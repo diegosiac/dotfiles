@@ -12,6 +12,60 @@ This repository is intentionally being rebuilt from zero. Configuration will be 
 - Public repository: no plaintext secrets.
 - Secrets must be handled through 1Password or generated locally.
 
+## Fresh install flow
+
+This is the happy path for a new Arch machine. Apply it in a VM first when changing the flow.
+
+```sh
+chezmoi init --apply diegosiac
+cd ~/.local/share/chezmoi
+```
+
+Install the official package sets:
+
+```sh
+sudo pacman -S --needed - < packages/arch/base.txt
+sudo pacman -S --needed - < packages/arch/desktop.txt
+```
+
+Install `paru` if the machine does not have an AUR helper yet:
+
+```sh
+scripts/install-paru.sh
+```
+
+Install AUR packages:
+
+```sh
+paru -S --needed - < packages/arch/aur.txt
+```
+
+Initialize project runtimes and AI tooling:
+
+```sh
+fnm install --lts
+fnm default lts-latest
+corepack enable
+corepack prepare pnpm@latest --activate
+scripts/install-gentle-ai-engram.sh
+```
+
+Optionally configure the login manager after the desktop has been tested from a TTY:
+
+```sh
+sudo scripts/configure-greetd.sh
+sudo systemctl enable --now greetd
+```
+
+Quick validation:
+
+```sh
+Hyprland
+pgrep -a quickshell
+secrets-load
+test -n "$ENGRAM_CLOUD_TOKEN" && echo "Engram Cloud token loaded"
+```
+
 ## Terminal multiplexer
 
 Zellij is the default terminal multiplexer. Tmux is also installed and can be selected per shell session.

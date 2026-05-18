@@ -66,6 +66,38 @@ secrets-load
 test -n "$ENGRAM_CLOUD_TOKEN" && echo "Engram Cloud token loaded"
 ```
 
+### VM desktop validation
+
+After changing Hyprland, Quickshell, package manifests, or startup scripts, validate the desktop in a disposable VM before trusting the host install.
+
+Apply the latest dotfiles and restart Quickshell:
+
+```sh
+cd ~/.local/share/chezmoi
+chezmoi update && chezmoi apply
+pkill quickshell
+quickshell > /tmp/quickshell.log 2>&1 &
+```
+
+Check the desktop behavior:
+
+- [ ] The top bar appears on login.
+- [ ] Clicking the right status island opens and closes the control center.
+- [ ] Volume slider and mute change the actual PipeWire sink.
+- [ ] Brightness controls only appear when the VM exposes a real backlight.
+- [ ] Network opens `nm-connection-editor`.
+- [ ] Lock works through `hyprlock` or `loginctl`.
+- [ ] Logout exits the Hyprland session.
+- [ ] Reboot and shutdown require a second confirmation click.
+
+Inspect the Quickshell log:
+
+```sh
+less /tmp/quickshell.log
+```
+
+Quickshell warnings about deprecated properties should be fixed. VM graphics warnings like `libEGL warning: failed to create dri2 screen` are usually harmless if the panel renders and behaves correctly.
+
 ## Terminal multiplexer
 
 Zellij is the default terminal multiplexer. Tmux is also installed and can be selected per shell session.

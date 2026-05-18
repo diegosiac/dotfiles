@@ -16,8 +16,16 @@ This repository is intentionally being rebuilt from zero. Configuration will be 
 
 This is the happy path for a new Arch machine. Apply it in a VM first when changing the flow.
 
+Install the bootstrap tools first if the fresh image does not have them yet:
+
 ```sh
-chezmoi init --apply diegosiac
+sudo pacman -Sy --needed git chezmoi
+```
+
+Clone the dotfiles source without applying it yet. Package-dependent chezmoi scripts, such as the Tmux plugin installer, need the package manifests to be installed first.
+
+```sh
+chezmoi init https://github.com/diegosiac/dotfiles.git
 cd ~/.local/share/chezmoi
 ```
 
@@ -38,6 +46,12 @@ Install AUR packages:
 
 ```sh
 paru -S --needed - < packages/arch/aur.txt
+```
+
+Apply the dotfiles after the required packages are available:
+
+```sh
+chezmoi apply
 ```
 
 Initialize project runtimes and AI tooling:

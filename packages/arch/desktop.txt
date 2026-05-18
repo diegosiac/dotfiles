@@ -48,6 +48,8 @@ seahorse
 xdg-utils
 shared-mime-info
 desktop-file-utils
+dconf
+xsettingsd
 noto-fonts
 noto-fonts-emoji
 noto-fonts-cjk

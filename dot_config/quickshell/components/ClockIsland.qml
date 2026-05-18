@@ -1,5 +1,4 @@
 import QtQuick
-import Quickshell.Io
 
 Rectangle {
     id: island
@@ -7,6 +6,7 @@ Rectangle {
     property color islandBg: "#1c2028"
     property color islandBorder: "#3a4050"
     property color textColor: "#f4f4f5"
+    property date currentDate: new Date()
 
     width: clockText.implicitWidth + 30
     height: 34
@@ -19,17 +19,18 @@ Rectangle {
         id: clockText
 
         anchors.centerIn: parent
-        text: Qt.formatDateTime(clock.date, "ddd d · HH:mm")
+        text: Qt.formatDateTime(island.currentDate, "ddd d · HH:mm")
         color: island.textColor
         font.family: "Inter"
         font.pixelSize: 13
         font.weight: Font.DemiBold
     }
 
-    SystemClock {
-        id: clock
-
-        precision: SystemClock.Minutes
+    Timer {
+        interval: 1000
+        running: true
+        repeat: true
+        onTriggered: island.currentDate = new Date()
     }
 
 }

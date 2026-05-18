@@ -7,7 +7,7 @@ if [[ "$(uname -s)" != "Linux" ]] || [[ ! -f /etc/arch-release ]]; then
 fi
 
 missing=()
-for command in greetd tuigreet Hyprland; do
+for command in greetd tuigreet start-hyprland; do
     if ! command -v "$command" >/dev/null 2>&1; then
         missing+=("$command")
     fi
@@ -31,11 +31,11 @@ sudo tee /etc/greetd/config.toml >/dev/null <<'EOF'
 vt = 1
 
 [default_session]
-command = "tuigreet --time --remember --cmd Hyprland"
+command = "tuigreet --time --remember --cmd start-hyprland"
 user = "greeter"
 EOF
 
-echo "greetd configured for tuigreet + Hyprland."
+echo "greetd configured for tuigreet + start-hyprland."
 echo "Enable it manually when ready:"
 echo "  sudo systemctl enable --now greetd.service"
 echo "Recovery if needed:"

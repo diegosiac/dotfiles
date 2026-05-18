@@ -1,6 +1,7 @@
 git
 github-cli
 base-devel
+sudo
 rust
 go
 chezmoi

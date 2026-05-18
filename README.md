@@ -26,7 +26,7 @@ The shell skips auto-start when already inside tmux or zellij, so nested session
 
 ## Runtime managers
 
-Node.js is managed with `fnm`, not with the system `nodejs` package. JavaScript package commands should use `pnpm`.
+Project JavaScript runtimes are managed with `fnm`. JavaScript package commands should use `pnpm`.
 
 After installing the base packages on a new machine, initialize Node.js with:
 
@@ -39,9 +39,48 @@ corepack prepare pnpm@latest --activate
 
 The shell aliases `npm` to `pnpm` and `npx` to `pnpm dlx`.
 
+Some Arch-packaged developer tools may pull the system `nodejs` package as a runtime dependency. That is acceptable for packaged CLIs, but project-level Node.js versions should still come from `fnm`.
+
 Python uses the system `python` package plus `uv` for Python tooling and virtual environments. Avoid global `pip install`; use `uv` or project-local virtual environments instead.
 
-`inshellisense` is intentionally not installed through AUR because the AUR package pulls system `nodejs`, which conflicts with the `fnm` runtime strategy. If we use it later, install it through the user-managed Node.js runtime instead.
+`inshellisense` is intentionally not installed through AUR because it is shell UX sugar, not required tooling. If we use it later, prefer the user-managed Node.js runtime instead.
+
+## AI stack
+
+The AI coding stack uses terminal-first agents plus shared persistent memory.
+
+Core repositories:
+
+- Gentle-AI: `https://github.com/Gentleman-Programming/gentle-ai`
+- Engram: `https://github.com/Gentleman-Programming/engram`
+
+Gentle-AI and Engram are installed as user-level Go binaries:
+
+```sh
+scripts/install-gentle-ai-engram.sh
+```
+
+After installation, configure the local user integrations as needed:
+
+```sh
+engram setup opencode
+engram setup pi
+gentle-ai
+```
+
+Generated agent config, MCP config, tokens, and Engram memory state stay outside this public repository.
+
+Secrets used by the AI stack are loaded from 1Password on demand:
+
+```sh
+secrets-load
+```
+
+The helper currently exports `ENGRAM_CLOUD_TOKEN` from `op://Secrets/Engram Cloud/password`. Clear it from the current shell with:
+
+```sh
+secrets-clear
+```
 
 ## Arch packages
 

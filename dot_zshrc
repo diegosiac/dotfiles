@@ -5,6 +5,9 @@
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
 
+# User-installed Go binaries
+export PATH="$HOME/go/bin:$PATH"
+
 # History
 HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"
 HISTSIZE=10000
@@ -48,6 +51,15 @@ alias gs='git status'
 alias cat='bat --style=plain --paging=never'
 alias npm='pnpm'
 alias npx='pnpm dlx'
+
+secrets-load() {
+    source "$HOME/.local/bin/secrets-load"
+}
+
+secrets-clear() {
+    unset ENGRAM_CLOUD_TOKEN
+    print "Cleared secrets: ENGRAM_CLOUD_TOKEN"
+}
 
 fzfbat() {
     fzf --preview='bat --theme=gruvbox-dark --color=always {}'

@@ -4,6 +4,7 @@ hypridle
 xdg-desktop-portal
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk
+dbus
 qt5-wayland
 qt6-wayland
 grim
@@ -49,6 +50,7 @@ xdg-utils
 shared-mime-info
 desktop-file-utils
 dconf
+glib2
 xsettingsd
 noto-fonts
 noto-fonts-emoji

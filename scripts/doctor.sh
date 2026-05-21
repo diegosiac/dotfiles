@@ -60,6 +60,31 @@ print_gsetting() {
     fi
 }
 
+check_user_unit() {
+    local unit="$1"
+    local enabled_status=""
+    local enabled_rc=0
+    local active_status=""
+    local active_rc=0
+
+    enabled_status="$(systemctl --user is-enabled "$unit" 2>&1)"
+    enabled_rc=$?
+    active_status="$(systemctl --user is-active "$unit" 2>&1)"
+    active_rc=$?
+
+    if (( enabled_rc == 0 )); then
+        ok "$unit user enabled status: $enabled_status"
+    else
+        warn "$unit user enabled status: $enabled_status"
+    fi
+
+    if (( active_rc == 0 )); then
+        ok "$unit user active status: $active_status"
+    else
+        warn "$unit user active status: $active_status"
+    fi
+}
+
 section "System"
 if [[ "$(uname -s 2>/dev/null)" == "Linux" && -f /etc/arch-release ]]; then
     ok "Arch Linux detected"
@@ -139,6 +164,64 @@ if command -v gsettings >/dev/null 2>&1; then
     print_gsetting org.gnome.desktop.interface cursor-theme
 else
     warn "gsettings is unavailable; skipping theme checks"
+fi
+
+section "Keyring"
+if command -v secret-tool >/dev/null 2>&1; then
+    ok "secret-tool found at $(command -v secret-tool)"
+else
+    warn "secret-tool is unavailable; install libsecret for Secret Service checks"
+fi
+
+if command -v systemctl >/dev/null 2>&1; then
+    if systemctl --user show-environment >/dev/null 2>&1; then
+        check_user_unit gnome-keyring-daemon.service
+        check_user_unit gnome-keyring-daemon.socket
+    else
+        warn "systemctl --user is unavailable for this session; skipping GNOME Keyring user unit checks"
+    fi
+else
+    warn "systemctl is unavailable; skipping GNOME Keyring user unit checks"
+fi
+
+if command -v busctl >/dev/null 2>&1; then
+    if busctl --user status org.freedesktop.secrets >/dev/null 2>&1; then
+        ok "DBus Secret Service name is available: org.freedesktop.secrets"
+    else
+        warn "DBus Secret Service name is unavailable or locked: org.freedesktop.secrets"
+    fi
+else
+    warn "busctl is unavailable; skipping DBus Secret Service check"
+fi
+
+if command -v secret-tool >/dev/null 2>&1 && [[ "${DOTFILES_DOCTOR_KEYRING_SMOKE:-}" == "1" ]]; then
+    smoke_id="smoke-test-$RANDOM-$(date +%s)"
+    smoke_secret="dotfiles-doctor-$RANDOM-$(date +%s)"
+    smoke_output="$(printf '%s' "$smoke_secret" | secret-tool store --label='dotfiles doctor temporary smoke test secret' dotfiles-doctor "$smoke_id" 2>&1)"
+    smoke_store_rc=$?
+
+    if (( smoke_store_rc == 0 )); then
+        smoke_lookup="$(secret-tool lookup dotfiles-doctor "$smoke_id" 2>&1)"
+        smoke_lookup_rc=$?
+        smoke_clear_output="$(secret-tool clear dotfiles-doctor "$smoke_id" 2>&1)"
+        smoke_clear_rc=$?
+
+        if (( smoke_lookup_rc == 0 )) && [[ "$smoke_lookup" == "$smoke_secret" ]]; then
+            ok "secret-tool temporary store/lookup smoke test passed"
+        else
+            warn "secret-tool temporary store/lookup smoke test failed: $smoke_lookup"
+        fi
+
+        if (( smoke_clear_rc == 0 )); then
+            ok "secret-tool temporary smoke test secret cleared"
+        else
+            warn "secret-tool temporary smoke test clear failed: $smoke_clear_output"
+        fi
+    else
+        warn "secret-tool temporary store smoke test skipped/failed; keyring may be locked or unavailable: $smoke_output"
+    fi
+elif command -v secret-tool >/dev/null 2>&1; then
+    ok "Optional secret-tool temporary store/lookup/clear smoke test skipped; set DOTFILES_DOCTOR_KEYRING_SMOKE=1 to run it with a fake test secret"
 fi
 
 section "Services"

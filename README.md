@@ -108,6 +108,8 @@ gentle-ai --help
 chezmoi doctor
 ```
 
+`scripts/configure-greetd.sh` also wires GNOME Keyring into `/etc/pam.d/greetd` for Secret Service/libsecret unlock. To run the optional fake-secret keyring smoke test, use `DOTFILES_DOCTOR_KEYRING_SMOKE=1 scripts/doctor.sh`; it stores, looks up, and clears only a temporary test value.
+
 Optional AI setup and secret validation require your authenticated user session:
 
 ```sh

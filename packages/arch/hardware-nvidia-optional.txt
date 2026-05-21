@@ -1,0 +1,7 @@
+# NVIDIA offload is intentionally not installed by default.
+#
+# The current target laptop has a GP108M / GeForce MX330. Do not assume the
+# current official `nvidia-open` package is the safe/default path for this GPU.
+#
+# If NVIDIA offload becomes necessary, research and install the correct legacy
+# driver path manually first, then codify it here after validation.

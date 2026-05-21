@@ -38,6 +38,4 @@ awk '
         exit 1
     }
 ' \
-    "$repo_root/packages/arch/base.txt" \
-    "$repo_root/packages/arch/desktop.txt" \
-    "$repo_root/packages/arch/aur.txt"
+    "$repo_root"/packages/arch/*.txt

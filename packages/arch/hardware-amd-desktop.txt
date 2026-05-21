@@ -1,0 +1,3 @@
+amd-ucode
+vulkan-radeon
+amdgpu_top

@@ -44,6 +44,20 @@ install_pacman_packages() {
     sudo pacman -Syu --needed - < <(grep -hEv '^[[:space:]]*(#|$)' "$repo_root/packages/arch/base.txt" "$repo_root/packages/arch/desktop.txt")
 }
 
+install_pacman_manifest() {
+    local manifest="$1"
+    local packages=()
+
+    mapfile -t packages < <(grep -hEv '^[[:space:]]*(#|$)' "$manifest")
+
+    if (( ${#packages[@]} == 0 )); then
+        warn "No installable packages found in $manifest."
+        return 0
+    fi
+
+    sudo pacman -S --needed -- "${packages[@]}"
+}
+
 install_aur_packages() {
     if ! command -v paru >/dev/null 2>&1; then
         section "paru"
@@ -207,6 +221,30 @@ if confirm "Install/update official Arch packages from packages/arch/base.txt an
 else
     warn "Skipped official package installation. Chezmoi scripts may fail if required commands are missing."
 fi
+
+section "Hardware packages"
+if confirm "Install common hardware foundation packages from packages/arch/hardware-common.txt?"; then
+    install_pacman_manifest "$repo_root/packages/arch/hardware-common.txt"
+    ok "Common hardware packages installed."
+else
+    warn "Skipped common hardware packages. GPU, firmware, audio, and diagnostics tooling may be incomplete."
+fi
+
+if confirm "Install AMD desktop hardware packages from packages/arch/hardware-amd-desktop.txt? Choose this only on the 7800X3D desktop."; then
+    install_pacman_manifest "$repo_root/packages/arch/hardware-amd-desktop.txt"
+    ok "AMD desktop hardware packages installed."
+else
+    warn "Skipped AMD desktop hardware packages."
+fi
+
+if confirm "Install Intel laptop hardware packages from packages/arch/hardware-intel-laptop.txt? Choose this only on the Intel laptop."; then
+    install_pacman_manifest "$repo_root/packages/arch/hardware-intel-laptop.txt"
+    ok "Intel laptop hardware packages installed."
+else
+    warn "Skipped Intel laptop hardware packages."
+fi
+
+warn "NVIDIA offload packages are intentionally not installed automatically. Review packages/arch/hardware-nvidia-optional.txt before changing this."
 
 section "AUR packages"
 if confirm "Install AUR packages from packages/arch/aur.txt with paru?"; then

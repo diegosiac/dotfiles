@@ -207,6 +207,27 @@ else
     warn "gsettings is unavailable; skipping theme checks"
 fi
 
+section "Notifications"
+for command_name in \
+    notify-send \
+    swaync \
+    swaync-client
+do
+    check_command "$command_name"
+done
+
+check_dbus_name org.freedesktop.Notifications
+
+if command -v pgrep >/dev/null 2>&1; then
+    if pgrep -a swaync >/dev/null 2>&1; then
+        ok "swaync process is running"
+    else
+        warn "swaync process is not running"
+    fi
+else
+    warn "pgrep is unavailable; skipping swaync process check"
+fi
+
 section "Screen Sharing and Portals"
 if command -v systemctl >/dev/null 2>&1; then
     if systemd_user_env="$(systemctl --user show-environment 2>&1)"; then

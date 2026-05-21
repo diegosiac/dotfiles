@@ -262,6 +262,12 @@ else
     warn "Skipped NetworkManager and Bluetooth service enablement."
 fi
 
+if confirm "Enable power-profiles-daemon.service now? Intended for the Intel laptop only."; then
+    enable_basic_desktop_service power-profiles-daemon.service
+else
+    warn "Skipped power-profiles-daemon.service enablement."
+fi
+
 section "Dotfiles"
 if confirm "Apply dotfiles now with chezmoi apply?"; then
     if chezmoi apply; then

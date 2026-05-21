@@ -2,3 +2,4 @@ intel-ucode
 vulkan-intel
 intel-media-driver
 intel-gpu-tools
+power-profiles-daemon

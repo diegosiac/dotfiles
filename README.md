@@ -257,13 +257,22 @@ Install them with an AUR helper, for example:
 paru -S --needed - < packages/arch/aur.txt
 ```
 
-If `paru` is not installed yet, install the binary AUR package manually:
+If `paru` is not installed yet, build it locally from AUR source:
 
 ```sh
 scripts/install-paru.sh
 ```
 
 This builds `paru` from source, so Rust/Cargo must be installed first through `packages/arch/base.txt`.
+
+## Foundation policy
+
+| Area | Policy |
+| ---- | ------ |
+| DNS | Use NetworkManager defaults. Do not hardcode public DNS or mutate `/etc/resolv.conf`. |
+| Firewall | No default firewall yet. `scripts/doctor.sh` reports current state; optional `firewalld` can be added later if desired. |
+| Power | AMD desktop needs no power daemon. Intel laptop uses `power-profiles-daemon`. Avoid governor, kernel flag, and tuning cargo cult. |
+| AUR | Optional, interactive, and a reviewed trust boundary. `paru` is built locally from AUR source if needed; AUR is not required for base boot. |
 
 ## JavaScript package security
 

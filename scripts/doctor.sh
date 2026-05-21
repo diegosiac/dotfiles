@@ -27,6 +27,10 @@ ok() {
     printf '%sOK%s   %s\n' "$green" "$reset" "$1"
 }
 
+info() {
+    printf '%sINFO%s %s\n' "$blue" "$reset" "$1"
+}
+
 warn() {
     warn_count=$((warn_count + 1))
     printf '%sWARN%s %s\n' "$yellow" "$reset" "$1"
@@ -345,6 +349,28 @@ else
     warn "systemd-inhibit is unavailable; skipping inhibitor check"
 fi
 
+section "Power Profiles"
+if command -v powerprofilesctl >/dev/null 2>&1; then
+    if powerprofiles_output="$(powerprofilesctl 2>&1)"; then
+        ok "powerprofilesctl can read power profiles"
+        print_limited_lines "$powerprofiles_output" 20
+    else
+        warn "powerprofilesctl is installed but could not read power profiles: $powerprofiles_output"
+    fi
+
+    if command -v systemctl >/dev/null 2>&1; then
+        if powerprofiles_active="$(systemctl is-active power-profiles-daemon.service 2>&1)"; then
+            ok "power-profiles-daemon.service active status: $powerprofiles_active"
+        else
+            warn "powerprofilesctl is installed but power-profiles-daemon.service is not active: $powerprofiles_active"
+        fi
+    else
+        info "systemctl is unavailable; skipping power-profiles-daemon.service status"
+    fi
+else
+    info "powerprofilesctl is unavailable; skipping power profile diagnostics"
+fi
+
 section "Node"
 if node_path="$(command -v node 2>/dev/null)"; then
     ok "node path: $node_path"
@@ -401,6 +427,38 @@ if check_optional_runtime_command nmcli; then
     else
         warn "nmcli general status could not read NetworkManager state"
     fi
+fi
+
+section "DNS"
+if command -v nmcli >/dev/null 2>&1; then
+    if nmcli_dns="$(nmcli general status 2>&1)"; then
+        info "NetworkManager status:"
+        print_limited_lines "$nmcli_dns" 6
+    else
+        info "NetworkManager status unavailable: $nmcli_dns"
+    fi
+else
+    info "nmcli is unavailable; skipping NetworkManager DNS context"
+fi
+
+if [[ -L /etc/resolv.conf ]]; then
+    resolv_target="$(readlink /etc/resolv.conf 2>/dev/null || true)"
+    info "/etc/resolv.conf is a symlink to ${resolv_target:-unknown target}"
+elif [[ -f /etc/resolv.conf ]]; then
+    info "/etc/resolv.conf is a regular file"
+else
+    info "/etc/resolv.conf is missing or not a regular file/symlink"
+fi
+
+if command -v resolvectl >/dev/null 2>&1; then
+    if resolvectl_status="$(resolvectl status 2>&1)"; then
+        info "resolvectl status:"
+        print_limited_lines "$resolvectl_status" 25
+    else
+        info "resolvectl status unavailable: $resolvectl_status"
+    fi
+else
+    info "resolvectl is unavailable; skipping systemd-resolved DNS context"
 fi
 
 if check_optional_runtime_command bluetoothctl; then
@@ -621,6 +679,31 @@ fi
 
 check_ssh_permissions
 check_secret_patterns
+
+section "AUR"
+if command -v paru >/dev/null 2>&1; then
+    if paru_version="$(paru --version 2>&1)"; then
+        ok "paru is available"
+        print_limited_lines "$paru_version" 3
+    else
+        info "paru is present but version output is unavailable: $paru_version"
+    fi
+else
+    info "paru is unavailable; AUR packages remain optional"
+fi
+
+if command -v pacman >/dev/null 2>&1; then
+    foreign_packages="$(pacman -Qm 2>/dev/null || true)"
+    if [[ -n "$foreign_packages" ]]; then
+        foreign_count="$(grep -c '^' <<<"$foreign_packages")"
+        info "Foreign packages installed: $foreign_count"
+        print_limited_lines "$foreign_packages" 25
+    else
+        info "No foreign packages reported by pacman -Qm"
+    fi
+else
+    info "pacman is unavailable; skipping foreign package list"
+fi
 
 section "Summary"
 printf 'Warnings: %s\n' "$warn_count"

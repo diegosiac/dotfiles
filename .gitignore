@@ -14,3 +14,10 @@
 *.swp
 *.swo
 *~
+
+# Agent tooling metadata (generated per-user, not product code)
+.atl/
+
+# Engram local runtime state (project sync chunks are intentionally versioned)
+.engram/engram.db
+.engram/cloud.json

@@ -94,7 +94,7 @@ fi
 command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 
 # Terminal multiplexer
-TERMINAL_MULTIPLEXER="${TERMINAL_MULTIPLEXER:-zellij}"
+TERMINAL_MULTIPLEXER="${TERMINAL_MULTIPLEXER:-tmux}"
 
 start_terminal_multiplexer_if_needed() {
     [[ $- != *i* ]] && return

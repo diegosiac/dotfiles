@@ -1,6 +1,7 @@
 [Default Applications]
-text/html=zen.desktop
-x-scheme-handler/http=zen.desktop
-x-scheme-handler/https=zen.desktop
+text/html=zen.desktop;brave-browser.desktop;
+application/pdf=zen.desktop;brave-browser.desktop;
+x-scheme-handler/http=zen.desktop;brave-browser.desktop;
+x-scheme-handler/https=zen.desktop;brave-browser.desktop;
 x-scheme-handler/about=zen.desktop
 x-scheme-handler/unknown=zen.desktop

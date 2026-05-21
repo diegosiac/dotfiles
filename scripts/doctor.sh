@@ -196,6 +196,11 @@ fi
 section "Commands"
 for command_name in \
     Hyprland \
+    hypridle \
+    hyprlock \
+    hyprctl \
+    loginctl \
+    systemd-inhibit \
     quickshell \
     greetd \
     tuigreet \
@@ -210,6 +215,41 @@ for command_name in \
 do
     check_command "$command_name"
 done
+
+section "Idle, Lock, and Suspend"
+if command -v pgrep >/dev/null 2>&1; then
+    if pgrep -a hypridle >/dev/null 2>&1; then
+        ok "hypridle process is running"
+    else
+        warn "hypridle process is not running"
+    fi
+else
+    warn "pgrep is unavailable; skipping hypridle process check"
+fi
+
+if [[ -n "${XDG_SESSION_ID:-}" ]]; then
+    if command -v loginctl >/dev/null 2>&1; then
+        if loginctl show-session "$XDG_SESSION_ID" -p Type -p Active -p Remote -p LockedHint -p IdleHint; then
+            ok "loginctl can read session $XDG_SESSION_ID lock/idle state"
+        else
+            warn "loginctl could not read session $XDG_SESSION_ID lock/idle state"
+        fi
+    else
+        warn "loginctl is unavailable; skipping session lock/idle state check"
+    fi
+else
+    warn "XDG_SESSION_ID is unset; skipping loginctl session lock/idle state check"
+fi
+
+if command -v systemd-inhibit >/dev/null 2>&1; then
+    if systemd-inhibit --list >/dev/null 2>&1; then
+        ok "systemd-inhibit can list active inhibitors"
+    else
+        warn "systemd-inhibit could not list active inhibitors"
+    fi
+else
+    warn "systemd-inhibit is unavailable; skipping inhibitor check"
+fi
 
 section "Node"
 if node_path="$(command -v node 2>/dev/null)"; then

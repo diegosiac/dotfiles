@@ -16,10 +16,26 @@ This repository is intentionally being rebuilt from zero. Configuration will be 
 
 This is the happy path for a new Arch machine. Apply it in a VM first when changing the flow.
 
-Install the bootstrap tools first if the fresh image does not have them yet:
+### One-command bootstrap
+
+Run the interactive bootstrap. It asks before installing packages, applying dotfiles, initializing runtimes, installing the AI stack, and enabling `greetd`.
+
+Run it as your regular user with sudo access, not as `root`.
 
 ```sh
-sudo pacman -Sy --needed git chezmoi
+bash <(curl -fsSL https://raw.githubusercontent.com/diegosiac/dotfiles/main/bootstrap.sh)
+```
+
+The root `bootstrap.sh` only ensures minimal prerequisites, initializes or updates the chezmoi source, and delegates to the repo-local `scripts/bootstrap-arch.sh`. Machine mutation stays in the bootstrap scripts; chezmoi owns dotfiles. Runtime and AI setup stay as interactive bootstrap phases because they depend on installed packages, network state, and user auth/session choices.
+
+### Manual fallback
+
+Use this auditable flow when debugging the bootstrap or when you want to run each step yourself.
+
+Install the bootstrap tools first if the fresh image does not have them yet. Run the flow as your regular user with sudo access:
+
+```sh
+sudo pacman -Syu --needed git chezmoi curl sudo
 ```
 
 Clone the dotfiles source without applying it yet. Package-dependent chezmoi scripts, such as the Tmux plugin installer, need the package manifests to be installed first.
@@ -32,7 +48,7 @@ cd ~/.local/share/chezmoi
 Install the official package sets:
 
 ```sh
-sudo pacman -S --needed - < packages/arch/base.txt
+sudo pacman -Syu --needed - < packages/arch/base.txt
 sudo pacman -S --needed - < packages/arch/desktop.txt
 ```
 
@@ -64,6 +80,12 @@ corepack prepare pnpm@latest --activate
 scripts/install-gentle-ai-engram.sh
 ```
 
+If `corepack` is not visible immediately after `fnm` installs Node.js, load the runtime environment in the current shell and retry the Corepack commands:
+
+```sh
+eval "$(fnm env --shell bash)"
+```
+
 Optionally configure the login manager after the desktop has been tested from a TTY:
 
 ```sh
@@ -76,6 +98,19 @@ Quick validation:
 ```sh
 Hyprland
 pgrep -a quickshell
+node --version
+pnpm --version
+engram --version
+gentle-ai --help
+chezmoi doctor
+```
+
+Optional AI setup and secret validation require your authenticated user session:
+
+```sh
+engram setup opencode
+engram setup pi
+gentle-ai
 secrets-load
 test -n "$ENGRAM_CLOUD_TOKEN" && echo "Engram Cloud token loaded"
 ```

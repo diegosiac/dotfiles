@@ -60,7 +60,7 @@ print_gsetting() {
     fi
 }
 
-check_user_unit() {
+check_user_unit_status() {
     local unit="$1"
     local enabled_status=""
     local enabled_rc=0
@@ -74,12 +74,16 @@ check_user_unit() {
 
     if (( enabled_rc == 0 )); then
         ok "$unit user enabled status: $enabled_status"
+    elif [[ "$enabled_status" == "disabled" ]]; then
+        ok "$unit user enabled status: disabled (activation may happen through PAM, socket, or DBus)"
     else
         warn "$unit user enabled status: $enabled_status"
     fi
 
     if (( active_rc == 0 )); then
         ok "$unit user active status: $active_status"
+    elif [[ "$active_status" == "inactive" ]]; then
+        ok "$unit user active status: inactive (it may start on demand)"
     else
         warn "$unit user active status: $active_status"
     fi
@@ -103,7 +107,7 @@ if command -v chezmoi >/dev/null 2>&1; then
     if chezmoi doctor; then
         ok "chezmoi doctor passed"
     else
-        fail "chezmoi doctor reported problems"
+        warn "chezmoi doctor reported environment diagnostics; review output above"
     fi
 else
     warn "chezmoi is not installed or not on PATH; skipping chezmoi doctor"
@@ -167,16 +171,28 @@ else
 fi
 
 section "Keyring"
+secret_service_available=0
 if command -v secret-tool >/dev/null 2>&1; then
     ok "secret-tool found at $(command -v secret-tool)"
 else
     warn "secret-tool is unavailable; install libsecret for Secret Service checks"
 fi
 
+if command -v busctl >/dev/null 2>&1; then
+    if busctl --user status org.freedesktop.secrets >/dev/null 2>&1; then
+        secret_service_available=1
+        ok "DBus Secret Service name is available: org.freedesktop.secrets"
+    else
+        warn "DBus Secret Service name is unavailable or locked: org.freedesktop.secrets"
+    fi
+else
+    warn "busctl is unavailable; skipping DBus Secret Service check"
+fi
+
 if command -v systemctl >/dev/null 2>&1; then
     if systemctl --user show-environment >/dev/null 2>&1; then
-        check_user_unit gnome-keyring-daemon.service
-        check_user_unit gnome-keyring-daemon.socket
+        check_user_unit_status gnome-keyring-daemon.service
+        check_user_unit_status gnome-keyring-daemon.socket
     else
         warn "systemctl --user is unavailable for this session; skipping GNOME Keyring user unit checks"
     fi
@@ -184,14 +200,8 @@ else
     warn "systemctl is unavailable; skipping GNOME Keyring user unit checks"
 fi
 
-if command -v busctl >/dev/null 2>&1; then
-    if busctl --user status org.freedesktop.secrets >/dev/null 2>&1; then
-        ok "DBus Secret Service name is available: org.freedesktop.secrets"
-    else
-        warn "DBus Secret Service name is unavailable or locked: org.freedesktop.secrets"
-    fi
-else
-    warn "busctl is unavailable; skipping DBus Secret Service check"
+if (( secret_service_available == 1 )); then
+    ok "Secret Service availability is the primary keyring signal"
 fi
 
 if command -v secret-tool >/dev/null 2>&1 && [[ "${DOTFILES_DOCTOR_KEYRING_SMOKE:-}" == "1" ]]; then

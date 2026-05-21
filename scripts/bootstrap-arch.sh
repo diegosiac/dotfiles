@@ -56,6 +56,31 @@ install_aur_packages() {
     paru -S --needed - < <(grep -hEv '^[[:space:]]*(#|$)' "$repo_root/packages/arch/aur.txt")
 }
 
+enable_basic_desktop_service() {
+    local unit="$1"
+
+    if ! command -v systemctl >/dev/null 2>&1; then
+        warn "systemctl is unavailable. Skipping $unit."
+        return 0
+    fi
+
+    if ! systemctl list-unit-files "$unit" >/dev/null 2>&1; then
+        warn "$unit is unavailable. Install the matching package first, then enable it manually if needed."
+        return 0
+    fi
+
+    if sudo systemctl enable --now "$unit"; then
+        ok "$unit enabled and started."
+    else
+        warn "Could not enable/start $unit. Continuing bootstrap; run 'sudo systemctl enable --now $unit' later if needed."
+    fi
+}
+
+enable_basic_desktop_services() {
+    enable_basic_desktop_service NetworkManager.service
+    enable_basic_desktop_service bluetooth.service
+}
+
 load_fnm_env() {
     command -v fnm >/dev/null 2>&1 || return 1
     eval "$(fnm env --shell bash)"
@@ -189,6 +214,14 @@ if confirm "Install AUR packages from packages/arch/aur.txt with paru?"; then
     ok "AUR packages installed."
 else
     warn "Skipped AUR package installation."
+fi
+
+section "Basic services"
+if confirm "Enable and start NetworkManager and Bluetooth services now?"; then
+    enable_basic_desktop_services
+    ok "Basic services phase finished."
+else
+    warn "Skipped NetworkManager and Bluetooth service enablement."
 fi
 
 section "Dotfiles"

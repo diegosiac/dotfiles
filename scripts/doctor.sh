@@ -101,6 +101,31 @@ check_user_unit_status() {
     fi
 }
 
+check_system_unit_status() {
+    local unit="$1"
+    local enabled_status=""
+    local enabled_rc=0
+    local active_status=""
+    local active_rc=0
+
+    enabled_status="$(systemctl is-enabled "$unit" 2>&1)"
+    enabled_rc=$?
+    active_status="$(systemctl is-active "$unit" 2>&1)"
+    active_rc=$?
+
+    if (( enabled_rc == 0 )); then
+        ok "$unit enabled status: $enabled_status"
+    else
+        warn "$unit enabled status: $enabled_status"
+    fi
+
+    if (( active_rc == 0 )); then
+        ok "$unit active status: $active_status"
+    else
+        warn "$unit active status: $active_status"
+    fi
+}
+
 check_dbus_name() {
     local name="$1"
 
@@ -228,6 +253,38 @@ else
     warn "pgrep is unavailable; skipping swaync process check"
 fi
 
+section "Audio, Bluetooth, and Network"
+if command -v systemctl >/dev/null 2>&1; then
+    check_system_unit_status NetworkManager.service
+    check_system_unit_status bluetooth.service
+else
+    warn "systemctl is unavailable; skipping NetworkManager and Bluetooth service checks"
+fi
+
+if check_optional_runtime_command nmcli; then
+    if nmcli general status >/dev/null 2>&1; then
+        ok "nmcli general status can read NetworkManager state"
+    else
+        warn "nmcli general status could not read NetworkManager state"
+    fi
+fi
+
+if check_optional_runtime_command bluetoothctl; then
+    if bluetoothctl show >/dev/null 2>&1; then
+        ok "bluetoothctl show can read controller state"
+    else
+        warn "bluetoothctl show could not read controller state"
+    fi
+fi
+
+if check_optional_runtime_command wpctl; then
+    if wpctl status >/dev/null 2>&1; then
+        ok "wpctl status can read PipeWire/WirePlumber state"
+    else
+        warn "wpctl status could not read PipeWire/WirePlumber state"
+    fi
+fi
+
 section "Screen Sharing and Portals"
 if command -v systemctl >/dev/null 2>&1; then
     if systemd_user_env="$(systemctl --user show-environment 2>&1)"; then
@@ -264,14 +321,6 @@ fi
 
 check_dbus_name org.freedesktop.portal.Desktop
 check_dbus_name org.freedesktop.impl.portal.desktop.hyprland
-
-if check_optional_runtime_command wpctl; then
-    if wpctl status >/dev/null 2>&1; then
-        ok "wpctl status can read PipeWire/WirePlumber state"
-    else
-        warn "wpctl status could not read PipeWire/WirePlumber state"
-    fi
-fi
 
 if check_optional_runtime_command pactl; then
     if pactl info >/dev/null 2>&1; then

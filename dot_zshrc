@@ -1,13 +1,6 @@
 # Only run interactive shell configuration for interactive sessions.
 [[ $- != *i* ]] && return
 
-# Editor
-export EDITOR="nvim"
-export VISUAL="$EDITOR"
-
-# User-installed Go binaries
-export PATH="$HOME/go/bin:$PATH"
-
 # History
 HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"
 HISTSIZE=10000
@@ -32,8 +25,11 @@ export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
 command -v carapace >/dev/null 2>&1 && source <(carapace _carapace)
 
 # FZF tab completion UI
-[[ -f /usr/share/fzf-tab/fzf-tab.plugin.zsh ]] && source /usr/share/fzf-tab/fzf-tab.plugin.zsh
-[[ -f /usr/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh ]] && source /usr/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
+if [[ -f /usr/share/fzf-tab/fzf-tab.plugin.zsh ]]; then
+    source /usr/share/fzf-tab/fzf-tab.plugin.zsh
+elif [[ -f /usr/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh ]]; then
+    source /usr/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
+fi
 
 # FZF
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"

@@ -1,0 +1,8 @@
+# Core session environment shared by interactive and non-interactive zsh.
+typeset -U path PATH
+path=("$HOME/.local/bin" "$HOME/go/bin" $path)
+export PATH
+
+# Default editor tools.
+export EDITOR="nvim"
+export VISUAL="nvim"

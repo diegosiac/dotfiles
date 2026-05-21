@@ -163,13 +163,13 @@ If either picker does not appear, run `scripts/doctor.sh` and review the `Screen
 
 ## Terminal multiplexer
 
-Zellij is the default terminal multiplexer. Tmux is also installed and can be selected per shell session.
+Tmux is the default terminal multiplexer. Zellij is also installed and can be selected per shell session.
 
-| Goal                        | Command                         |
-| --------------------------- | ------------------------------- |
-| Use the default multiplexer | `zsh`                           |
-| Start with tmux instead     | `TERMINAL_MULTIPLEXER=tmux zsh` |
-| Start without a multiplexer | `TERMINAL_MULTIPLEXER=none zsh` |
+| Goal                        | Command                           |
+| --------------------------- | --------------------------------- |
+| Use the default multiplexer | `zsh`                             |
+| Start with Zellij instead   | `TERMINAL_MULTIPLEXER=zellij zsh` |
+| Start without a multiplexer | `TERMINAL_MULTIPLEXER=none zsh`   |
 
 The shell skips auto-start when already inside tmux or zellij, so nested sessions are avoided by default.
 

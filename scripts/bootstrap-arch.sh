@@ -116,6 +116,42 @@ apply_desktop_dark_theme_defaults() {
     set_gsetting org.gnome.desktop.interface color-scheme 'prefer-dark'
 }
 
+configure_default_shell() {
+    local zsh_path=""
+    local passwd_entry=""
+    local login_shell=""
+
+    if [[ -x /usr/bin/zsh ]]; then
+        zsh_path="/usr/bin/zsh"
+    elif zsh_path="$(command -v zsh 2>/dev/null)"; then
+        :
+    else
+        warn "zsh is not installed or not on PATH. Install packages first, then rerun this phase."
+        return 0
+    fi
+
+    passwd_entry="$(getent passwd "$USER" || true)"
+    login_shell="${passwd_entry##*:}"
+
+    if [[ "${SHELL:-}" == */zsh || "$login_shell" == */zsh ]]; then
+        warn "Your current or configured login shell is already zsh. Continuing anyway if you choose to refresh it."
+    fi
+
+    if ! grep -Fxq "$zsh_path" /etc/shells; then
+        warn "$zsh_path is not listed in /etc/shells. Adding it with sudo."
+        if ! printf '%s\n' "$zsh_path" | sudo tee -a /etc/shells >/dev/null; then
+            warn "Could not add $zsh_path to /etc/shells. Skipping login shell change."
+            return 0
+        fi
+    fi
+
+    if chsh -s "$zsh_path" "$USER"; then
+        ok "Default login shell set to $zsh_path. Log out and back in for it to take effect."
+    else
+        warn "Could not change the default login shell. Continuing bootstrap; run 'chsh -s $zsh_path $USER' later if needed."
+    fi
+}
+
 printf '\n%s%sSiac Dotfiles Bootstrap%s\n' "$bold" "$blue" "$reset"
 printf '%sInteractive Arch Linux bootstrap for Diego Siac dotfiles.%s\n' "$yellow" "$reset"
 
@@ -137,6 +173,8 @@ ok "sudo access confirmed."
 
 cd "$repo_root"
 
+chezmoi_apply_succeeded=false
+
 section "Official packages"
 if confirm "Install/update official Arch packages from packages/arch/base.txt and packages/arch/desktop.txt?"; then
     install_pacman_packages
@@ -155,8 +193,12 @@ fi
 
 section "Dotfiles"
 if confirm "Apply dotfiles now with chezmoi apply?"; then
-    chezmoi apply
-    ok "Dotfiles applied."
+    if chezmoi apply; then
+        chezmoi_apply_succeeded=true
+        ok "Dotfiles applied."
+    else
+        warn "chezmoi apply failed. Continuing bootstrap, but greetd will be skipped because Hyprland dotfiles may be missing."
+    fi
 else
     warn "Skipped chezmoi apply. Run 'chezmoi apply' later from any shell."
 fi
@@ -167,6 +209,13 @@ if confirm "Apply desktop dark theme defaults now with gsettings?"; then
     ok "Desktop theme default phase finished."
 else
     warn "Skipped immediate desktop theme defaults. Chezmoi-managed GTK and xsettingsd files are still installed when dotfiles are applied."
+fi
+
+section "Shell"
+if confirm "Change the default login shell to zsh?"; then
+    configure_default_shell
+else
+    warn "Skipped login shell change. Your login shell may remain bash until you run chsh manually."
 fi
 
 section "Runtimes"
@@ -186,7 +235,9 @@ else
 fi
 
 section "greetd"
-if confirm "Configure and enable greetd now? This can change your login flow immediately."; then
+if [[ "$chezmoi_apply_succeeded" != true ]]; then
+    warn "Skipping greetd. It requires a successful chezmoi apply in this bootstrap run so Hyprland and terminal config exist before login manager startup."
+elif confirm "Configure and enable greetd now? This can change your login flow immediately."; then
     sudo "$repo_root/scripts/configure-greetd.sh"
     sudo systemctl enable --now greetd
     ok "greetd configured and enabled."

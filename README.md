@@ -18,7 +18,7 @@ This is the happy path for a new Arch machine. Apply it in a VM first when chang
 
 ### One-command bootstrap
 
-Run the interactive bootstrap. It asks before installing packages, applying dotfiles, applying immediate desktop theme defaults, initializing runtimes, installing the AI stack, and enabling `greetd`.
+Run the interactive bootstrap. It asks before installing packages, applying dotfiles, applying immediate desktop theme defaults, switching the login shell to `zsh`, initializing runtimes, installing the AI stack, and enabling `greetd`.
 
 Run it as your regular user with sudo access, not as `root`.
 
@@ -70,7 +70,7 @@ Apply the dotfiles after the required packages are available:
 chezmoi apply
 ```
 
-Optionally apply the desktop dark theme defaults when the bootstrap asks, or rerun `chezmoi apply` after the desktop packages are available.
+Optionally apply the desktop dark theme defaults when the bootstrap asks, or rerun `chezmoi apply` after the desktop packages are available. Change the login shell to `zsh` before relying on the terminal-first session defaults.
 
 Initialize project runtimes and AI tooling:
 
@@ -88,7 +88,7 @@ If `corepack` is not visible immediately after `fnm` installs Node.js, load the 
 eval "$(fnm env --shell bash)"
 ```
 
-Optionally configure the login manager after the desktop has been tested from a TTY:
+Optionally configure the login manager only after dotfiles apply cleanly and the desktop has been tested from a TTY:
 
 ```sh
 sudo scripts/configure-greetd.sh

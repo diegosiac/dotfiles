@@ -152,6 +152,15 @@ less /tmp/quickshell.log
 
 Quickshell warnings about deprecated properties should be fixed. VM graphics warnings like `libEGL warning: failed to create dri2 screen` are usually harmless if the panel renders and behaves correctly.
 
+### Screen sharing smoke tests
+
+Run these from a real Hyprland session after installing the desktop package set and applying dotfiles:
+
+- WebRTC: open `https://mozilla.github.io/webrtc-landing/gum_test.html`, choose screen capture, and confirm the portal picker appears and shares a window or monitor.
+- OBS: add a `Screen Capture (PipeWire)` source and confirm the portal picker appears and the captured preview updates.
+
+If either picker does not appear, run `scripts/doctor.sh` and review the `Screen Sharing and Portals` warnings first.
+
 ## Terminal multiplexer
 
 Zellij is the default terminal multiplexer. Tmux is also installed and can be selected per shell session.

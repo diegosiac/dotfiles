@@ -1,12 +1,14 @@
 hyprland
 hyprlock
 hypridle
+xorg-xwayland
 xdg-desktop-portal
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk
 dbus
 qt5-wayland
 qt6-wayland
+wayland-utils
 grim
 slurp
 satty

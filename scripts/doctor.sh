@@ -48,6 +48,18 @@ check_command() {
     fi
 }
 
+check_optional_runtime_command() {
+    local command_name="$1"
+    local command_path=""
+
+    if command_path="$(command -v "$command_name" 2>/dev/null)"; then
+        ok "$command_name found at $command_path"
+    else
+        warn "$command_name is unavailable; skipping runtime diagnostic"
+        return 1
+    fi
+}
+
 print_gsetting() {
     local schema="$1"
     local key="$2"
@@ -86,6 +98,31 @@ check_user_unit_status() {
         ok "$unit user active status: inactive (it may start on demand)"
     else
         warn "$unit user active status: $active_status"
+    fi
+}
+
+check_dbus_name() {
+    local name="$1"
+
+    if command -v busctl >/dev/null 2>&1; then
+        if busctl --user status "$name" >/dev/null 2>&1; then
+            ok "DBus user name is available: $name"
+        else
+            warn "DBus user name is unavailable: $name"
+        fi
+    else
+        warn "busctl is unavailable; skipping DBus user name check for $name"
+    fi
+}
+
+check_systemd_user_env_var() {
+    local env_output="$1"
+    local var_name="$2"
+
+    if grep -Eq "^${var_name}=" <<<"$env_output"; then
+        ok "systemd user environment contains $var_name"
+    else
+        warn "systemd user environment is missing $var_name"
     fi
 }
 
@@ -168,6 +205,73 @@ if command -v gsettings >/dev/null 2>&1; then
     print_gsetting org.gnome.desktop.interface cursor-theme
 else
     warn "gsettings is unavailable; skipping theme checks"
+fi
+
+section "Screen Sharing and Portals"
+if command -v systemctl >/dev/null 2>&1; then
+    if systemd_user_env="$(systemctl --user show-environment 2>&1)"; then
+        for env_var in \
+            WAYLAND_DISPLAY \
+            XDG_CURRENT_DESKTOP \
+            XDG_SESSION_DESKTOP \
+            XDG_SESSION_TYPE
+        do
+            check_systemd_user_env_var "$systemd_user_env" "$env_var"
+        done
+
+        if grep -Eq '^HYPRLAND_INSTANCE_SIGNATURE=' <<<"$systemd_user_env"; then
+            ok "systemd user environment contains HYPRLAND_INSTANCE_SIGNATURE"
+        else
+            ok "systemd user environment does not contain optional HYPRLAND_INSTANCE_SIGNATURE"
+        fi
+
+        for unit in \
+            pipewire.service \
+            pipewire-pulse.service \
+            wireplumber.service \
+            xdg-desktop-portal.service \
+            xdg-desktop-portal-hyprland.service
+        do
+            check_user_unit_status "$unit"
+        done
+    else
+        warn "systemctl --user show-environment is unavailable; skipping portal environment and user unit checks: $systemd_user_env"
+    fi
+else
+    warn "systemctl is unavailable; skipping portal environment and user unit checks"
+fi
+
+check_dbus_name org.freedesktop.portal.Desktop
+check_dbus_name org.freedesktop.impl.portal.desktop.hyprland
+
+if check_optional_runtime_command wpctl; then
+    if wpctl status >/dev/null 2>&1; then
+        ok "wpctl status can read PipeWire/WirePlumber state"
+    else
+        warn "wpctl status could not read PipeWire/WirePlumber state"
+    fi
+fi
+
+if check_optional_runtime_command pactl; then
+    if pactl info >/dev/null 2>&1; then
+        ok "pactl info can read PulseAudio-compatible PipeWire state"
+    else
+        warn "pactl info could not read PulseAudio-compatible PipeWire state"
+    fi
+fi
+
+if check_optional_runtime_command wayland-info; then
+    if command -v timeout >/dev/null 2>&1; then
+        if timeout 5s wayland-info >/dev/null 2>&1; then
+            ok "wayland-info can query the compositor"
+        else
+            warn "wayland-info could not query the compositor"
+        fi
+    elif wayland-info >/dev/null 2>&1; then
+        ok "wayland-info can query the compositor"
+    else
+        warn "wayland-info could not query the compositor"
+    fi
 fi
 
 section "Keyring"

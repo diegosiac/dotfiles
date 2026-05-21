@@ -98,6 +98,7 @@ sudo systemctl enable --now greetd
 Quick validation:
 
 ```sh
+scripts/doctor.sh
 Hyprland
 pgrep -a quickshell
 node --version

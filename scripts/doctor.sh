@@ -151,6 +151,100 @@ check_systemd_user_env_var() {
     fi
 }
 
+print_limited_lines() {
+    local text="$1"
+    local limit="$2"
+    local line=""
+    local count=0
+
+    while IFS= read -r line; do
+        count=$((count + 1))
+        if (( count <= limit )); then
+            printf '  %s\n' "$line"
+        fi
+    done <<<"$text"
+
+    if (( count > limit )); then
+        printf '  ... truncated %s more lines\n' "$((count - limit))"
+    fi
+}
+
+check_failed_units() {
+    local label="$1"
+    shift
+    local failed_output=""
+    local failed_count=0
+
+    if failed_output="$(systemctl "$@" --failed --no-pager 2>&1)"; then
+        failed_count="$(grep -Ec '^[[:space:]●]*[^[:space:]]+[[:space:]]+loaded[[:space:]]+failed[[:space:]]+' <<<"$failed_output" || true)"
+        if (( failed_count > 0 )); then
+            warn "$label has failed units"
+            print_limited_lines "$failed_output" 20
+        else
+            ok "$label has no failed units"
+        fi
+    else
+        warn "Could not read $label failed units: $failed_output"
+    fi
+}
+
+check_ssh_permissions() {
+    local ssh_dir="$HOME/.ssh"
+    local mode=""
+    local basename=""
+
+    if [[ ! -d "$ssh_dir" ]]; then
+        ok "No $ssh_dir directory present"
+        return
+    fi
+
+    mode="$(stat -c '%a' "$ssh_dir" 2>/dev/null || true)"
+    if [[ -n "$mode" && $((8#$mode & 022)) -eq 0 ]]; then
+        ok "$ssh_dir is not group/world writable"
+    elif [[ -n "$mode" ]]; then
+        warn "$ssh_dir is group/world writable (mode $mode)"
+    else
+        warn "Could not read permissions for $ssh_dir"
+    fi
+
+    while IFS= read -r -d '' key_file; do
+        basename="${key_file##*/}"
+        [[ "$basename" == *.pub || "$basename" == "known_hosts" || "$basename" == "authorized_keys" || "$basename" == "config" ]] && continue
+
+        mode="$(stat -c '%a' "$key_file" 2>/dev/null || true)"
+        if [[ -n "$mode" && $((8#$mode & 044)) -eq 0 ]]; then
+            ok "$key_file is not group/world readable"
+        elif [[ -n "$mode" ]]; then
+            warn "$key_file is group/world readable (mode $mode)"
+        else
+            warn "Could not read permissions for $key_file"
+        fi
+    done < <(find "$ssh_dir" -maxdepth 1 -type f \( -name 'id_*' -o -name '*.pem' -o -name '*.key' \) -print0 2>/dev/null)
+}
+
+check_secret_patterns() {
+    local pattern="-----BEGIN (RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|gh[pousr]_[0-9A-Za-z]{36,}|xox[baprs]-[0-9A-Za-z-]{10,}|(api[_-]?key|token|secret)[[:space:]]*[:=][[:space:]]*[\"'][0-9A-Za-z_./+=-]{20,}"
+    local matches=""
+    local rc=0
+
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        warn "Not inside a git work tree; skipping tracked-file secret-pattern scan"
+        return
+    fi
+
+    matches="$(git grep -nE -I "$pattern" -- 2>/dev/null)"
+    rc=$?
+
+    if (( rc == 0 )); then
+        warn "Potential secret patterns found in tracked files"
+        print_limited_lines "$matches" 20
+    elif (( rc == 1 )); then
+        ok "No obvious secret patterns found in tracked files"
+    else
+        warn "git grep secret-pattern scan failed"
+    fi
+}
+
 section "System"
 if [[ "$(uname -s 2>/dev/null)" == "Linux" && -f /etc/arch-release ]]; then
     ok "Arch Linux detected"
@@ -469,6 +563,64 @@ if command -v systemctl >/dev/null 2>&1; then
 else
     warn "systemctl is unavailable; skipping greetd service checks"
 fi
+
+section "Security"
+firewall_command_found=0
+if command -v ufw >/dev/null 2>&1; then
+    firewall_command_found=1
+    if ufw_status="$(ufw status 2>&1)" && grep -qi '^Status: active' <<<"$ufw_status"; then
+        ok "ufw status is active"
+    else
+        warn "ufw is present but not active or status is unavailable"
+    fi
+fi
+
+if command -v firewall-cmd >/dev/null 2>&1; then
+    firewall_command_found=1
+    if firewall_state="$(firewall-cmd --state 2>&1)" && [[ "$firewall_state" == "running" ]]; then
+        ok "firewalld status is running"
+    else
+        warn "firewalld is present but not running or status is unavailable"
+    fi
+fi
+
+if command -v nft >/dev/null 2>&1; then
+    firewall_command_found=1
+    if nft_output="$(nft list ruleset 2>&1)"; then
+        if [[ -n "$nft_output" ]]; then
+            ok "nft is present and can list a ruleset"
+        else
+            warn "nft is present but the ruleset appears empty"
+        fi
+    else
+        warn "nft is present but ruleset status is unavailable"
+    fi
+fi
+
+if (( firewall_command_found == 0 )); then
+    ok "No firewall manager command found; not required by this doctor"
+fi
+
+if command -v ss >/dev/null 2>&1; then
+    if ss_output="$(ss -tulpen 2>&1)"; then
+        warn "Listening sockets from ss -tulpen (review exposed services)"
+        print_limited_lines "$ss_output" 25
+    else
+        warn "ss -tulpen failed: $ss_output"
+    fi
+else
+    warn "ss is unavailable; skipping listening socket check"
+fi
+
+if command -v systemctl >/dev/null 2>&1; then
+    check_failed_units "system units"
+    check_failed_units "user units" --user
+else
+    warn "systemctl is unavailable; skipping failed unit checks"
+fi
+
+check_ssh_permissions
+check_secret_patterns
 
 section "Summary"
 printf 'Warnings: %s\n' "$warn_count"

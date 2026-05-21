@@ -18,7 +18,7 @@ set_gsetting() {
 
 set_gsetting org.gnome.desktop.interface gtk-theme 'WhiteSur-Dark'
 set_gsetting org.gnome.desktop.interface icon-theme 'WhiteSur'
-set_gsetting org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Classic'
+set_gsetting org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Ice'
 set_gsetting org.gnome.desktop.interface cursor-size 24
 set_gsetting org.gnome.desktop.interface font-name 'Inter 11'
 set_gsetting org.gnome.desktop.interface color-scheme 'prefer-dark'

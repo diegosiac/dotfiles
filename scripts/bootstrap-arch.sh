@@ -92,6 +92,30 @@ install_ai_stack() {
     bash "$repo_root/scripts/install-gentle-ai-engram.sh"
 }
 
+apply_desktop_dark_theme_defaults() {
+    if ! command -v gsettings >/dev/null 2>&1; then
+        warn "gsettings is unavailable. Skipping immediate desktop theme defaults."
+        return 0
+    fi
+
+    set_gsetting() {
+        local schema="$1"
+        local key="$2"
+        local value="$3"
+
+        if ! gsettings set "$schema" "$key" "$value"; then
+            warn "Could not set gsettings key: $schema $key"
+        fi
+    }
+
+    set_gsetting org.gnome.desktop.interface gtk-theme 'WhiteSur-Dark'
+    set_gsetting org.gnome.desktop.interface icon-theme 'WhiteSur'
+    set_gsetting org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Ice'
+    set_gsetting org.gnome.desktop.interface cursor-size 24
+    set_gsetting org.gnome.desktop.interface font-name 'Inter 11'
+    set_gsetting org.gnome.desktop.interface color-scheme 'prefer-dark'
+}
+
 printf '\n%s%sSiac Dotfiles Bootstrap%s\n' "$bold" "$blue" "$reset"
 printf '%sInteractive Arch Linux bootstrap for Diego Siac dotfiles.%s\n' "$yellow" "$reset"
 
@@ -137,6 +161,14 @@ else
     warn "Skipped chezmoi apply. Run 'chezmoi apply' later from any shell."
 fi
 
+section "Desktop theme"
+if confirm "Apply desktop dark theme defaults now with gsettings?"; then
+    apply_desktop_dark_theme_defaults
+    ok "Desktop theme default phase finished."
+else
+    warn "Skipped immediate desktop theme defaults. Chezmoi-managed GTK and xsettingsd files are still installed when dotfiles are applied."
+fi
+
 section "Runtimes"
 if confirm "Initialize Node.js runtime with fnm and activate pnpm through Corepack?"; then
     initialize_node_runtime
@@ -174,6 +206,9 @@ Run these checks after the bootstrap finishes:
   engram --version
   gentle-ai --help
   chezmoi doctor
+  gsettings get org.gnome.desktop.interface color-scheme
+  gsettings get org.gnome.desktop.interface gtk-theme
+  gsettings get org.gnome.desktop.interface cursor-theme
 
 Optional AI setup after you have an authenticated shell/session:
 

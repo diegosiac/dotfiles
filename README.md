@@ -18,7 +18,7 @@ This is the happy path for a new Arch machine. Apply it in a VM first when chang
 
 ### One-command bootstrap
 
-Run the interactive bootstrap. It asks before installing packages, applying dotfiles, initializing runtimes, installing the AI stack, and enabling `greetd`.
+Run the interactive bootstrap. It asks before installing packages, applying dotfiles, applying immediate desktop theme defaults, initializing runtimes, installing the AI stack, and enabling `greetd`.
 
 Run it as your regular user with sudo access, not as `root`.
 
@@ -69,6 +69,8 @@ Apply the dotfiles after the required packages are available:
 ```sh
 chezmoi apply
 ```
+
+Optionally apply the desktop dark theme defaults when the bootstrap asks, or rerun `chezmoi apply` after the desktop packages are available.
 
 Initialize project runtimes and AI tooling:
 

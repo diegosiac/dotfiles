@@ -24,6 +24,9 @@ btop
 fastfetch
 lazygit
 lazydocker
+docker
+docker-compose
+docker-buildx
 atac
 opencode
 gemini-cli

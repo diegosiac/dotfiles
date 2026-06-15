@@ -95,6 +95,23 @@ enable_basic_desktop_services() {
     enable_basic_desktop_service bluetooth.service
 }
 
+configure_docker() {
+    if ! command -v docker >/dev/null 2>&1; then
+        warn "docker is not installed. Install packages/arch/base.txt first, then rerun this phase."
+        return 0
+    fi
+
+    enable_basic_desktop_service docker.service
+
+    if id -nG "$USER" 2>/dev/null | tr ' ' '\n' | grep -Fxq docker; then
+        ok "$USER is already in the docker group."
+    elif sudo usermod -aG docker "$USER"; then
+        ok "Added $USER to the docker group. Log out and back in for it to take effect."
+    else
+        warn "Could not add $USER to the docker group. Run 'sudo usermod -aG docker $USER' later if needed."
+    fi
+}
+
 load_fnm_env() {
     command -v fnm >/dev/null 2>&1 || return 1
     eval "$(fnm env --shell bash)"
@@ -266,6 +283,14 @@ if confirm "Enable power-profiles-daemon.service now? Intended for the Intel lap
     enable_basic_desktop_service power-profiles-daemon.service
 else
     warn "Skipped power-profiles-daemon.service enablement."
+fi
+
+section "Docker"
+if confirm "Enable docker.service and add $USER to the docker group now?"; then
+    configure_docker
+    ok "Docker phase finished."
+else
+    warn "Skipped Docker setup. Run 'sudo systemctl enable --now docker.service' and 'sudo usermod -aG docker $USER' later if needed."
 fi
 
 section "Dotfiles"

@@ -17,6 +17,7 @@
 
 # Agent tooling metadata (generated per-user, not product code)
 .atl/
+.pi
 
 # Engram local runtime state (project sync chunks are intentionally versioned)
 .engram/engram.db

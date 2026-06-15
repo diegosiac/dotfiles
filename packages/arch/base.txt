@@ -43,6 +43,7 @@ python
 python-pip
 python-pynvim
 uv
+aws-cli-v2
 alacritty
 wezterm
 ghostty

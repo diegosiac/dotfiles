@@ -172,6 +172,56 @@ apply_desktop_dark_theme_defaults() {
     set_gsetting org.gnome.desktop.interface color-scheme 'prefer-dark'
 }
 
+configure_grub() {
+    if [[ ! -d /sys/firmware/efi ]]; then
+        warn "Not booted in UEFI mode. Skipping GRUB configuration."
+        return 0
+    fi
+
+    if ! command -v grub-install >/dev/null 2>&1; then
+        warn "grub is not installed. Install packages/arch/base.txt first, then rerun this phase."
+        return 0
+    fi
+
+    local esp=""
+    local candidate=""
+    for candidate in /boot /efi /boot/efi; do
+        if findmnt -no FSTYPE "$candidate" 2>/dev/null | grep -qx vfat; then
+            esp="$candidate"
+            break
+        fi
+    done
+
+    if [[ -z "$esp" ]]; then
+        warn "Could not detect the EFI System Partition (no vfat mount at /boot, /efi, or /boot/efi). Configure GRUB manually."
+        return 0
+    fi
+
+    # GRUB ships with os-prober disabled for security; dual-boot needs it on so
+    # other operating systems (e.g. Windows) are detected and added to the menu.
+    if grep -q '^#\?GRUB_DISABLE_OS_PROBER=' /etc/default/grub 2>/dev/null; then
+        sudo sed -i 's/^#\?GRUB_DISABLE_OS_PROBER=.*/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
+    else
+        printf 'GRUB_DISABLE_OS_PROBER=false\n' | sudo tee -a /etc/default/grub >/dev/null
+    fi
+
+    if ! command -v os-prober >/dev/null 2>&1; then
+        warn "os-prober is not installed. GRUB will not detect other operating systems until it is present."
+    fi
+
+    if ! sudo grub-install --target=x86_64-efi --efi-directory="$esp" --bootloader-id=GRUB; then
+        warn "grub-install failed. Review the output above and rerun this phase manually."
+        return 0
+    fi
+
+    if ! sudo grub-mkconfig -o /boot/grub/grub.cfg; then
+        warn "grub-mkconfig failed. Rerun 'sudo grub-mkconfig -o /boot/grub/grub.cfg' manually."
+        return 0
+    fi
+
+    ok "GRUB installed on $esp with os-prober enabled for dual-boot detection."
+}
+
 configure_default_shell() {
     local zsh_path=""
     local passwd_entry=""
@@ -334,6 +384,14 @@ if confirm "Install Gentle-AI and Engram user binaries with Go?"; then
     ok "AI stack install phase finished."
 else
     warn "Skipped AI stack installation. Run 'scripts/install-gentle-ai-engram.sh' later."
+fi
+
+section "Bootloader"
+if confirm "Install GRUB and enable os-prober for dual-boot detection? This rewrites your boot menu."; then
+    configure_grub
+    ok "Bootloader phase finished."
+else
+    warn "Skipped GRUB configuration. Your current bootloader stays untouched."
 fi
 
 section "greetd"

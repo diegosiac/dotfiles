@@ -2,6 +2,9 @@ git
 github-cli
 base-devel
 sudo
+grub
+efibootmgr
+os-prober
 rust
 go
 chezmoi

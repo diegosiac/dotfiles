@@ -5,7 +5,6 @@ local mainMod = "SUPER"
 local terminal = "alacritty"
 local launcher = "walker"
 local browser = "zen-browser"
-local notes = 'xdg-open "obsidian://open?vault=diegosiac"'
 
 hl.monitor({
     output = "",
@@ -46,13 +45,37 @@ hl.config({
         sensitivity = 0,
     },
     general = {
-        gaps_in = 5,
-        gaps_out = 10,
-        border_size = 2,
+        gaps_in = 4,
+        gaps_out = 8,
+        border_size = 1,
+        col = {
+            active_border = "rgba(c8d3d5ff)",
+            inactive_border = "rgba(3b4244aa)",
+        },
         layout = "dwindle",
     },
     decoration = {
-        rounding = 10,
+        rounding = 5,
+        active_opacity = 1.0,
+        inactive_opacity = 0.96,
+        fullscreen_opacity = 1.0,
+        blur = {
+            enabled = true,
+            size = 5,
+            passes = 1,
+            ignore_opacity = true,
+            new_optimizations = true,
+            xray = true,
+            special = false,
+            popups = true,
+            popups_ignorealpha = 0.60,
+            input_methods = false,
+            input_methods_ignorealpha = 0.20,
+            contrast = 0.8916,
+            brightness = 1.0,
+            vibrancy = 0.1696,
+            vibrancy_darkness = 0.0,
+        },
     },
     animations = {
         enabled = true,
@@ -67,23 +90,57 @@ hl.config({
     },
 })
 
+hl.curve("workspaceEase", {
+    type = "bezier",
+    points = { { 0.16, 1.0 }, { 0.30, 1.0 } },
+})
+
+hl.animation({
+    leaf = "workspaces",
+    enabled = true,
+    speed = 2.5,
+    bezier = "workspaceEase",
+    style = "fade",
+})
+
+hl.animation({
+    leaf = "windowsIn",
+    enabled = true,
+    speed = 2.5,
+    bezier = "workspaceEase",
+    style = "popin 96%",
+})
+
+hl.animation({
+    leaf = "windowsOut",
+    enabled = true,
+    speed = 2.0,
+    bezier = "workspaceEase",
+    style = "popin 98%",
+})
+
+hl.animation({
+    leaf = "fade",
+    enabled = true,
+    speed = 2.5,
+    bezier = "workspaceEase",
+})
+
+hl.animation({
+    leaf = "layers",
+    enabled = true,
+    speed = 2.5,
+    bezier = "workspaceEase",
+    style = "fade",
+})
+
 -- Core keyboard workflow.
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd(launcher))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
-hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(notes))
 hl.bind(mainMod .. " + S", hl.dsp.exec_cmd("$HOME/.local/bin/screenshot-edit"))
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("loginctl lock-session"))
 hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exit())
-
--- Full-window floating notes scratchpad.
-hl.window_rule({
-    name = "obsidian-full-window-scratchpad",
-    match = { class = "^(obsidian)$" },
-    float = true,
-    size = { "monitor_w*0.95", "monitor_h*0.90" },
-    center = true,
-})
 
 -- Window management.
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())

@@ -1,6 +1,9 @@
 [terminal.shell]
 program = "/usr/bin/zsh"
 
+[window]
+opacity = 0.92
+
 [font]
 size = 12.0
 

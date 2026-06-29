@@ -16,6 +16,7 @@ elephant-clipboard
 elephant-bluetooth
 brave-bin
 zen-browser-bin
+helium-browser-bin
 google-chrome
 ttf-geist-variable
 ttf-geist-mono-variable

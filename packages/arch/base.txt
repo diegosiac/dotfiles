@@ -36,6 +36,7 @@ gemini-cli
 openai-codex
 curl
 wget
+sed
 unzip
 gzip
 tar

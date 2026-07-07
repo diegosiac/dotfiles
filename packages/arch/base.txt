@@ -1,6 +1,8 @@
 git
 github-cli
+git-delta
 base-devel
+just
 sudo
 grub
 efibootmgr
@@ -12,6 +14,8 @@ zsh
 zsh-completions
 zsh-autosuggestions
 zsh-syntax-highlighting
+shellcheck
+shfmt
 neovim
 starship
 eza
@@ -19,6 +23,7 @@ bat
 fd
 fzf
 ripgrep
+ast-grep
 zoxide
 atuin
 tmux
@@ -37,6 +42,9 @@ openai-codex
 curl
 wget
 sed
+sd
+jq
+yq
 unzip
 gzip
 tar

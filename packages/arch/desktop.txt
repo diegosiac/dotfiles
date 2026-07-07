@@ -39,7 +39,6 @@ yazi
 file
 ffmpeg
 7zip
-jq
 poppler
 resvg
 imagemagick

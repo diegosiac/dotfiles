@@ -90,17 +90,23 @@ fi
 command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 
 # Terminal multiplexer
-TERMINAL_MULTIPLEXER="${TERMINAL_MULTIPLEXER:-tmux}"
+# Herdr is the default agent multiplexer; tmux and zellij remain available on
+# demand through TERMINAL_MULTIPLEXER=tmux|zellij.
+TERMINAL_MULTIPLEXER="${TERMINAL_MULTIPLEXER:-herdr}"
 
 start_terminal_multiplexer_if_needed() {
     [[ $- != *i* ]] && return
     [[ ! -t 1 ]] && return
-    [[ -n "$TMUX" || -n "$ZELLIJ" ]] && return
+    # Herdr exports HERDR_ENV into every pane. Without this guard a herdr pane
+    # would start another multiplexer and break herdr's agent-state detection.
+    [[ -n "$TMUX" || -n "$ZELLIJ" || -n "$HERDR_ENV" ]] && return
     [[ "$TERMINAL_MULTIPLEXER" == "none" ]] && return
 
-    if command -v "$TERMINAL_MULTIPLEXER" >/dev/null 2>&1; then
-        exec "$TERMINAL_MULTIPLEXER"
-    fi
+    command -v "$TERMINAL_MULTIPLEXER" >/dev/null 2>&1 || return
+
+    # Deliberately not exec: a multiplexer that fails to start leaves a usable
+    # Zsh session instead of replacing and killing the shell process.
+    "$TERMINAL_MULTIPLEXER" || echo "⚠️  $TERMINAL_MULTIPLEXER failed to start; continuing in Zsh."
 }
 
 start_terminal_multiplexer_if_needed

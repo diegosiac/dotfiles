@@ -163,15 +163,20 @@ If either picker does not appear, run `scripts/doctor.sh` and review the `Screen
 
 ## Terminal multiplexer
 
-Tmux is the default terminal multiplexer. Zellij is also installed and can be selected per shell session.
+Herdr is the default terminal multiplexer. It is agent-oriented: workspaces, tabs and panes with a sidebar reporting per-agent state. Tmux and Zellij stay installed and can be selected per shell session.
 
 | Goal                        | Command                           |
 | --------------------------- | --------------------------------- |
 | Use the default multiplexer | `zsh`                             |
+| Start with Tmux instead     | `TERMINAL_MULTIPLEXER=tmux zsh`   |
 | Start with Zellij instead   | `TERMINAL_MULTIPLEXER=zellij zsh` |
 | Start without a multiplexer | `TERMINAL_MULTIPLEXER=none zsh`   |
 
-The shell skips auto-start when already inside tmux or zellij, so nested sessions are avoided by default.
+The shell skips auto-start when `HERDR_ENV`, `TMUX` or `ZELLIJ` is already set, so nested sessions are avoided by default. Auto-start does not `exec`, so a multiplexer that fails to launch leaves a usable Zsh session.
+
+Herdr agent integrations are not installed automatically. Enable the ones you need with `herdr integration install <agent>` (for example `claude`, `codex`, `opencode`); without the hook the sidebar cannot report agent state.
+
+Prefix keys currently overlap: the vendored Herdr config uses `ctrl+a`, which is also the Tmux prefix in `dot_tmux.conf`. Running Tmux inside a Herdr pane means Herdr consumes the prefix first.
 
 ## Runtime managers
 

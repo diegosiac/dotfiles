@@ -109,4 +109,23 @@ start_terminal_multiplexer_if_needed() {
     "$TERMINAL_MULTIPLEXER" || echo "⚠️  $TERMINAL_MULTIPLEXER failed to start; continuing in Zsh."
 }
 
+# Installer-managed blocks below. Keep the marker comments intact: Railway and
+# pnpm look for them to update their block instead of appending a duplicate.
+# The only edit is the -f guard, so fresh machines without the env file do not
+# error on every shell start.
+
+# >>> railway initialize >>>
+[[ -f "$HOME/.railway/env" ]] && source "$HOME/.railway/env"
+# <<< railway initialize <<<
+
+# pnpm
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
+
+# Keep the multiplexer last: it takes over the shell, so everything above must
+# already be exported for herdr and its panes to inherit it.
 start_terminal_multiplexer_if_needed

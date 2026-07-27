@@ -302,10 +302,11 @@ These configurations are not auto-updated during bootstrap or `chezmoi apply`. U
 
 Vendored configs currently planned or used:
 
-| Tool   | Source path               | Local path          |
-| ------ | ------------------------- | ------------------- |
-| Zellij | `GentlemanZellij/zellij`  | `dot_config/zellij` |
-| Tmux   | `GentlemanTmux/tmux.conf` | `dot_tmux.conf`     |
-| Neovim | `GentlemanNvim/nvim`      | `dot_config/nvim`   |
+| Tool   | Source path               | Local path                   |
+| ------ | ------------------------- | ---------------------------- |
+| Zellij | `GentlemanZellij/zellij`  | `dot_config/zellij`          |
+| Tmux   | `GentlemanTmux/tmux.conf` | `dot_tmux.conf`              |
+| Neovim | `GentlemanNvim/nvim`      | `dot_config/nvim`            |
+| Herdr  | `herdr/config.toml`       | `dot_config/herdr/config.toml` |
 
 Tmux plugins are installed through TPM by the chezmoi script `run_once_after_20-install-tmux-plugins.sh`.

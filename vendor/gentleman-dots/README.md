@@ -26,6 +26,18 @@ They are copied as reviewed snapshots, not auto-updated during bootstrap or `che
 - Sync script: `vendor/gentleman-dots/sync-tmux.sh`
 - Plugin install: `run_once_after_20-install-tmux-plugins.sh`
 
+## Herdr
+
+- Source path: `herdr/config.toml`
+- Destination path: `dot_config/herdr/config.toml`
+- Sync script: `vendor/gentleman-dots/sync-herdr.sh`
+- Binary install: `herdr` from the AUR list in `packages/arch/aur.txt`
+- Agent integrations: not vendored. Install per agent with `herdr integration install <agent>`.
+
+Upstream copies this file into place and runs `chmod u+w` because Home Manager
+would otherwise link it read-only from the Nix store. Chezmoi already writes a
+regular writable file, so no equivalent step is needed here.
+
 ## Neovim
 
 - Source path: `GentlemanNvim/nvim`

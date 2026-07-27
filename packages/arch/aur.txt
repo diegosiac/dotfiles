@@ -5,6 +5,7 @@ gh-dash
 slack-desktop
 claude-code
 pi
+herdr
 claude-desktop-bin
 1password-cli
 walker

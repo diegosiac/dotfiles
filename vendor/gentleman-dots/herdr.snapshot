@@ -1,0 +1,5 @@
+repo=https://github.com/Gentleman-Programming/Gentleman.Dots.git
+source_path=herdr/config.toml
+destination_path=dot_config/herdr/config.toml
+commit=02584500de6378ff5f54d252dc28fce8424b088a
+synced_at=2026-07-27T04:16:11Z

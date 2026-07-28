@@ -70,7 +70,7 @@ install_aur_packages() {
     paru -S --needed - < <(grep -hEv '^[[:space:]]*(#|$)' "$repo_root/packages/arch/aur.txt")
 }
 
-enable_basic_desktop_service() {
+enable_system_service() {
     local unit="$1"
 
     if ! command -v systemctl >/dev/null 2>&1; then
@@ -90,10 +90,11 @@ enable_basic_desktop_service() {
     fi
 }
 
-enable_basic_desktop_services() {
-    enable_basic_desktop_service NetworkManager.service
-    enable_basic_desktop_service bluetooth.service
-    enable_basic_desktop_service tailscaled.service
+enable_basic_services() {
+    enable_system_service NetworkManager.service
+    enable_system_service bluetooth.service
+    enable_system_service tailscaled.service
+    ok "Tailscale needs a one-time 'sudo tailscale up' to authenticate and join your tailnet."
 }
 
 configure_docker() {
@@ -102,7 +103,7 @@ configure_docker() {
         return 0
     fi
 
-    enable_basic_desktop_service docker.service
+    enable_system_service docker.service
 
     if id -nG "$USER" 2>/dev/null | tr ' ' '\n' | grep -Fxq docker; then
         ok "$USER is already in the docker group."
@@ -324,14 +325,14 @@ fi
 
 section "Basic services"
 if confirm "Enable and start NetworkManager, Bluetooth, and Tailscale services now?"; then
-    enable_basic_desktop_services
+    enable_basic_services
     ok "Basic services phase finished."
 else
     warn "Skipped NetworkManager, Bluetooth, and Tailscale service enablement."
 fi
 
 if confirm "Enable power-profiles-daemon.service now? Intended for the Intel laptop only."; then
-    enable_basic_desktop_service power-profiles-daemon.service
+    enable_system_service power-profiles-daemon.service
 else
     warn "Skipped power-profiles-daemon.service enablement."
 fi

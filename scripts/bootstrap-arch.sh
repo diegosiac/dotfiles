@@ -260,6 +260,29 @@ configure_default_shell() {
     fi
 }
 
+ensure_chezmoi_initialized() {
+    local source_dir repo_url
+
+    source_dir="$(chezmoi source-path 2>/dev/null || true)"
+    if [[ -n "$source_dir" && -d "$source_dir/.git" ]]; then
+        ok "chezmoi source already initialized at $source_dir."
+        return 0
+    fi
+
+    repo_url="$(git -C "$repo_root" remote get-url origin 2>/dev/null || true)"
+    if [[ -z "$repo_url" ]]; then
+        repo_url="$repo_root"
+        warn "No git origin found for $repo_root. Initializing chezmoi from the local checkout instead."
+    fi
+
+    if chezmoi init "$repo_url"; then
+        ok "chezmoi initialized from $repo_url."
+    else
+        warn "chezmoi init failed. Run 'chezmoi init $repo_url' manually and rerun this phase."
+        return 1
+    fi
+}
+
 printf '\n%s%sSiac Dotfiles Bootstrap%s\n' "$bold" "$blue" "$reset"
 printf '%sInteractive Arch Linux bootstrap for Diego Siac dotfiles.%s\n' "$yellow" "$reset"
 
@@ -347,7 +370,7 @@ fi
 
 section "Dotfiles"
 if confirm "Apply dotfiles now with chezmoi apply?"; then
-    if chezmoi apply; then
+    if ensure_chezmoi_initialized && chezmoi apply; then
         chezmoi_apply_succeeded=true
         ok "Dotfiles applied."
     else

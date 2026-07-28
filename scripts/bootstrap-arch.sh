@@ -94,6 +94,8 @@ enable_basic_services() {
     enable_system_service NetworkManager.service
     enable_system_service bluetooth.service
     enable_system_service tailscaled.service
+    enable_system_service systemd-timesyncd.service
+    enable_system_service paccache.timer
     ok "Tailscale needs a one-time 'sudo tailscale up' to authenticate and join your tailnet."
 }
 
@@ -347,7 +349,7 @@ else
 fi
 
 section "Basic services"
-if confirm "Enable and start NetworkManager, Bluetooth, and Tailscale services now?"; then
+if confirm "Enable and start NetworkManager, Bluetooth, Tailscale, time sync, and pacman cache cleanup services now?"; then
     enable_basic_services
     ok "Basic services phase finished."
 else

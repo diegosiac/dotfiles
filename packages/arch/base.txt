@@ -39,6 +39,9 @@ atac
 opencode
 gemini-cli
 openai-codex
+xdg-user-dirs
+pacman-contrib
+reflector
 curl
 wget
 tailscale

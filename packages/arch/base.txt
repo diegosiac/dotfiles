@@ -41,6 +41,7 @@ gemini-cli
 openai-codex
 curl
 wget
+tailscale
 sed
 sd
 jq

@@ -93,6 +93,7 @@ enable_basic_desktop_service() {
 enable_basic_desktop_services() {
     enable_basic_desktop_service NetworkManager.service
     enable_basic_desktop_service bluetooth.service
+    enable_basic_desktop_service tailscaled.service
 }
 
 configure_docker() {
@@ -322,11 +323,11 @@ else
 fi
 
 section "Basic services"
-if confirm "Enable and start NetworkManager and Bluetooth services now?"; then
+if confirm "Enable and start NetworkManager, Bluetooth, and Tailscale services now?"; then
     enable_basic_desktop_services
     ok "Basic services phase finished."
 else
-    warn "Skipped NetworkManager and Bluetooth service enablement."
+    warn "Skipped NetworkManager, Bluetooth, and Tailscale service enablement."
 fi
 
 if confirm "Enable power-profiles-daemon.service now? Intended for the Intel laptop only."; then

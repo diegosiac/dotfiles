@@ -8,6 +8,7 @@ pi
 herdr
 claude-desktop-bin
 1password-cli
+1password
 walker
 elephant
 elephant-providerlist

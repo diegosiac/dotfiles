@@ -60,6 +60,7 @@ python-pip
 python-pynvim
 uv
 aws-cli-v2
+wrangler
 alacritty
 wezterm
 ghostty

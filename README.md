@@ -173,6 +173,49 @@ bash tests/configure-moshi.sh
 
 The following are generated local state and MUST NOT enter Git: `authorized_keys`, OpenSSH host keys, moshi-hook pairing state, the generated user service, generated agent hook files, Tailscale state, linger state, phone settings, logs, tokens, host IDs, secrets, license keys, machine names, and machine addresses. The script and manifests are the reproducible boundary; operator confirmations and generated state remain local.
 
+### Controlled UFW activation
+
+UFW covers IPv4 and IPv6 with a default-deny incoming and default-allow outgoing policy. All inbound traffic is allowed only on `tailscale0`; UDP 41641 and SSH, Mosh, Moshi, or Zen ports are not opened globally.
+
+Perform activation only with independent console or recovery access available, Tailscale connected, and the current remote session kept open. Install UFW and verify that IPv6 support is enabled before continuing:
+
+```sh
+sudo pacman -S --needed ufw
+grep -qx 'IPV6=yes' /etc/default/ufw
+```
+
+If the IPv6 check fails, set `IPV6=yes` in `/etc/default/ufw` before configuring or enabling UFW. Configure the approved policy, then inspect the pending rule set before activation:
+
+```sh
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow in on tailscale0
+sudo ufw show added
+```
+
+Confirm that the only inbound allowance is on `tailscale0`, then enable UFW and its Arch systemd service for boot persistence:
+
+```sh
+sudo ufw enable
+sudo systemctl enable ufw.service
+sudo ufw status verbose
+```
+
+Before closing the original session, use a separate client to establish and validate NEW SSH and Mosh sessions through Tailscale, replacing `user@tailscale-host` with the tailnet destination:
+
+```sh
+ssh user@tailscale-host
+mosh user@tailscale-host
+```
+
+If either connection fails, keep the original session open and disable UFW from the independent recovery console:
+
+```sh
+sudo ufw disable
+```
+
+Docker-published ports can bypass UFW. Review every published port before using it; do not add `DOCKER-USER` mitigation until Docker actually publishes a port and the required exposure is known.
+
 ### VM desktop validation
 
 After changing Hyprland, Quickshell, package manifests, or startup scripts, validate the desktop in a disposable VM before trusting the host install.
@@ -328,7 +371,7 @@ This builds `paru` from source, so Rust/Cargo must be installed first through `p
 | Area | Policy |
 | ---- | ------ |
 | DNS | Use NetworkManager defaults. Do not hardcode public DNS or mutate `/etc/resolv.conf`. |
-| Firewall | No default firewall yet. `scripts/doctor.sh` reports current state; optional `firewalld` can be added later if desired. |
+| Firewall | UFW covers IPv4 and IPv6, denies incoming traffic by default, allows outgoing traffic, and permits inbound traffic only on `tailscale0`. Activate it only through the controlled runbook above. |
 | Power | AMD desktop needs no power daemon. Intel laptop uses `power-profiles-daemon`. Avoid governor, kernel flag, and tuning cargo cult. |
 | AUR | Optional, interactive, and a reviewed trust boundary. `paru` is built locally from AUR source if needed; AUR is not required for base boot. |
 

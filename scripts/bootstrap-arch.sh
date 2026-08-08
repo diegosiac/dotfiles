@@ -96,7 +96,20 @@ enable_basic_services() {
     enable_system_service tailscaled.service
     enable_system_service systemd-timesyncd.service
     enable_system_service paccache.timer
-    ok "Tailscale needs a one-time 'sudo tailscale up' to authenticate and join your tailnet."
+    ok "Tailscale service is ready; authenticate separately through your approved flow before Moshi setup."
+}
+
+configure_moshi() {
+    if [[ ! -x "$repo_root/scripts/configure-moshi.sh" ]]; then
+        warn "scripts/configure-moshi.sh is unavailable or not executable. Skipping optional Moshi setup."
+        return 0
+    fi
+
+    if bash "$repo_root/scripts/configure-moshi.sh"; then
+        ok "Optional Moshi setup finished."
+    else
+        warn "Moshi setup was skipped or stopped. Bootstrap will continue; authenticate Tailscale and rerun 'scripts/configure-moshi.sh' when ready."
+    fi
 }
 
 configure_docker() {
@@ -362,6 +375,13 @@ else
     warn "Skipped power-profiles-daemon.service enablement."
 fi
 
+section "Moshi (optional)"
+if confirm "Configure Moshi, Mosh, hardened OpenSSH, and agent hooks now? This requires op, MOSHI_SSH_PUBLIC_KEY_REF, authenticated Tailscale, and interactive login tests."; then
+    configure_moshi
+else
+    warn "Skipped optional Moshi setup. Run 'scripts/configure-moshi.sh' later when Tailscale is authenticated."
+fi
+
 section "Docker"
 if confirm "Enable docker.service and add $USER to the docker group now?"; then
     configure_docker
@@ -444,6 +464,7 @@ Run these checks after the bootstrap finishes:
   engram --version
   gentle-ai --help
   chezmoi doctor
+  scripts/configure-moshi.sh --check
   gsettings get org.gnome.desktop.interface color-scheme
   gsettings get org.gnome.desktop.interface gtk-theme
   gsettings get org.gnome.desktop.interface cursor-theme

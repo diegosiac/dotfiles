@@ -44,6 +44,8 @@ pacman-contrib
 reflector
 curl
 wget
+openssh
+mosh
 tailscale
 sed
 sd

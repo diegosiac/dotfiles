@@ -622,6 +622,109 @@ else
     warn "systemctl is unavailable; skipping greetd service checks"
 fi
 
+section "Moshi, OpenSSH, and Tailscale"
+for command_name in ssh sshd ssh-keygen mosh op; do
+    if command -v "$command_name" >/dev/null 2>&1; then
+        ok "$command_name is available"
+    else
+        fail "Missing Moshi access prerequisite: $command_name"
+    fi
+done
+
+if command -v systemctl >/dev/null 2>&1; then
+    check_system_unit_status tailscaled.service
+    check_system_unit_status sshd.service
+else
+    warn "systemctl is unavailable; skipping tailscaled and sshd service checks"
+fi
+
+if command -v tailscale >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
+    if tailscale status --json 2>/dev/null | jq -e '.BackendState == "Running" and (.Self.Online == true)' >/dev/null; then
+        ok "Tailscale backend is running and this node is online"
+    else
+        warn "Tailscale is not both running and online"
+    fi
+
+    tailscale_run_ssh="$(tailscale debug prefs 2>/dev/null | jq -r 'if (.RunSSH | type) == "boolean" then (.RunSSH | tostring) else "unknown" end' 2>/dev/null || printf 'unknown')"
+    if [[ "$tailscale_run_ssh" == "true" || "$tailscale_run_ssh" == "false" ]]; then
+        ok "Tailscale RunSSH: $tailscale_run_ssh"
+    else
+        warn "Tailscale RunSSH could not be read from structured preferences"
+    fi
+else
+    warn "tailscale or jq is unavailable; skipping sanitized Tailscale state checks"
+fi
+
+if command -v sshd >/dev/null 2>&1; then
+    if sudo -n sshd -t >/dev/null 2>&1; then
+        ok "sshd configuration syntax is valid"
+        sshd_host="$(uname -n 2>/dev/null || printf localhost)"
+        effective_sshd_config="$(sudo -n sshd -T -C "user=${USER:-unknown},host=$sshd_host,addr=127.0.0.1" 2>/dev/null || true)"
+        if [[ -n "$effective_sshd_config" ]] \
+            && grep -Fqx 'permitrootlogin no' <<<"$effective_sshd_config" \
+            && grep -Fqx 'pubkeyauthentication yes' <<<"$effective_sshd_config" \
+            && grep -Fqx 'passwordauthentication no' <<<"$effective_sshd_config" \
+            && grep -Fqx 'kbdinteractiveauthentication no' <<<"$effective_sshd_config" \
+            && grep -Fqx 'authenticationmethods publickey' <<<"$effective_sshd_config" \
+            && awk -v user="${USER:-unknown}" '$1 == "allowusers" { for (i = 2; i <= NF; i++) if ($i == user) found = 1 } END { exit !found }' <<<"$effective_sshd_config"; then
+            ok "Effective sshd configuration enforces the Moshi hardening policy"
+        else
+            warn "Effective sshd configuration could not be verified or does not enforce the complete Moshi hardening policy"
+        fi
+    else
+        warn "Could not validate sshd non-interactively; run 'sudo sshd -t' and inspect 'sudo sshd -T'"
+    fi
+fi
+
+if command -v moshi-hook >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
+    ok "moshi-hook is available"
+    moshi_status="$(moshi-hook status --json 2>/dev/null | jq -c '{paired: (.paired == true), hooks: [.hooks[]? | select(.target == "pi" or .target == "claude" or .target == "codex" or .target == "opencode" or .target == "grok") | {target, status}]}' 2>/dev/null || true)"
+    if [[ -n "$moshi_status" ]] && [[ "$(jq -r '.paired' <<<"$moshi_status" 2>/dev/null)" == "true" ]]; then
+        ok "moshi-hook reports paired state"
+    else
+        warn "moshi-hook does not report paired state"
+    fi
+
+    for hook_target in pi claude codex opencode grok; do
+        hook_status="$(jq -r --arg target "$hook_target" '[.hooks[]? | select(.target == $target) | .status] | first // "missing"' <<<"$moshi_status" 2>/dev/null || printf 'unknown')"
+        if [[ "$hook_status" == "installed" || "$hook_status" == "ok" || "$hook_status" == "current" ]]; then
+            ok "moshi-hook target $hook_target status: $hook_status"
+        else
+            warn "moshi-hook target $hook_target status: $hook_status"
+        fi
+    done
+    unset moshi_status hook_status
+
+    if moshi-hook probe --json 2>/dev/null | jq -e '.installed == true and .running == true' >/dev/null; then
+        ok "moshi-hook daemon probe reports installed and running"
+    else
+        warn "moshi-hook daemon probe did not report installed and running"
+    fi
+
+    if command -v systemctl >/dev/null 2>&1; then
+        check_user_unit_status moshi-hook.service
+    fi
+else
+    warn "moshi-hook or jq is unavailable; skipping structured Moshi checks"
+fi
+
+if command -v herdr >/dev/null 2>&1; then
+    ok "Herdr is available for Moshi terminal context detection"
+else
+    warn "Herdr is unavailable; Moshi can still use another supported terminal context"
+fi
+
+if command -v loginctl >/dev/null 2>&1; then
+    linger_state="$(loginctl show-user "${USER:-}" -p Linger --value 2>/dev/null || true)"
+    if [[ "$linger_state" == "yes" ]]; then
+        ok "User lingering is enabled"
+    else
+        warn "User lingering is disabled; moshi-hook may stop after logout"
+    fi
+else
+    warn "loginctl is unavailable; skipping linger check"
+fi
+
 section "Security"
 firewall_command_found=0
 if command -v ufw >/dev/null 2>&1; then

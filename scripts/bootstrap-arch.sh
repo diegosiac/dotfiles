@@ -96,6 +96,7 @@ enable_basic_services() {
     enable_system_service tailscaled.service
     enable_system_service systemd-timesyncd.service
     enable_system_service paccache.timer
+    enable_system_service fstrim.timer
     ok "Tailscale service is ready; authenticate separately through your approved flow before Moshi setup."
 }
 
@@ -362,7 +363,7 @@ else
 fi
 
 section "Basic services"
-if confirm "Enable and start NetworkManager, Bluetooth, Tailscale, time sync, and pacman cache cleanup services now?"; then
+if confirm "Enable and start NetworkManager, Bluetooth, Tailscale, time sync, pacman cache cleanup, and weekly filesystem TRIM services now?"; then
     enable_basic_services
     ok "Basic services phase finished."
 else

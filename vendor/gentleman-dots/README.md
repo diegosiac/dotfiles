@@ -13,12 +13,6 @@ They are copied as reviewed snapshots, not auto-updated during bootstrap or `che
 3. Test the updated config in the VM.
 4. Commit only after the snapshot is validated.
 
-## Zellij
-
-- Source path: `GentlemanZellij/zellij`
-- Destination path: `dot_config/zellij`
-- Sync script: `vendor/gentleman-dots/sync-zellij.sh`
-
 ## Tmux
 
 - Source path: `GentlemanTmux/tmux.conf`

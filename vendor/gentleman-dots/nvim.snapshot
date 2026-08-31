@@ -1,5 +1,5 @@
 repo=https://github.com/Gentleman-Programming/Gentleman.Dots.git
 source_path=GentlemanNvim/nvim
 destination_path=dot_config/nvim
-commit=c26f89c6c7216b771528309328b5582ea5a0da89
-synced_at=2026-05-17T04:43:22Z
+commit=02584500de6378ff5f54d252dc28fce8424b088a
+synced_at=2026-08-31T09:29:32Z

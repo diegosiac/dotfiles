@@ -74,18 +74,18 @@ Optionally apply the desktop dark theme defaults when the bootstrap asks, or rer
 
 Initialize project runtimes and AI tooling:
 
-```sh
-fnm install --lts
-fnm default lts-latest
+```zsh
+mise use --global node@lts
+eval "$(mise activate zsh)"
 corepack enable
 corepack prepare pnpm@latest --activate
 scripts/install-gentle-ai-engram.sh
 ```
 
-If `corepack` is not visible immediately after `fnm` installs Node.js, load the runtime environment in the current shell and retry the Corepack commands:
+Run these commands from Zsh after applying the dotfiles. If `corepack` is not visible immediately after Mise installs Node.js, reload Mise's native Zsh activation and retry the Corepack commands:
 
-```sh
-eval "$(fnm env --shell bash)"
+```zsh
+eval "$(mise activate zsh)"
 ```
 
 Optionally configure the login manager only after dotfiles apply cleanly and the desktop has been tested from a TTY:
@@ -259,37 +259,26 @@ If either picker does not appear, run `scripts/doctor.sh` and review the `Screen
 
 ## Terminal multiplexer
 
-Herdr is the default terminal multiplexer. It is agent-oriented: workspaces, tabs and panes with a sidebar reporting per-agent state. Tmux and Zellij stay installed and can be selected per shell session.
-
-| Goal                        | Command                           |
-| --------------------------- | --------------------------------- |
-| Use the default multiplexer | `zsh`                             |
-| Start with Tmux instead     | `TERMINAL_MULTIPLEXER=tmux zsh`   |
-| Start with Zellij instead   | `TERMINAL_MULTIPLEXER=zellij zsh` |
-| Start without a multiplexer | `TERMINAL_MULTIPLEXER=none zsh`   |
-
-The shell skips auto-start when `HERDR_ENV`, `TMUX` or `ZELLIJ` is already set, so nested sessions are avoided by default. Auto-start does not `exec`, so a multiplexer that fails to launch leaves a usable Zsh session.
-
-Herdr agent integrations are not installed automatically. Enable the ones you need with `herdr integration install <agent>` (for example `claude`, `codex`, `opencode`); without the hook the sidebar cannot report agent state.
-
-Prefix keys currently overlap: the vendored Herdr config uses `ctrl+a`, which is also the Tmux prefix in `dot_tmux.conf`. Running Tmux inside a Herdr pane means Herdr consumes the prefix first.
+Start Herdr with `herdr` or Tmux with `tmux` when a terminal multiplexer is wanted.
 
 ## Runtime managers
 
-Project JavaScript runtimes are managed with `fnm`. JavaScript package commands should use `pnpm`.
+Mise is the canonical runtime manager. Project JavaScript runtimes come from Mise, and JavaScript package commands should use `pnpm`. Native Zsh startup mirrors Omarchy's environment contract: stock mode uses `/usr/share/omarchy`, while a valid inherited development override is retained only when `/etc/omarchy.conf` marks dev-link mode. Only development mode prepends its command directory, and no Omarchy Bash startup or config code is sourced. Interactive Zsh sessions activate Mise through `mise activate zsh`.
 
 After installing the base packages on a new machine, initialize Node.js with:
 
-```sh
-fnm install --lts
-fnm default lts-latest
+```zsh
+mise use --global node@lts
+eval "$(mise activate zsh)"
 corepack enable
 corepack prepare pnpm@latest --activate
 ```
 
 The shell aliases `npm` to `pnpm` and `npx` to `pnpm dlx`.
 
-Some Arch-packaged developer tools may pull the system `nodejs` package as a runtime dependency. That is acceptable for packaged CLIs, but project-level Node.js versions should still come from `fnm`.
+Native Zsh also provides the curated Omarchy-style `ls`, `lsa`, `lt`, and `lta` eza listings plus `ff` and `eff` for fuzzy file selection and editing. Existing `l` and `ll` listings remain available. Destructive drive and worktree helpers, SSH wrappers and forwarding, background rsync watchers, compression shortcuts, and Tmux/Herdr layouts remain Omarchy Bash-only and are not sourced by Zsh.
+
+Some Arch-packaged developer tools may pull the system `nodejs` package as a runtime dependency. That is acceptable for packaged CLIs, but project-level Node.js versions should still come from Mise.
 
 Python uses the system `python` package plus `uv` for Python tooling and virtual environments. Avoid global `pip install`; use `uv` or project-local virtual environments instead.
 
@@ -403,11 +392,10 @@ These configurations are not auto-updated during bootstrap or `chezmoi apply`. U
 
 Vendored configs currently planned or used:
 
-| Tool   | Source path               | Local path                   |
-| ------ | ------------------------- | ---------------------------- |
-| Zellij | `GentlemanZellij/zellij`  | `dot_config/zellij`          |
-| Tmux   | `GentlemanTmux/tmux.conf` | `dot_tmux.conf`              |
-| Neovim | `GentlemanNvim/nvim`      | `dot_config/nvim`            |
+| Tool   | Source path               | Local path                     |
+| ------ | ------------------------- | ------------------------------ |
+| Tmux   | `GentlemanTmux/tmux.conf` | `dot_tmux.conf`                |
+| Neovim | `GentlemanNvim/nvim`      | `dot_config/nvim`              |
 | Herdr  | `herdr/config.toml`       | `dot_config/herdr/config.toml` |
 
 Tmux plugins are installed through TPM by the chezmoi script `run_once_after_20-install-tmux-plugins.sh`.

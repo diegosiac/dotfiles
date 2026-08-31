@@ -13,6 +13,7 @@ setopt hist_ignore_space
 setopt hist_verify
 
 # Completion
+typeset -U fpath
 fpath=(/usr/share/zsh/site-functions $fpath)
 
 autoload -Uz compinit
@@ -24,25 +25,29 @@ zstyle ':completion:*' menu select
 export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
 command -v carapace >/dev/null 2>&1 && source <(carapace _carapace)
 
-# FZF tab completion UI
+# FZF
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+
+[[ -f /usr/share/fzf/key-bindings.zsh ]] && source /usr/share/fzf/key-bindings.zsh
+[[ -f /usr/share/fzf/completion.zsh ]] && source /usr/share/fzf/completion.zsh
+
+# FZF tab completion UI must load after FZF completion to own the final Tab binding.
 if [[ -f /usr/share/fzf-tab/fzf-tab.plugin.zsh ]]; then
     source /usr/share/fzf-tab/fzf-tab.plugin.zsh
 elif [[ -f /usr/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh ]]; then
     source /usr/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
 fi
 
-# FZF
-export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
-export FZF_DEFAULT_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+# Curated native Zsh ports of Omarchy's interactive shell helpers.
+omarchy_interactive_file="$HOME/.config/zsh/omarchy-interactive.zsh"
+if [[ -r "$omarchy_interactive_file" ]]; then
+    source "$omarchy_interactive_file"
+fi
+unset omarchy_interactive_file
 
-[[ -f /usr/share/fzf/key-bindings.zsh ]] && source /usr/share/fzf/key-bindings.zsh
-[[ -f /usr/share/fzf/completion.zsh ]] && source /usr/share/fzf/completion.zsh
-
-# Aliases
-alias ls='eza --group-directories-first'
-alias l='eza -lah --group-directories-first'
-alias ll='ls -lah'
+# User aliases
 alias gs='git status'
 alias cat='bat --style=plain --paging=never'
 alias npm='pnpm'
@@ -57,19 +62,8 @@ secrets-clear() {
     print "Cleared secrets: ENGRAM_CLOUD_TOKEN"
 }
 
-fzfbat() {
-    fzf --preview='bat --theme=gruvbox-dark --color=always {}'
-}
-
-fzfnvim() {
-    local file
-    file="$(fzf --preview='bat --theme=gruvbox-dark --color=always {}')" || return
-    [[ -n "$file" ]] && nvim "$file"
-}
-
-# FNM / Node.js
-export FNM_DIR="$HOME/.local/share/fnm"
-command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell zsh)"
+# Mise runtime manager
+command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
 
 # Zoxide
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
@@ -89,26 +83,6 @@ fi
 # Starship prompt
 command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 
-# Terminal multiplexer
-# Herdr is the default agent multiplexer; tmux and zellij remain available on
-# demand through TERMINAL_MULTIPLEXER=tmux|zellij.
-TERMINAL_MULTIPLEXER="${TERMINAL_MULTIPLEXER:-herdr}"
-
-start_terminal_multiplexer_if_needed() {
-    [[ $- != *i* ]] && return
-    [[ ! -t 1 ]] && return
-    # Herdr exports HERDR_ENV into every pane. Without this guard a herdr pane
-    # would start another multiplexer and break herdr's agent-state detection.
-    [[ -n "$TMUX" || -n "$ZELLIJ" || -n "$HERDR_ENV" ]] && return
-    [[ "$TERMINAL_MULTIPLEXER" == "none" ]] && return
-
-    command -v "$TERMINAL_MULTIPLEXER" >/dev/null 2>&1 || return
-
-    # Deliberately not exec: a multiplexer that fails to start leaves a usable
-    # Zsh session instead of replacing and killing the shell process.
-    "$TERMINAL_MULTIPLEXER" || echo "⚠️  $TERMINAL_MULTIPLEXER failed to start; continuing in Zsh."
-}
-
 # Installer-managed blocks below. Keep the marker comments intact: Railway and
 # pnpm look for them to update their block instead of appending a duplicate.
 # The only edit is the -f guard, so fresh machines without the env file do not
@@ -125,7 +99,3 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end
-
-# Keep the multiplexer last: it takes over the shell, so everything above must
-# already be exported for herdr and its panes to inherit it.
-start_terminal_multiplexer_if_needed

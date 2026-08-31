@@ -1,6 +1,15 @@
 # Dotfiles
 
-Personal dotfiles for an Arch Linux, terminal-first, Hyprland-based environment.
+Personal terminal-first dotfiles managed with chezmoi for Arch Linux and Omarchy.
+
+## Permanent branch model
+
+| Branch | Use it for | Tracking rule |
+| ------ | ---------- | ------------- |
+| `main` | Arch-only dotfiles | Arch users track `main`. |
+| `omarchy` | Omarchy-specific dotfiles | Omarchy users track and update `omarchy` directly. |
+
+`main` is permanently the Arch-only branch. `omarchy` is permanently the Omarchy-specific branch and will never be merged into `main`. Omarchy users must initialize and remain on `omarchy`; they must not use `main` for an Omarchy setup.
 
 This repository is intentionally being rebuilt from zero. Configuration will be added incrementally as each tool and workflow is selected.
 
@@ -12,21 +21,23 @@ This repository is intentionally being rebuilt from zero. Configuration will be 
 - Public repository: no plaintext secrets.
 - Secrets must be handled through 1Password or generated locally.
 
-## Fresh install flow
+## Omarchy fresh install flow
 
-This is the happy path for a new Arch machine. Apply it in a VM first when changing the flow.
+This is the happy path for a new Omarchy installation. Apply it in a VM first when changing the flow.
 
-### One-command bootstrap
+### Branch-aware interactive bootstrap
 
 Run the interactive bootstrap. It asks before installing packages, applying dotfiles, applying immediate desktop theme defaults, switching the login shell to `zsh`, initializing runtimes, installing the AI stack, and enabling `greetd`.
 
 Run it as your regular user with sudo access, not as `root`.
 
 ```sh
-bash <(curl -fsSL https://raw.githubusercontent.com/diegosiac/dotfiles/main/bootstrap.sh)
+sudo pacman -Syu --needed git chezmoi curl sudo
+chezmoi init --branch omarchy https://github.com/diegosiac/dotfiles.git
+bash "$(chezmoi source-path)/bootstrap.sh"
 ```
 
-The root `bootstrap.sh` only ensures minimal prerequisites, initializes or updates the chezmoi source, and delegates to the repo-local `scripts/bootstrap-arch.sh`. Machine mutation stays in the bootstrap scripts; chezmoi owns dotfiles. Runtime and AI setup stay as interactive bootstrap phases because they depend on installed packages, network state, and user auth/session choices.
+Initializing with `--branch omarchy` is required so subsequent source updates stay on the Omarchy branch. The root `bootstrap.sh` ensures minimal prerequisites, updates the checked-out chezmoi source, and delegates to the repo-local `scripts/bootstrap-arch.sh`. Machine mutation stays in the bootstrap scripts; chezmoi owns dotfiles. Runtime and AI setup stay as interactive bootstrap phases because they depend on installed packages, network state, and user auth/session choices.
 
 ### Manual fallback
 
@@ -38,11 +49,11 @@ Install the bootstrap tools first if the fresh image does not have them yet. Run
 sudo pacman -Syu --needed git chezmoi curl sudo
 ```
 
-Clone the dotfiles source without applying it yet. Package-dependent chezmoi scripts, such as the Tmux plugin installer, need the package manifests to be installed first.
+Clone the Omarchy branch as the dotfiles source without applying it yet. Package-dependent chezmoi scripts, such as the Tmux plugin installer, need the package manifests to be installed first.
 
 ```sh
-chezmoi init https://github.com/diegosiac/dotfiles.git
-cd ~/.local/share/chezmoi
+chezmoi init --branch omarchy https://github.com/diegosiac/dotfiles.git
+cd "$(chezmoi source-path)"
 ```
 
 Install the official package sets:
@@ -220,10 +231,11 @@ Docker-published ports can bypass UFW. Review every published port before using 
 
 After changing Hyprland, Quickshell, package manifests, or startup scripts, validate the desktop in a disposable VM before trusting the host install.
 
-Apply the latest dotfiles and restart Quickshell:
+Confirm the chezmoi source is still on `omarchy`, then apply the latest dotfiles and restart Quickshell:
 
 ```sh
-cd ~/.local/share/chezmoi
+cd "$(chezmoi source-path)"
+git branch --show-current # must print: omarchy
 chezmoi update && chezmoi apply
 pkill quickshell
 quickshell > /tmp/quickshell.log 2>&1 &

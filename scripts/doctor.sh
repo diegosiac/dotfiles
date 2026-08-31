@@ -273,11 +273,11 @@ else
     warn "chezmoi is not installed or not on PATH; skipping chezmoi doctor"
 fi
 
-section "Desktop Files"
-if [[ -f "$HOME/.config/hypr/hyprland.conf" ]]; then
-    ok "Hyprland config exists at $HOME/.config/hypr/hyprland.conf"
+section "Stock Omarchy Desktop"
+if [[ -f "$HOME/.config/hypr/hyprland.lua" ]]; then
+    ok "Stock Omarchy Hyprland config exists at $HOME/.config/hypr/hyprland.lua"
 else
-    fail "Missing Hyprland config: $HOME/.config/hypr/hyprland.conf"
+    fail "Missing stock Omarchy Hyprland config: $HOME/.config/hypr/hyprland.lua"
 fi
 
 section "Shell"

@@ -22,7 +22,3 @@ helium-browser-bin
 google-chrome
 ttf-geist-variable
 ttf-geist-mono-variable
-whitesur-icon-theme
-bibata-cursor-theme
-apple_cursor
-whitesur-gtk-theme

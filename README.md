@@ -13,11 +13,17 @@ Personal terminal-first dotfiles managed with chezmoi for Arch Linux and Omarchy
 
 This repository is intentionally being rebuilt from zero. Configuration will be added incrementally as each tool and workflow is selected.
 
+## Omarchy ownership boundary
+
+On the `omarchy` branch, stock Omarchy exclusively owns Hyprland, Quickshell, GTK, Qt integration, desktop portals, icon and cursor theme selection, wallpapers, and desktop theming. Chezmoi does not install or overwrite configuration for those layers.
+
+Chezmoi continues to own personal tool configuration, including shells, Git, Tmux, Neovim, terminals, and other explicitly selected applications. Repository-only `bootstrap.sh`, `scripts/`, `tests/`, and `.codegraph/` stay in the source checkout and are excluded from destination targets. The optional greetd flow is preserved pending a separate display-manager ownership decision.
+
 ## Principles
 
 - Arch Linux first.
 - Terminal-first workflow.
-- Hyprland as the desktop direction.
+- Stock Omarchy owns the desktop on the `omarchy` branch.
 - Public repository: no plaintext secrets.
 - Secrets must be handled through 1Password or generated locally.
 
@@ -27,7 +33,7 @@ This is the happy path for a new Omarchy installation. Apply it in a VM first wh
 
 ### Branch-aware interactive bootstrap
 
-Run the interactive bootstrap. It asks before installing packages, applying dotfiles, applying immediate desktop theme defaults, switching the login shell to `zsh`, initializing runtimes, installing the AI stack, and enabling `greetd`.
+Run the interactive bootstrap. It asks before installing repository package sets, applying personal dotfiles, switching the login shell to `zsh`, initializing runtimes, installing the AI stack, and enabling `greetd`. It does not apply desktop theme defaults or replace stock Omarchy desktop configuration.
 
 Run it as your regular user with sudo access, not as `root`.
 
@@ -37,7 +43,7 @@ chezmoi init --branch omarchy https://github.com/diegosiac/dotfiles.git
 bash "$(chezmoi source-path)/bootstrap.sh"
 ```
 
-Initializing with `--branch omarchy` is required so subsequent source updates stay on the Omarchy branch. The root `bootstrap.sh` ensures minimal prerequisites, updates the checked-out chezmoi source, and delegates to the repo-local `scripts/bootstrap-arch.sh`. Machine mutation stays in the bootstrap scripts; chezmoi owns dotfiles. Runtime and AI setup stay as interactive bootstrap phases because they depend on installed packages, network state, and user auth/session choices.
+Initializing with `--branch omarchy` is required so subsequent source updates stay on the Omarchy branch. The root `bootstrap.sh` ensures minimal prerequisites, updates the checked-out chezmoi source, and delegates to the repo-local `scripts/bootstrap-arch.sh`. Machine mutation stays in the bootstrap scripts; Chezmoi owns personal dotfiles only, while stock Omarchy owns the desktop layers listed above. Runtime and AI setup stay as interactive bootstrap phases because they depend on installed packages, network state, and user auth/session choices.
 
 ### Manual fallback
 
@@ -81,7 +87,7 @@ Apply the dotfiles after the required packages are available:
 chezmoi apply
 ```
 
-Optionally apply the desktop dark theme defaults when the bootstrap asks, or rerun `chezmoi apply` after the desktop packages are available. Change the login shell to `zsh` before relying on the terminal-first session defaults.
+Stock Omarchy desktop and theme defaults remain unchanged by this repository. Change the login shell to `zsh` before relying on the terminal-first session defaults.
 
 Initialize project runtimes and AI tooling:
 
@@ -110,8 +116,10 @@ Quick validation:
 
 ```sh
 scripts/doctor.sh
-Hyprland
+omarchy version
+Hyprland --version
 pgrep -a quickshell
+hyprctl configerrors
 node --version
 pnpm --version
 engram --version
@@ -227,24 +235,26 @@ sudo ufw disable
 
 Docker-published ports can bypass UFW. Review every published port before using it; do not add `DOCKER-USER` mitigation until Docker actually publishes a port and the required exposure is known.
 
-### VM desktop validation
+### Stock Omarchy desktop validation
 
-After changing Hyprland, Quickshell, package manifests, or startup scripts, validate the desktop in a disposable VM before trusting the host install.
+After an Omarchy update or a change to personal desktop-adjacent packages, validate the stock desktop in a disposable VM before trusting the host install. Chezmoi does not replace Hyprland or Quickshell configuration and does not restart the Omarchy shell.
 
-Confirm the chezmoi source is still on `omarchy`, then apply the latest dotfiles and restart Quickshell:
+Confirm the Chezmoi source is still on `omarchy`, then run read-only stock diagnostics:
 
 ```sh
 cd "$(chezmoi source-path)"
 git branch --show-current # must print: omarchy
-chezmoi update && chezmoi apply
-pkill quickshell
-quickshell > /tmp/quickshell.log 2>&1 &
+omarchy version
+Hyprland --version
+pgrep -a quickshell
+hyprctl configerrors
+omarchy debug --no-sudo --print
 ```
 
 Check the desktop behavior:
 
-- [ ] The top bar appears on login.
-- [ ] Clicking the right status island opens and closes the control center.
+- [ ] The stock Omarchy shell and bar appear on login.
+- [ ] Stock launchers, menus, and control surfaces open and close normally.
 - [ ] Volume slider and mute change the actual PipeWire sink.
 - [ ] Brightness controls only appear when the VM exposes a real backlight.
 - [ ] Network opens `nm-connection-editor`.
@@ -252,17 +262,17 @@ Check the desktop behavior:
 - [ ] Logout exits the Hyprland session.
 - [ ] Reboot and shutdown require a second confirmation click.
 
-Inspect the Quickshell log:
+Inspect recent user-session Quickshell messages without restarting it:
 
 ```sh
-less /tmp/quickshell.log
+journalctl --user -b --no-pager | grep -i quickshell
 ```
 
 Quickshell warnings about deprecated properties should be fixed. VM graphics warnings like `libEGL warning: failed to create dri2 screen` are usually harmless if the panel renders and behaves correctly.
 
 ### Screen sharing smoke tests
 
-Run these from a real Hyprland session after installing the desktop package set and applying dotfiles:
+Run these from a real stock Omarchy Hyprland session. Portal packages and configuration come from Omarchy, not this repository:
 
 - WebRTC: open `https://mozilla.github.io/webrtc-landing/gum_test.html`, choose screen capture, and confirm the portal picker appears and shares a window or monitor.
 - OBS: add a `Screen Capture (PipeWire)` source and confirm the portal picker appears and the captured preview updates.
@@ -271,7 +281,9 @@ If either picker does not appear, run `scripts/doctor.sh` and review the `Screen
 
 ## Terminal multiplexer
 
-Start Herdr with `herdr` or Tmux with `tmux` when a terminal multiplexer is wanted.
+Herdr and Tmux are explicit manual choices; shell startup never launches either multiplexer. Start Herdr with `herdr` or Tmux with `tmux` only when one is wanted.
+
+After package installation, Chezmoi's `run_once_after_20-install-tmux-plugins.sh` provisions TPM and the configured Tmux plugins. The script intentionally remains unchanged, but its Git clones resolve mutable upstream refs rather than repository-pinned commits; treat that as a supply-chain and reproducibility boundary.
 
 ## Runtime managers
 
@@ -347,6 +359,8 @@ Install them with:
 sudo pacman -S --needed - < packages/arch/base.txt
 ```
 
+On `omarchy`, the Omarchy-owned desktop packages named in the ownership boundary are intentionally not redeclared. The manifest retains only the explicitly preserved package set.
+
 AUR packages are listed separately so `pacman` installs do not fail:
 
 ```sh
@@ -410,4 +424,4 @@ Vendored configs currently planned or used:
 | Neovim | `GentlemanNvim/nvim`      | `dot_config/nvim`              |
 | Herdr  | `herdr/config.toml`       | `dot_config/herdr/config.toml` |
 
-Tmux plugins are installed through TPM by the chezmoi script `run_once_after_20-install-tmux-plugins.sh`.
+Tmux plugins are installed through TPM by the Chezmoi script `run_once_after_20-install-tmux-plugins.sh`, subject to the mutable-upstream caveat above.

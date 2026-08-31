@@ -281,7 +281,7 @@ If either picker does not appear, run `scripts/doctor.sh` and review the `Screen
 
 ## Terminal multiplexer
 
-Herdr and Tmux are explicit manual choices; shell startup never launches either multiplexer. Start Herdr with `herdr` or stock Tmux with `tmux` only when one is wanted. Stock Omarchy owns the Tmux configuration.
+Herdr and Tmux are explicit manual choices; shell startup never launches either multiplexer. Start Herdr with `herdr` or Tmux with `tmux` only when one is wanted. Stock Omarchy owns both configurations.
 
 ## Runtime managers
 
@@ -419,4 +419,3 @@ Vendored configs currently planned or used:
 | Tool   | Source path               | Local path                     |
 | ------ | ------------------------- | ------------------------------ |
 | Neovim | `GentlemanNvim/nvim`      | `dot_config/nvim`              |
-| Herdr  | `herdr/config.toml`       | `dot_config/herdr/config.toml` |

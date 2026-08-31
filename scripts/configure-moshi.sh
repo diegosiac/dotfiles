@@ -12,11 +12,12 @@ blue="$(tput setaf 4 2>/dev/null || true)"
 
 temp_files=()
 removed_legacy_sshd_dropins=()
+easy_pair_confirmed=false
 managed_sshd_dropin="/etc/ssh/sshd_config.d/00-moshi.conf"
 managed_sshd_marker="# Managed by dotfiles scripts/configure-moshi.sh"
 moshi_hook_installer_url="https://getmoshi.app/install.sh"
 # Trust boundary: review upstream installer changes before consciously updating this digest.
-moshi_hook_installer_sha256="5365e4409ae9ba35a719656b11973f0c8dd11aeaa64040df1148ce783ddc1413"
+moshi_hook_installer_sha256="95f05fe8d4525bef32c557eede09ecd0e4414f8d0eba8c3a65a866a409134432"
 
 cleanup() {
 	local file
@@ -68,31 +69,28 @@ new_temp_file() {
 effective_sshd_policy_matches() {
 	local effective_config="$1"
 	local ports="${2:-}"
-	local expected=""
 	local expected_ports=""
 	local actual_ports=""
 
-	for expected in \
-		"permitrootlogin no" \
-		"pubkeyauthentication yes" \
-		"passwordauthentication no" \
-		"kbdinteractiveauthentication no" \
-		"authenticationmethods publickey"; do
-		grep -Fqx -- "$expected" <<<"$effective_config" || return 1
-	done
-
 	awk -v user="$USER" '
-		$1 == "allowusers" {
+		tolower($1) == "permitrootlogin" && NF == 2 && $2 == "no" { permit_root_login = 1 }
+		tolower($1) == "pubkeyauthentication" && NF == 2 && $2 == "yes" { pubkey_authentication = 1 }
+		tolower($1) == "passwordauthentication" && NF == 2 && $2 == "no" { password_authentication = 1 }
+		tolower($1) == "kbdinteractiveauthentication" && NF == 2 && $2 == "no" { keyboard_authentication = 1 }
+		tolower($1) == "authenticationmethods" && NF == 2 && $2 == "publickey" { authentication_methods = 1 }
+		tolower($1) == "allowusers" {
 			for (i = 2; i <= NF; i++) {
-				if ($i == user) found = 1
+				if ($i == user) allowed_user = 1
 			}
 		}
-		END { exit !found }
+		END {
+			exit !(permit_root_login && pubkey_authentication && password_authentication && keyboard_authentication && authentication_methods && allowed_user)
+		}
 	' <<<"$effective_config" || return 1
 
 	if [[ -n "$ports" ]]; then
 		expected_ports="$(tr ' ' '\n' <<<"$ports" | sort -nu | paste -sd ' ' -)"
-		actual_ports="$(awk '$1 == "port" { print $2 }' <<<"$effective_config" | sort -nu | paste -sd ' ' -)"
+		actual_ports="$(awk 'tolower($1) == "port" && NF == 2 { print $2 }' <<<"$effective_config" | sort -nu | paste -sd ' ' -)"
 		[[ "$actual_ports" == "$expected_ports" ]] || return 1
 	fi
 }
@@ -115,7 +113,7 @@ check_mode() {
 	local sshd_host=""
 
 	section "Moshi workflow diagnostics (read-only)"
-	for command_name in ssh sshd ssh-keygen mosh tailscale jq curl op systemctl; do
+	for command_name in ssh sshd ssh-keygen mosh tailscale jq curl systemctl; do
 		if command -v "$command_name" >/dev/null 2>&1; then
 			ok "$command_name is available."
 		else
@@ -173,9 +171,9 @@ check_mode() {
 		sanitized_status="$(moshi-hook status --json 2>/dev/null | jq -c '{paired: (.paired == true), hooks: [.hooks[]? | select(.target == "pi" or .target == "claude" or .target == "codex" or .target == "opencode" or .target == "grok") | {target, status}]}' 2>/dev/null || true)"
 		if [[ -n "$sanitized_status" ]]; then
 			if [[ "$(jq -r '.paired' <<<"$sanitized_status")" == "true" ]]; then
-				ok "moshi-hook reports paired state."
+				ok "moshi-hook reports agent-hook paired state."
 			else
-				warn "moshi-hook is not paired."
+				warn "moshi-hook is not paired for agent hooks."
 			fi
 			jq -r '.hooks[] | "hook " + .target + ": " + .status' <<<"$sanitized_status"
 		else
@@ -229,7 +227,7 @@ install_moshi_hook() {
 
 	new_temp_file
 	installer="$temp_file_result"
-	curl --proto '=https' --tlsv1.2 -fsSL "$moshi_hook_installer_url" -o "$installer"
+	curl --proto '=https' --tlsv1.2 -fsSL "$moshi_hook_installer_url" -o "$installer" || fail "Could not download the Moshi installer over verified HTTPS. Refusing to continue."
 	verify_moshi_hook_installer "$installer"
 	if [[ -n "${MOSHI_HOOK_VERSION:-}" ]]; then
 		MOSHI_HOOK_VERSION="$MOSHI_HOOK_VERSION" bash "$installer"
@@ -241,45 +239,30 @@ install_moshi_hook() {
 	ok "moshi-hook installed after verifying the pinned installer SHA-256; upstream asset checksum behavior was preserved."
 }
 
-add_public_key() {
-	local authorized_fingerprints=""
-	local key_details=""
-	local key_fingerprint=""
-	local public_key=""
-	local key_file=""
-	local authorized_keys="$HOME/.ssh/authorized_keys"
-	local public_key_ref="${MOSHI_SSH_PUBLIC_KEY_REF:-}"
+confirm_easy_pair() {
+	section "Moshi Easy Pair confirmation"
+	warn "Easy Pair starts a new host authorization. On reruns, continue only when you intentionally want to authorize a mobile-generated key."
+	warn "The QR code displayed by Easy Pair is a temporary access token. Treat it as a secret: do not share, record, or capture it."
+	printf '%s\n' "The private key is generated on the mobile device. Only its public key is sent to this host and installed in authorized_keys."
 
-	section "1Password public-key authorization"
-	[[ -n "$public_key_ref" ]] || fail "MOSHI_SSH_PUBLIC_KEY_REF is required and must identify the public-key field in 1Password. The private-key field is forbidden."
-	if ! public_key="$(op read "$public_key_ref" 2>/dev/null)"; then
-		fail "Could not retrieve the Moshi SSH public key with 1Password CLI. Verify the reference and your 'op' session without printing the reference."
+	if confirm "Authorize a Moshi mobile device with Easy Pair after OpenSSH is validated?"; then
+		easy_pair_confirmed=true
+		return 0
 	fi
-	unset public_key_ref MOSHI_SSH_PUBLIC_KEY_REF
 
-	[[ "$public_key" != *$'\n'* && "$public_key" != *$'\r'* ]] || fail "The 1Password reference must resolve to exactly one public-key line."
-	[[ "$public_key" != *"PRIVATE KEY"* ]] || fail "Private key material is forbidden."
-	[[ "$public_key" =~ ^ssh-ed25519[[:space:]]+[A-Za-z0-9+/]+={0,2}([[:space:]].*)?$ ]] || fail "The 1Password reference did not resolve to an ssh-ed25519 public key."
+	warn "Easy Pair declined. No installer, OpenSSH, Tailscale, or host-credential changes were made."
+	return 1
+}
 
-	new_temp_file
-	key_file="$temp_file_result"
-	printf '%s\n' "$public_key" >"$key_file"
-	ssh-keygen -l -f "$key_file" -E sha256 >/dev/null 2>&1 || fail "The supplied value is not a syntactically valid Ed25519 public key."
-	key_details="$(ssh-keygen -l -f "$key_file" -E sha256 2>/dev/null)"
-	[[ "${key_details##* }" == "(ED25519)" ]] || fail "The supplied key is not Ed25519."
-	key_fingerprint="$(awk '{print $2}' <<<"$key_details")"
+setup_easy_pair() {
+	[[ "$easy_pair_confirmed" == true ]] || fail "Easy Pair was not explicitly confirmed. Refusing to create or replace host authorization state."
 
-	install -d -m 0700 "$HOME/.ssh"
-	touch "$authorized_keys"
-	chmod 0600 "$authorized_keys"
-	authorized_fingerprints="$(ssh-keygen -l -f "$authorized_keys" -E sha256 2>/dev/null || true)"
-	if awk -v fingerprint="$key_fingerprint" '$2 == fingerprint { found = 1 } END { exit !found }' <<<"$authorized_fingerprints"; then
-		ok "The public key is already authorized."
-	else
-		printf '%s\n' "$public_key" >>"$authorized_keys"
-		ok "The public key was added to authorized_keys."
+	section "Moshi Easy Pair host authorization"
+	warn "The next command displays the temporary-access QR. Scan it only with the intended Moshi mobile device."
+	if ! moshi-hook host setup; then
+		fail "Moshi Easy Pair host setup failed. Keep this session open and inspect authorized_keys before retrying; during a Tailscale SSH migration, port 2222 remains available for recovery."
 	fi
-	unset authorized_fingerprints key_details key_fingerprint public_key
+	ok "Easy Pair authorized the mobile-generated public key. The private key remained on the mobile device."
 }
 
 sshd_dropin_is_owned() {
@@ -432,10 +415,10 @@ write_sshd_dropin() {
 pair_and_install_hooks() {
 	local paired=""
 
-	section "Moshi pairing and hooks"
+	section "Moshi agent pairing and hooks"
 	paired="$(moshi-hook status --json 2>/dev/null | jq -er 'if (.paired | type) == "boolean" then (.paired | tostring) else error("missing paired state") end')" || fail "Could not read Moshi paired state. Refusing to replace pairing credentials implicitly."
 	if [[ "$paired" == "true" ]]; then
-		ok "Existing Moshi pairing preserved. Use --rotate-pairing only when intentionally replacing pairing credentials."
+		ok "Existing Moshi agent-hook pairing preserved. Use --rotate-pairing only when intentionally replacing pairing credentials."
 	else
 		pair_moshi_hook
 	fi
@@ -484,6 +467,7 @@ orchestrate_ssh_migration() {
 	if [[ "$run_ssh_value" == "false" ]]; then
 		section "OpenSSH setup (Tailscale SSH is already disabled)"
 		write_sshd_dropin "22"
+		setup_easy_pair
 		warn "Keep this session open. Test a NEW port-22 SSH/Moshi login from another client."
 		confirm "Did the new port-22 login succeed?" || fail "Port-22 success was not confirmed. Tailscale SSH was not changed; use the rollback guidance above before retrying."
 		return
@@ -491,6 +475,7 @@ orchestrate_ssh_migration() {
 
 	section "OpenSSH migration while Tailscale SSH remains active"
 	write_sshd_dropin "22 2222"
+	warn "Easy Pair cannot run while Tailscale SSH intercepts port 22. Use an existing OpenSSH credential for the port-2222 safety test before Tailscale SSH is disabled."
 	warn "Tailscale SSH remains active. Keep this session open and test OpenSSH through port 2222 from Moshi or another client."
 	confirm "Did a new OpenSSH login on port 2222 succeed?" || fail "Port-2222 success was not confirmed. Tailscale SSH remains active and port 2222 remains available for diagnosis."
 
@@ -499,16 +484,20 @@ orchestrate_ssh_migration() {
 	sudo tailscale set --ssh=false
 	ok "Tailscale SSH disabled."
 
+	setup_easy_pair
 	warn "Keep this session open. Test a NEW port-22 OpenSSH/Moshi login before port 2222 is removed."
 	confirm "Did a new port-22 login succeed after disabling Tailscale SSH?" || fail "Port-22 success was not confirmed. Port 2222 remains configured; re-enable Tailscale SSH with 'sudo tailscale set --ssh=true' if rollback is needed."
 	write_sshd_dropin "22"
 	ok "Temporary port 2222 removed after explicit port-22 confirmation."
 }
 
-configure_moshi() {
+preflight_moshi() {
 	section "Preflight"
 	read_tailscale_state
-	add_public_key
+	confirm_easy_pair || fail "Easy Pair was cancelled before any setup changes were made."
+}
+
+configure_moshi() {
 	install_moshi_hook
 	orchestrate_ssh_migration "$run_ssh"
 	pair_and_install_hooks
@@ -516,10 +505,15 @@ configure_moshi() {
 	check_mode
 
 	cat <<'EOF'
-Setup finished. Generated authorization, host keys, Moshi pairing/service/hook
+Setup finished. Easy Pair authorization, host keys, Moshi pairing/service/hook
 state, Tailscale state, linger state, logs, IDs, and phone settings are local
 machine state and must never be copied into this repository.
 EOF
+}
+
+validate_host_environment() {
+	[[ "$(uname -s)" == "Linux" && -f /etc/arch-release ]] || fail "This setup supports Arch Linux only."
+	((EUID != 0)) || fail "Run this script as a regular user with sudo access, not as root."
 }
 
 main() {
@@ -536,13 +530,13 @@ main() {
 		fail "Usage: $0 [--check|--rotate-pairing]"
 	fi
 
-	[[ "$(uname -s)" == "Linux" && -f /etc/arch-release ]] || fail "This setup supports Arch Linux only."
-	((EUID != 0)) || fail "Run this script as a regular user with sudo access, not as root."
+	validate_host_environment
 
-	for command_name in sudo curl jq op ssh sshd ssh-keygen systemctl tailscale mosh; do
+	for command_name in sudo curl jq ssh sshd ssh-keygen systemctl tailscale mosh; do
 		require_command "$command_name"
 	done
 	validate_moshi_hook_version
+	preflight_moshi
 	sudo -v
 	configure_moshi
 }

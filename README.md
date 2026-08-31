@@ -141,27 +141,26 @@ test -n "$ENGRAM_CLOUD_TOKEN" && echo "Engram Cloud token loaded"
 
 ### Reproducible Moshi access
 
-The repository reproduces Moshi prerequisites and the setup procedure, but not machine identity or credentials. `packages/arch/base.txt` installs `openssh` and `mosh`; `scripts/configure-moshi.sh` configures the local machine interactively. Run it only from a regular user account with sudo access and KEEP THE CURRENT SESSION OPEN while testing new logins. The script never runs `tailscale up`.
+The repository reproduces Moshi prerequisites and the setup procedure, but not machine identity or credentials. `packages/arch/base.txt` installs `openssh` and `mosh`; `scripts/configure-moshi.sh` configures the local machine interactively. Run it only from a regular user account with sudo access and KEEP THE CURRENT SESSION OPEN while testing new logins. Tailscale must already be authenticated and online; the script never runs `tailscale up`.
 
-SSH key material originates in 1Password. Before setup, use a hidden prompt to provide a secret reference that resolves ONLY to the Ed25519 public-key field; the script does not assume any vault, item, or field name:
+Run the setup with the Moshi mobile app ready:
 
-```bash
-read -rsp '1Password public-key reference: ' MOSHI_SSH_PUBLIC_KEY_REF && printf '\n'
-export MOSHI_SSH_PUBLIC_KEY_REF
+```sh
 scripts/configure-moshi.sh
-unset MOSHI_SSH_PUBLIC_KEY_REF
 ```
 
-The script requires `op`, retrieves only that public key, rejects multiline, private-key, malformed, and non-Ed25519 values, and authorizes the key idempotently by fingerprint. It never reads, stores, or prints the matching private key. Moshi has no documented first-class 1Password integration: keep the private key in 1Password and manually import it into the Moshi mobile app from a file or the clipboard when creating the connection, following [Moshi connections and authentication](https://getmoshi.app/docs/connections). Do not automate or print the private key.
+The script uses the current Moshi Easy Pair flow through `moshi-hook host setup`. It first requires explicit confirmation, then waits until hardened OpenSSH is validated and available before displaying the QR. That QR is a temporary access token: scan it only with the intended Moshi mobile device, and do not share, record, or capture it. The mobile device generates and retains the private key; only the public key is sent to the host and installed in `authorized_keys`.
+
+Every rerun asks again before starting a new Easy Pair authorization. Declining at the initial gate exits before the installer or any OpenSSH, Tailscale, or host-credential state is changed. Accept only when another host authorization is intentional; the script never changes host authorization without that confirmation.
 
 Tailscale must already be authenticated and online. The script reads structured Tailscale status and preferences but never runs `tailscale up` or prints identity fields. Migration depends on the actual `RunSSH` preference:
 
 - **`RunSSH=false`:** Tailscale SSH is already off. The script hardens OpenSSH on port 22 only, requires the operator to confirm a successful new login, and continues. It does not create port 2222 or call `tailscale set --ssh=false`.
-- **`RunSSH=true`:** Tailscale SSH stays active while hardened OpenSSH is prepared on ports 22 and 2222. The operator must explicitly confirm a new port-2222 login before the script disables only Tailscale SSH. The operator must then explicitly confirm a new port-22 login before the temporary port 2222 is removed. Success is never inferred.
+- **`RunSSH=true`:** Tailscale SSH stays active while hardened OpenSSH is prepared on ports 22 and 2222. Because Tailscale SSH intercepts port 22 and prevents Easy Pair, the operator must use an existing OpenSSH credential to confirm a new port-2222 login before the script disables only Tailscale SSH. Easy Pair then runs against normal OpenSSH. The operator must explicitly confirm a new port-22 login before the temporary port 2222 is removed. Success is never inferred.
 
 OpenSSH is configured with generated host keys, root login disabled, public-key-only authentication, password and keyboard-interactive authentication disabled, and the current user allowlisted. OpenSSH uses the first obtained value for most directives, so the repository owns `/etc/ssh/sshd_config.d/00-moshi.conf`; it refuses to replace an unowned file there, leaves all unowned configuration untouched, and removes only marker-owned legacy `10-moshi.conf` or `90-moshi.conf` files. Every managed replacement is backed up and checked with both `sshd -t` and effective `sshd -T` policy before sshd is started or reloaded. Existing sessions are not closed. If a test fails, keep the current session open, use the reported rollback backup (or remove the newly generated `00-moshi.conf` on a first install), run `sudo sshd -t`, and reload sshd. During the `RunSSH=true` migration, port 2222 remains available until port 22 is explicitly confirmed; Tailscale SSH can be restored with `sudo tailscale set --ssh=true` if needed.
 
-The setup command shown in the 1Password flow downloads the official `https://getmoshi.app/install.sh` installer and verifies its exact repository-pinned SHA-256 before execution. That pin is an explicit trust boundary, not a signature: any upstream installer change fails closed and requires consciously reviewing the new script before updating the digest. The reviewed installer retains its upstream checksum behavior for versioned CDN assets.
+The setup downloads the official `https://getmoshi.app/install.sh` installer and verifies its exact repository-pinned SHA-256 before execution. That pin is an explicit trust boundary, not a signature: any upstream installer change or download failure stops before execution and requires consciously reviewing the new script before updating the digest. The reviewed installer retains its upstream checksum behavior for versioned CDN assets and may run its own interactive first-run configuration.
 
 Leaving `MOSHI_HOOK_VERSION` unset is the default and installs the latest release. For a reproducible pin, pass an explicit release:
 
@@ -169,7 +168,7 @@ Leaving `MOSHI_HOOK_VERSION` unset is the default and installs the latest releas
 MOSHI_HOOK_VERSION=vX.Y.Z scripts/configure-moshi.sh
 ```
 
-Never use the literal value `latest`; upstream would interpret it as `vlatest`. Routine reruns preserve an existing pairing and still install exactly the `pi`, `claude`, `codex`, `opencode`, and `grok` hooks plus the moshi-hook systemd user service. Pairing input is hidden so the token does not enter shell history. Replace pairing credentials only through the explicit `scripts/configure-moshi.sh --rotate-pairing` action. Setup optionally enables user lingering after explaining that it keeps user services available beyond an interactive login.
+Easy Pair authorizes SSH host access; agent-hook pairing is a separate flow. After host access and the SSH migration succeed, routine reruns preserve an existing agent-hook pairing and still install exactly the `pi`, `claude`, `codex`, `opencode`, and `grok` hooks plus the moshi-hook systemd user service. If no agent-hook pairing exists, the script requests its pairing token through hidden input so the token does not enter shell history. Replace agent-hook pairing credentials only through the explicit `scripts/configure-moshi.sh --rotate-pairing` action. Setup optionally enables user lingering after explaining that it keeps user services available beyond an interactive login.
 
 Official references: [install](https://getmoshi.app/docs/install), [hooks](https://getmoshi.app/docs/hooks), [Tailscale](https://getmoshi.app/docs/tailscale), [Tailscale guide](https://getmoshi.app/guides/tailscale), [connections](https://getmoshi.app/docs/connections), and [security and sync](https://getmoshi.app/docs/security-sync).
 
@@ -184,13 +183,13 @@ moshi-hook probe --json | jq '{installed, running}'
 moshi-hook status --json | jq '{paired, hooks: [.hooks[] | select(.target == "pi" or .target == "claude" or .target == "codex" or .target == "opencode" or .target == "grok") | {target, status}]}'
 ```
 
-Run the deterministic installer trust-boundary, SSH/Tailscale migration, and rollback contract tests without root, network, or host changes:
+Run the deterministic Easy Pair confirmation, installer trust-boundary, SSH/Tailscale migration, and rollback contract tests without root, network, or host changes:
 
 ```sh
 bash tests/configure-moshi.sh
 ```
 
-The following are generated local state and MUST NOT enter Git: `authorized_keys`, OpenSSH host keys, moshi-hook pairing state, the generated user service, generated agent hook files, Tailscale state, linger state, phone settings, logs, tokens, host IDs, secrets, license keys, machine names, and machine addresses. The script and manifests are the reproducible boundary; operator confirmations and generated state remain local.
+The following are generated local state and MUST NOT enter Git: `authorized_keys`, OpenSSH host keys, Easy Pair QR data, moshi-hook pairing state, the generated user service, generated agent hook files, Tailscale state, linger state, phone settings, logs, tokens, host IDs, secrets, license keys, machine names, and machine addresses. The script and manifests are the reproducible boundary; operator confirmations and generated state remain local.
 
 ### Controlled UFW activation
 

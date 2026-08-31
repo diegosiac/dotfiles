@@ -352,7 +352,7 @@ else
 fi
 
 section "Moshi (optional)"
-if confirm "Configure Moshi, Mosh, hardened OpenSSH, and agent hooks now? This requires op, MOSHI_SSH_PUBLIC_KEY_REF, authenticated Tailscale, and interactive login tests."; then
+if confirm "Configure Moshi Easy Pair, Mosh, hardened OpenSSH, and agent hooks now? This requires authenticated Tailscale, access to the Moshi mobile app, and interactive login tests."; then
     configure_moshi
 else
     warn "Skipped optional Moshi setup. Run 'scripts/configure-moshi.sh' later when Tailscale is authenticated."

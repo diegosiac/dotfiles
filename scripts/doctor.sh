@@ -623,7 +623,7 @@ else
 fi
 
 section "Moshi, OpenSSH, and Tailscale"
-for command_name in ssh sshd ssh-keygen mosh op; do
+for command_name in ssh sshd ssh-keygen mosh; do
     if command -v "$command_name" >/dev/null 2>&1; then
         ok "$command_name is available"
     else
@@ -661,12 +661,21 @@ if command -v sshd >/dev/null 2>&1; then
         sshd_host="$(uname -n 2>/dev/null || printf localhost)"
         effective_sshd_config="$(sudo -n sshd -T -C "user=${USER:-unknown},host=$sshd_host,addr=127.0.0.1" 2>/dev/null || true)"
         if [[ -n "$effective_sshd_config" ]] \
-            && grep -Fqx 'permitrootlogin no' <<<"$effective_sshd_config" \
-            && grep -Fqx 'pubkeyauthentication yes' <<<"$effective_sshd_config" \
-            && grep -Fqx 'passwordauthentication no' <<<"$effective_sshd_config" \
-            && grep -Fqx 'kbdinteractiveauthentication no' <<<"$effective_sshd_config" \
-            && grep -Fqx 'authenticationmethods publickey' <<<"$effective_sshd_config" \
-            && awk -v user="${USER:-unknown}" '$1 == "allowusers" { for (i = 2; i <= NF; i++) if ($i == user) found = 1 } END { exit !found }' <<<"$effective_sshd_config"; then
+            && awk -v user="${USER:-unknown}" '
+                tolower($1) == "permitrootlogin" && NF == 2 && $2 == "no" { permit_root_login = 1 }
+                tolower($1) == "pubkeyauthentication" && NF == 2 && $2 == "yes" { pubkey_authentication = 1 }
+                tolower($1) == "passwordauthentication" && NF == 2 && $2 == "no" { password_authentication = 1 }
+                tolower($1) == "kbdinteractiveauthentication" && NF == 2 && $2 == "no" { keyboard_authentication = 1 }
+                tolower($1) == "authenticationmethods" && NF == 2 && $2 == "publickey" { authentication_methods = 1 }
+                tolower($1) == "allowusers" {
+                    for (i = 2; i <= NF; i++) {
+                        if ($i == user) allowed_user = 1
+                    }
+                }
+                END {
+                    exit !(permit_root_login && pubkey_authentication && password_authentication && keyboard_authentication && authentication_methods && allowed_user)
+                }
+            ' <<<"$effective_sshd_config"; then
             ok "Effective sshd configuration enforces the Moshi hardening policy"
         else
             warn "Effective sshd configuration could not be verified or does not enforce the complete Moshi hardening policy"
@@ -680,9 +689,9 @@ if command -v moshi-hook >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
     ok "moshi-hook is available"
     moshi_status="$(moshi-hook status --json 2>/dev/null | jq -c '{paired: (.paired == true), hooks: [.hooks[]? | select(.target == "pi" or .target == "claude" or .target == "codex" or .target == "opencode" or .target == "grok") | {target, status}]}' 2>/dev/null || true)"
     if [[ -n "$moshi_status" ]] && [[ "$(jq -r '.paired' <<<"$moshi_status" 2>/dev/null)" == "true" ]]; then
-        ok "moshi-hook reports paired state"
+        ok "moshi-hook reports agent-hook paired state"
     else
-        warn "moshi-hook does not report paired state"
+        warn "moshi-hook does not report agent-hook paired state"
     fi
 
     for hook_target in pi claude codex opencode grok; do

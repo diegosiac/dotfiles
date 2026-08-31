@@ -1,0 +1,811 @@
+diff --git a/lazy-lock.json b/lazy-lock.json
+index d1fd455..7d404e2 100644
+--- a/lazy-lock.json
++++ b/lazy-lock.json
+@@ -1,30 +1,40 @@
+ {
+   "LazyVim": { "branch": "main", "commit": "9e58f05aae1bf521ce1ff5b6b3bd8c5bf88a6488" },
+   "SchemaStore.nvim": { "branch": "main", "commit": "0fccf9234acfd981867cbd42c4101829e6808790" },
++  "aether": { "branch": "v3", "commit": "02af9ba1ef9d6f136a6b20404d39f2a4e3857e16" },
++  "ashen.nvim": { "branch": "main", "commit": "bfb04bd50b69d863469b2deb9fb361cf0d945ba7" },
++  "bamboo.nvim": { "branch": "master", "commit": "1309bc88bffcf1bedc3e84e7fa9004de93da774a" },
+   "blink-cmp-copilot": { "branch": "main", "commit": "439cff78780c033aa23cf061d7315314b347e3c1" },
+   "blink.cmp": { "branch": "main", "commit": "327fff91fe6af358e990be7be1ec8b78037d2138" },
+   "blink.compat": { "branch": "main", "commit": "2ed6d9a28b07fa6f3bface818470605f8896408c" },
+-  "catppuccin": { "branch": "main", "commit": "30fa4d122d9b22ad8b2e0ab1b533c8c26c4dde86" },
++  "catppuccin": { "branch": "main", "commit": "edefef779ab08ce1a4a404713e3012b0d202bd35" },
+   "claude-code.nvim": { "branch": "main", "commit": "c9a31e51069977edaad9560473b5d031fcc5d38b" },
+   "conform.nvim": { "branch": "master", "commit": "b4aab989db276993ea5dcb78872be494ce546521" },
+   "copilot.lua": { "branch": "master", "commit": "f7732213e41995439171f35bdd2bf1c809f8e8e7" },
++  "ethereal.nvim": { "branch": "main", "commit": "a0ec73332e537228981b6a4f465cef82bb3e1d36" },
++  "everforest-nvim": { "branch": "main", "commit": "a0e9edc57379e8feafc6ba207c26dbb12fc1b6d8" },
+   "flash.nvim": { "branch": "main", "commit": "b68bda044d68e4026c4e1ec6df3c5afd7eb8e341" },
++  "flexoki-neovim": { "branch": "main", "commit": "c3e2251e813d29d885a7cbbe9808a7af234d845d" },
+   "friendly-snippets": { "branch": "main", "commit": "572f5660cf05f8cd8834e096d7b4c921ba18e175" },
+   "fzf-lua": { "branch": "main", "commit": "f8cf874c7c78deaddb028b80b7116c50cb53e88d" },
+   "gemini-cli.nvim": { "branch": "main", "commit": "887fc46979e0a1e4e05035bcc83deb76164e91a2" },
+-  "gentleman-kanagawa-blur": { "branch": "main", "commit": "9a3b54edaf18dd6fa0e8b77726d3e7db0f8af6d3" },
+   "git.nvim": { "branch": "main", "commit": "70ceb406568132aec754b25b46ebda1a05dd46f0" },
+   "goto-preview": { "branch": "main", "commit": "cf561d10b4b104db20375c48b86cf36af9f96e00" },
+   "grug-far.nvim": { "branch": "main", "commit": "50d9ee2b5a19634670441948e7e4afaa042f1059" },
++  "gruvbox.nvim": { "branch": "main", "commit": "154eb5ff5b96d0641307113fa385eaf0d36d9796" },
++  "hackerman.nvim": { "branch": "main", "commit": "d7699ce7639686b8f3a5ae108b496a32ee5c076d" },
+   "harpoon": { "branch": "harpoon2", "commit": "ed1f853847ffd04b2b61c314865665e1dadf22c7" },
+   "incline.nvim": { "branch": "main", "commit": "0fd2d5a27504dba7fdc507a53275f22c081fe640" },
+-  "kanagawa.nvim": { "branch": "master", "commit": "debe91547d7fb1eef34ce26a5106f277fbfdd109" },
++  "kanagawa.nvim": { "branch": "master", "commit": "bb85e4bfc8d89b0e62c8fa53ccdd13d12e2f77b3" },
+   "lazy.nvim": { "branch": "main", "commit": "6c3bda4aca61a13a9c63f1c1d1b16b9d3be90d7a" },
+   "lazydev.nvim": { "branch": "main", "commit": "0c5e67881ddb9c64e04ca5a4cc57b3e4b76c8feb" },
+   "lualine.nvim": { "branch": "master", "commit": "b8c23159c0161f4b89196f74ee3a6d02cdc3a955" },
++  "lumon.nvim": { "branch": "master", "commit": "f8ce95213e57b379089da23abc36a1fc39936b63" },
+   "markdown-preview.nvim": { "branch": "master", "commit": "a923f5fc5ba36a3b17e289dc35dc17f66d0548ee" },
+   "mason-lspconfig.nvim": { "branch": "main", "commit": "7f9a39fcd2ac6e979001f857727d606888f5909c" },
+   "mason.nvim": { "branch": "main", "commit": "7dc4facca9702f95353d5a1f87daf23d78e31c2a" },
++  "matteblack.nvim": { "branch": "main", "commit": "a8a039f5d6189b28d76fa0221e64965efec7e996" },
++  "miasma.nvim": { "branch": "main", "commit": "466456f08d1a114c983c0d24e8fc01339e3b0a27" },
+   "mini.ai": { "branch": "main", "commit": "45a26d032d8703f280c69c2ed9fb4e1bfc8f24f9" },
+   "mini.diff": { "branch": "main", "commit": "7077b636d642fcd5cd48554e187a251883239660" },
+   "mini.files": { "branch": "main", "commit": "2db6db37c37ee5955fe72907e33fa31cd2dd0fd4" },
+@@ -32,7 +42,9 @@
+   "mini.icons": { "branch": "main", "commit": "f9a177c11daa7829389b7b6eaaec8b8a5c47052d" },
+   "mini.pairs": { "branch": "main", "commit": "3738ea30ff33e0cbf2983dc67319a5468d25b0a9" },
+   "mini.surround": { "branch": "main", "commit": "e170a2dde4b0a8905c9bb218ed428be94ec0b255" },
++  "monokai-pro.nvim": { "branch": "master", "commit": "5b06ae0736813b1c65d76a4be9edbe92be0b9c74" },
+   "neo-tree.nvim": { "branch": "main", "commit": "ed057048a281b418d5318dd5153f9486daa517a3" },
++  "nightfox.nvim": { "branch": "main", "commit": "4dacd3f0185a2227bdf3b6c0975a8f0bf87cac9a" },
+   "noice.nvim": { "branch": "main", "commit": "0427460c2d7f673ad60eb02b35f5e9926cf67c59" },
+   "nui.nvim": { "branch": "main", "commit": "de740991c12411b663994b2860f1a4fd0937c130" },
+   "nvim-dap": { "branch": "master", "commit": "7523676a4be17644587aa47e4d42f6f7646d4727" },
+@@ -50,21 +62,24 @@
+   "nvim-web-devicons": { "branch": "master", "commit": "6e51ca170563330e063720449c21f43e27ca0bc1" },
+   "obsidian.nvim": { "branch": "main", "commit": "705cc9b4f66eca1e54040ac819102e80a32896d3" },
+   "oil.nvim": { "branch": "master", "commit": "07f80ad645895af849a597d1cac897059d89b686" },
+-  "oldworld.nvim": { "branch": "main", "commit": "4b7acaebd89129b46c8f702cc8c4ab36630f4abf" },
+   "persistence.nvim": { "branch": "main", "commit": "166a79a55bfa7a4db3e26fc031b4d92af71d0b51" },
+   "plenary.nvim": { "branch": "master", "commit": "b9fd5226c2f76c951fc8ed5923d85e4de065e509" },
+   "render-markdown.nvim": { "branch": "main", "commit": "5f437a26a8a8b964eff683dd6f68bc2a0d38c5db" },
++  "retro-82.nvim": { "branch": "master", "commit": "41b8c42ed0099eb43824903ef606a6b051d33505" },
++  "rose-pine": { "branch": "main", "commit": "ff483051a47e27d84bdef47703538df1ed9f4a47" },
+   "screenkey.nvim": { "branch": "main", "commit": "16390931d847b1d5d77098daccac4e55654ac9e2" },
+   "smear-cursor.nvim": { "branch": "main", "commit": "4b86df8a0c5f46e708616b21a02493bb0e47ecbd" },
+   "snacks.nvim": { "branch": "main", "commit": "72a6316d2421942cb81f2d5276a0e607629cd1c6" },
+   "symbols-outline.nvim": { "branch": "master", "commit": "564ee65dfc9024bdde73a6621820866987cbb256" },
+   "todo-comments.nvim": { "branch": "main", "commit": "ae0a2afb47cf7395dc400e5dc4e05274bf4fb9e0" },
+-  "tokyonight.nvim": { "branch": "main", "commit": "057ef5d260c1931f1dffd0f052c685dcd14100a3" },
++  "tokyonight.nvim": { "branch": "main", "commit": "cdc07ac78467a233fd62c493de29a17e0cf2b2b6" },
+   "trouble.nvim": { "branch": "main", "commit": "3fb3bd737be8866e5f3a170abc70b4da8b5dd45a" },
+   "ts-comments.nvim": { "branch": "main", "commit": "1bd9d0ba1d8b336c3db50692ffd0955fe1bb9f0c" },
+   "twilight.nvim": { "branch": "main", "commit": "1584c0b0a979b71fd86b18d302ba84e9aba85b1b" },
++  "vantablack.nvim": { "branch": "main", "commit": "8a05ea96343914f1001e937b4fa7d9d44b51d221" },
+   "vim-be-good": { "branch": "master", "commit": "0ae3de14eb8efc6effe7704b5e46495e91931cc5" },
+   "vim-multiple-cursors": { "branch": "master", "commit": "6456718e1d30b42c04b920c5413ca44f68f08759" },
+   "which-key.nvim": { "branch": "main", "commit": "370ec46f710e058c9c1646273e6b225acf47cbed" },
++  "white.nvim": { "branch": "main", "commit": "e3c3c3cc4b943b521032299e4f9b0d84a02e06d1" },
+   "zen-mode.nvim": { "branch": "main", "commit": "863f150ca321b3dd8aa1a2b69b5f411a220e144f" }
+ }
+diff --git a/lua/config/lazy.lua b/lua/config/lazy.lua
+index 7939e15..fa83125 100644
+--- a/lua/config/lazy.lua
++++ b/lua/config/lazy.lua
+@@ -1,8 +1,5 @@
+ -- This file contains the configuration for setting up the lazy.nvim plugin manager in Neovim.
+
+--- Node.js configuration - always use latest stable version
+-vim.g.node_host_prog = vim.fn.exepath("node") or "/usr/local/bin/node"
+-
+ -- Spell-checking
+ vim.opt.spell = true -- activa spell checker
+ vim.opt.spelllang = { "en" }
+@@ -21,23 +18,6 @@ end
+ -- Prepend the lazy.nvim path to the runtime path
+ vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
+
+--- Fix copy and paste in WSL (Windows Subsystem for Linux)
+-vim.opt.clipboard = "unnamedplus" -- Use the system clipboard for all operations
+-if vim.fn.has("wsl") == 1 then
+-  vim.g.clipboard = {
+-    name = "win32yank", -- Use win32yank for clipboard operations
+-    copy = {
+-      ["+"] = "win32yank.exe -i --crlf", -- Command to copy to the system clipboard
+-      ["*"] = "win32yank.exe -i --crlf", -- Command to copy to the primary clipboard
+-    },
+-    paste = {
+-      ["+"] = "win32yank.exe -o --lf", -- Command to paste from the system clipboard
+-      ["*"] = "win32yank.exe -o --lf", -- Command to paste from the primary clipboard
+-    },
+-    cache_enabled = false, -- Disable clipboard caching
+-  }
+-end
+-
+ -- Setup lazy.nvim with the specified configuration
+ require("lazy").setup({
+   spec = {
+diff --git a/lua/config/nodejs.lua b/lua/config/nodejs.lua
+index 63fcbc1..3d0e04e 100644
+--- a/lua/config/nodejs.lua
++++ b/lua/config/nodejs.lua
+@@ -1,241 +1,224 @@
+--- Node.js configuration for Neovim
+--- This ensures Neovim uses the SYSTEM Node.js, not project-specific versions
+--- This prevents issues when working with old projects that use Node < 18
++-- Resolve Neovim's Node.js runtime and provider from the global Mise configuration.
+
+ local M = {}
+
+--- Function to get system Node.js path (avoiding project-specific versions)
+-local function get_system_node()
+-  -- Priority order for system Node.js (avoiding project overrides)
+-  local system_paths = {
+-    "/opt/homebrew/bin/node", -- Homebrew on Apple Silicon
+-    "/usr/local/bin/node", -- Homebrew on Intel Mac or standard install
+-    vim.fn.expand("~/.volta/bin/node"), -- Volta's global Node
+-    vim.fn.expand("~/.nvm/versions/node/*/bin/node"), -- NVM default version
+-    vim.fn.expand("~/.nix-profile/bin/node"), -- Nix
+-    "/usr/bin/node", -- System default
++local state = {
++  source = "unconfigured",
++  node = nil,
++  npm = nil,
++  provider = nil,
++  mise_bin = nil,
++  detail = nil,
++}
++
++local function run(command, options)
++  options = vim.tbl_extend("force", { text = true }, options or {})
++  local result = vim.system(command, options):wait()
++  return result.code, vim.trim(result.stdout or ""), vim.trim(result.stderr or "")
++end
++
++local function prepend_path_once(directory)
++  local updated = { directory }
++  for _, entry in ipairs(vim.split(vim.env.PATH or "", ":", { plain = true, trimempty = true })) do
++    if entry ~= directory then
++      updated[#updated + 1] = entry
++    end
++  end
++  vim.env.PATH = table.concat(updated, ":")
++end
++
++local function global_mise_install()
++  if vim.fn.executable("mise") ~= 1 then
++    return nil, "Mise is not executable"
++  end
++
++  local home = vim.env.HOME or vim.uv.os_homedir()
++  local code, stdout, stderr = run(
++    { "mise", "ls", "--global", "--installed", "--json", "node" },
++    { cwd = home }
++  )
++  if code ~= 0 then
++    return nil, stderr ~= "" and stderr or "Mise could not list the global Node.js runtime"
++  end
++
++  local ok, entries = pcall(vim.json.decode, stdout)
++  if not ok or type(entries) ~= "table" then
++    return nil, "Mise returned invalid JSON for the global Node.js runtime"
++  end
++
++  local selected = nil
++  for _, entry in ipairs(entries) do
++    if
++      entry.active == true
++      and entry.installed == true
++      and type(entry.install_path) == "string"
++      and entry.install_path ~= ""
++    then
++      if selected then
++        return nil, "Mise reported multiple active global Node.js runtimes"
++      end
++      selected = entry.install_path
++    end
++  end
++
++  if not selected then
++    return nil, "Mise has no active installed global Node.js runtime"
++  end
++
++  return selected, nil
++end
++
++local function select_node()
++  local install_path, mise_detail = global_mise_install()
++  if install_path then
++    local bin = install_path .. "/bin"
++    local node = bin .. "/node"
++    if vim.fn.executable(node) == 1 then
++      prepend_path_once(bin)
++      return node, bin, "Mise global", nil
++    end
++    mise_detail = "The active global Mise Node.js runtime has no executable bin/node"
++  end
++
++  for _, node in ipairs({ "/usr/bin/node", "/usr/local/bin/node" }) do
++    if vim.fn.executable(node) == 1 then
++      return node, vim.fn.fnamemodify(node, ":h"), "Linux system fallback", mise_detail
++    end
++  end
++
++  return nil, nil, "unavailable", mise_detail
++end
++
++local function executable_or_nil(path)
++  return path and vim.fn.executable(path) == 1 and path or nil
++end
++
++local function node_version(node)
++  local code, stdout = run({ node, "--version" })
++  if code ~= 0 then
++    return nil
++  end
++  return stdout:gsub("^v", ""):match("(%d+%.%d+%.%d+)")
++end
++
++local function provider_guidance(bin)
++  return "Neovim's Node.js provider is unavailable because "
++    .. bin
++    .. "/neovim-node-host is not executable. Install it under the global Mise Node.js runtime with:\n"
++    .. "  mise use --global node@lts\n"
++    .. "  npm install --global neovim"
++end
++
++local function setup_nodejs()
++  vim.g.node_host_prog = nil
++  state = {
++    source = "unconfigured",
++    node = nil,
++    npm = nil,
++    provider = nil,
++    mise_bin = nil,
++    detail = nil,
+   }
+
+-  -- First try to find a system Node.js directly
+-  for _, path in ipairs(system_paths) do
+-    -- Handle glob patterns (for nvm)
+-    if path:match("%*") then
+-      local expanded = vim.fn.glob(path, false, true)
+-      if #expanded > 0 then
+-        -- Get the latest version from nvm
+-        table.sort(expanded, function(a, b)
+-          return a > b
+-        end)
+-        path = expanded[1]
+-      else
+-        goto continue
+-      end
+-    end
+-
+-    if vim.fn.executable(path) == 1 then
+-      return path
+-    end
+-
+-    ::continue::
++  local node, bin, source, detail = select_node()
++  state.source = source
++  state.detail = detail
++  if not node then
++    vim.notify(
++      "Node.js was not found. Install the global Mise runtime with:\n  mise use --global node@lts",
++      vim.log.levels.ERROR
++    )
++    return false, nil
+   end
+
+-  -- Fallback to whatever is in PATH (but warn if it might be project-specific)
+-  return vim.fn.exepath("node")
++  state.node = node
++  state.npm = executable_or_nil(bin .. "/npm")
++  state.mise_bin = source == "Mise global" and bin or nil
++  state.provider = executable_or_nil(bin .. "/neovim-node-host")
++  if state.provider then
++    vim.g.node_host_prog = state.provider
++  else
++    vim.notify(provider_guidance(bin), vim.log.levels.WARN)
++  end
++
++  local version = node_version(node)
++  if not version then
++    vim.notify("Could not read the Node.js version from the selected runtime.", vim.log.levels.ERROR)
++    return false, nil
++  end
++
++  local major = tonumber(version:match("^(%d+)"))
++  if major and major < 18 then
++    vim.notify(
++      "Node.js v"
++        .. version
++        .. " is too old. Neovim requires v18+ (v22+ recommended).\n\nUpgrade with:\n  mise use --global node@lts",
++      vim.log.levels.WARN
++    )
++  elseif vim.g.debug_nodejs or vim.env.DEBUG_NODEJS then
++    print("Node.js runtime: " .. node .. " (v" .. version .. ")")
++    print("Source: " .. source)
++  end
++
++  return true, version
+ end
+
+--- Function to setup Node.js for Neovim
+-local function setup_nodejs()
+-  -- Get system Node.js, avoiding project-specific versions
+-  local node_path = get_system_node()
+-
+-  if node_path ~= "" then
+-    local version_output = vim.fn.system(node_path .. " --version 2>/dev/null")
+-    if vim.v.shell_error == 0 then
+-      -- Clean version string: remove newlines, ANSI escape codes, and 'v' prefix
+-      local version = version_output
+-        :gsub("\r", "") -- Remove carriage returns
+-        :gsub("\n", "") -- Remove newlines
+-        :gsub("\27%[[%d;]*%a", "") -- Remove ANSI escape sequences
+-        :gsub("^v", "") -- Remove 'v' prefix
+-        :match("(%d+%.%d+%.%d+)") -- Extract version number pattern
+-
+-      if version then
+-        local major_version = tonumber(version:match("^(%d+)"))
+-
+-        if major_version and major_version >= 18 then
+-          -- Set the Node.js host program
+-          vim.g.node_host_prog = node_path
+-
+-          -- Set npm path
+-          local npm_path = vim.fn.exepath("npm")
+-          if npm_path ~= "" then
+-            vim.g.npm_host_prog = npm_path
+-          end
+-
+-          if vim.g.debug_nodejs or vim.env.DEBUG_NODEJS then
+-            print("✓ Node.js for Neovim: " .. node_path .. " (v" .. version .. ")")
+-
+-            -- Detect which manager is being used
+-            if node_path:match("%.volta/") then
+-              print("  Using Volta-managed Node.js")
+-            elseif node_path:match("%.nvm/") then
+-              print("  Using NVM-managed Node.js")
+-            elseif node_path:match("%.nix%-profile/") then
+-              print("  Using Nix-managed Node.js")
+-            elseif node_path:match("/homebrew/") then
+-              print("  Using Homebrew-managed Node.js")
+-            else
+-              print("  Using system Node.js")
+-            end
+-          end
+-
+-          return true, version
+-        else
+-          -- Provide specific upgrade instructions based on the detected manager
+-          local upgrade_msg = "⚠️  Node.js version "
+-            .. version
+-            .. " is too old. Neovim requires v18+ (v22+ recommended).\n\n"
+-
+-          if node_path:match("/homebrew/") then
+-            upgrade_msg = upgrade_msg .. "To upgrade with Homebrew:\n  brew upgrade node"
+-          elseif node_path:match("%.volta/") then
+-            upgrade_msg = upgrade_msg .. "To upgrade with Volta:\n  volta install node@latest"
+-          elseif node_path:match("%.nvm/") then
+-            upgrade_msg = upgrade_msg .. "To upgrade with NVM:\n  nvm install --lts\n  nvm alias default lts/*"
+-          elseif node_path:match("%.nix%-profile/") then
+-            upgrade_msg = upgrade_msg .. "To upgrade with Nix:\n  nix profile upgrade nixpkgs#nodejs"
+-          else
+-            upgrade_msg = upgrade_msg .. "Please upgrade Node.js to v18 or higher using your package manager."
+-          end
+-
+-          upgrade_msg = upgrade_msg .. "\n\nNote: Neovim uses the SYSTEM Node.js, not project-specific versions."
+-
+-          vim.notify(upgrade_msg, vim.log.levels.WARN)
+-          vim.g.node_host_prog = node_path
+-          return true, version
+-        end
+-      else
+-        -- Handle case where version parsing failed
+-        vim.notify(
+-          "⚠️  Could not parse Node.js version from: "
+-            .. version_output
+-            .. "\nPlease ensure Node.js is properly installed.",
+-          vim.log.levels.ERROR
+-        )
+-        return false, nil
+-      end
+-    end
+-  end
+-
+-  vim.notify(
+-    "⚠️  Node.js not found! Some plugins may not work correctly.\nInstall Node.js with:\n  brew install node",
+-    vim.log.levels.ERROR
+-  )
+-  return false, nil
+-end
+-
+--- Function to check if we're using a recent Node.js version
+-local function check_node_version()
+-  if not vim.g.node_host_prog then
+-    return
+-  end
+-
+-  local version_output = vim.fn.system(vim.g.node_host_prog .. " --version 2>/dev/null")
+-  if vim.v.shell_error ~= 0 then
+-    return
+-  end
+-
+-  local version = version_output:gsub("\n", ""):gsub("v", "")
+-  local major_version = tonumber(version:match("^(%d+)"))
+-
+-  if major_version then
+-    if major_version >= 18 and major_version < 22 then
+-      if vim.g.debug_nodejs then
+-        vim.notify(
+-          "ℹ️  Node.js v" .. version .. " works but v22+ is recommended for optimal performance.",
+-          vim.log.levels.INFO
+-        )
+-      end
+-    elseif major_version < 18 then
+-      vim.notify(
+-        "⚠️  Node.js version " .. version .. " is too old. Neovim requires v18+ (v22+ recommended).",
+-        vim.log.levels.WARN
+-      )
+-    end
++local function check_node_version(version)
++  local major = version and tonumber(version:match("^(%d+)"))
++  if major and major >= 18 and major < 22 and vim.g.debug_nodejs then
++    vim.notify("Node.js v" .. version .. " works, but v22+ is recommended.", vim.log.levels.INFO)
+   end
+ end
+
+--- Main setup function
+ function M.setup(opts)
+   opts = opts or {}
+-
+-  -- Setup Node.js
+   local success, version = setup_nodejs()
+-
+   if success and not opts.silent then
+-    check_node_version()
++    check_node_version(version)
+   end
+-
+   return success
+ end
+
+--- Function to get current Node.js info
+ function M.info()
+-  if not vim.g.node_host_prog then
+-    print("Node.js: Not configured")
+-    return
++  print("Node.js runtime: " .. (state.node or "Not configured"))
++  print("Source: " .. state.source)
++  print("npm: " .. (state.npm or "Not found adjacent to the selected Node.js runtime"))
++  print("Neovim Node.js host: " .. (state.provider or "Not installed"))
++  if state.mise_bin then
++    print("Global Mise bin: " .. state.mise_bin)
+   end
+-
+-  local version_output = vim.fn.system(vim.g.node_host_prog .. " --version 2>/dev/null")
+-  if vim.v.shell_error ~= 0 then
+-    print("Node.js: Error getting version")
+-    return
++  if state.detail then
++    print("Mise detail: " .. state.detail)
+   end
+-
+-  local version = version_output:gsub("\n", ""):gsub("v", "")
+-  print("Node.js for Neovim: " .. vim.g.node_host_prog .. " (v" .. version .. ")")
+-
+-  -- Detect source
+-  if vim.g.node_host_prog:match("%.volta/") then
+-    print("Source: Volta-managed")
+-  elseif vim.g.node_host_prog:match("%.nvm/") then
+-    print("Source: NVM-managed")
+-  elseif vim.g.node_host_prog:match("%.nix%-profile/") then
+-    print("Source: Nix-managed")
+-  elseif vim.g.node_host_prog:match("/homebrew/") then
+-    print("Source: Homebrew-managed")
+-  else
+-    print("Source: System")
+-  end
+-
+-  if vim.g.npm_host_prog then
+-    print("npm: " .. vim.g.npm_host_prog)
++  if not state.node then
++    print("Guidance: mise use --global node@lts")
++  elseif not state.provider then
++    print("Provider guidance: npm install --global neovim")
+   end
+
+   if vim.g.debug_nodejs then
+-    print("\nPATH: " .. (vim.env.PATH or "not set"))
++    print("Mise executable: " .. (vim.fn.exepath("mise") ~= "" and vim.fn.exepath("mise") or "Not found"))
++    print("HOME: " .. (vim.env.HOME or "Not set"))
++    print("PATH: " .. (vim.env.PATH or "Not set"))
+   end
+ end
+
+--- Command to manually refresh Node.js configuration
+ vim.api.nvim_create_user_command("NodeRefresh", function()
+   M.setup({ silent = false })
+   M.info()
+-end, { desc = "Refresh Node.js configuration" })
++end, { desc = "Refresh global Mise Node.js configuration" })
+
+--- Command to show Node.js info
+ vim.api.nvim_create_user_command("NodeInfo", function()
+   M.info()
+-end, { desc = "Show Node.js configuration info" })
++end, { desc = "Show global Mise Node.js configuration" })
+
+--- Command to debug Node.js PATH issues
+ vim.api.nvim_create_user_command("NodeDebug", function()
+   vim.g.debug_nodejs = true
+-  print("=== Node.js Debug Mode Enabled ===")
++  print("=== Global Mise Node.js Debug Mode ===")
+   M.setup({ silent = false })
+   M.info()
+   print("=== End Debug Info ===")
+   vim.g.debug_nodejs = false
+-end, { desc = "Debug Node.js configuration and PATH" })
++end, { desc = "Debug global Mise Node.js resolution" })
+
+ return M
+diff --git a/lua/config/options.lua b/lua/config/options.lua
+index 3ea1454..d6dd729 100644
+--- a/lua/config/options.lua
++++ b/lua/config/options.lua
+@@ -1,3 +1,5 @@
+ -- Options are automatically loaded before lazy.nvim startup
+ -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
+ -- Add any additional options here
++
++require("config.remote_clipboard").setup()
+diff --git a/lua/config/symlink_remote_clipboard.lua b/lua/config/symlink_remote_clipboard.lua
+new file mode 100644
+index 0000000..b332527
+--- /dev/null
++++ b/lua/config/symlink_remote_clipboard.lua
+@@ -0,0 +1 @@
++/usr/share/omarchy-nvim/config/lua/config/remote_clipboard.lua
+diff --git a/lua/plugins/avante.lua b/lua/plugins/avante.lua
+index 2bbc047..56a526a 100644
+--- a/lua/plugins/avante.lua
++++ b/lua/plugins/avante.lua
+@@ -3,14 +3,7 @@ return {
+     "yetone/avante.nvim",
+     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+     -- ⚠️ must add this setting! ! !
+-    build = function()
+-      -- conditionally use the correct build system for the current OS
+-      if vim.fn.has("win32") == 1 then
+-        return "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
+-      else
+-        return "make"
+-      end
+-    end,
++    build = "make",
+     event = "VeryLazy",
+     version = false, -- Never set this value to "*"! Never!
+     ---@module 'avante'
+@@ -213,7 +206,7 @@ return {
+             focus_on_apply = "ours", -- which diff to focus after applying
+           },
+         },
+-        system_prompt = "Este GPT es un clon del usuario, un arquitecto líder frontend especializado en Angular y React, con experiencia en arquitectura limpia, arquitectura hexagonal y separación de lógica en aplicaciones escalables. Tiene un enfoque técnico pero práctico, con explicaciones claras y aplicables, siempre con ejemplos útiles para desarrolladores con conocimientos intermedios y avanzados.\n\nHabla con un tono profesional pero cercano, relajado y con un toque de humor inteligente. Evita formalidades excesivas y usa un lenguaje directo, técnico cuando es necesario, pero accesible. Su estilo es argentino, sin caer en clichés, y utiliza expresiones como 'buenas acá estamos' o 'dale que va' según el contexto.\n\nSus principales áreas de conocimiento incluyen:\n- Desarrollo frontend con Angular, React y gestión de estado avanzada (Redux, Signals, State Managers propios como Gentleman State Manager y GPX-Store).\n- Arquitectura de software con enfoque en Clean Architecture, Hexagonal Architecure y Scream Architecture.\n- Implementación de buenas prácticas en TypeScript, testing unitario y end-to-end.\n- Loco por la modularización, atomic design y el patrón contenedor presentacional \n- Herramientas de productividad como LazyVim, Tmux, Zellij, OBS y Stream Deck.\n- Mentoría y enseñanza de conceptos avanzados de forma clara y efectiva.\n- Liderazgo de comunidades y creación de contenido en YouTube, Twitch y Discord.\n\nA la hora de explicar un concepto técnico:\n1. Explica el problema que el usuario enfrenta.\n2. Propone una solución clara y directa, con ejemplos si aplica.\n3. Menciona herramientas o recursos que pueden ayudar.\n\nSi el tema es complejo, usa analogías prácticas, especialmente relacionadas con construcción y arquitectura. Si menciona una herramienta o concepto, explica su utilidad y cómo aplicarlo sin redundancias.\n\nAdemás, tiene experiencia en charlas técnicas y generación de contenido. Puede hablar sobre la importancia de la introspección, có...",
++        system_prompt = "Este GPT es un clon del usuario, un arquitecto líder frontend especializado en Angular y React, con experiencia en arquitectura limpia, arquitectura hexagonal y separación de lógica en aplicaciones escalables. Tiene un enfoque técnico pero práctico, con explicaciones claras y aplicables, siempre con ejemplos útiles para desarrolladores con conocimientos intermedios y avanzados.\n\nHabla con un tono profesional pero cercano, relajado y con un toque de humor inteligente. Evita formalidades excesivas y usa un lenguaje directo, técnico cuando es necesario, pero accesible. Su estilo es argentino, sin caer en clichés, y utiliza expresiones como 'buenas acá estamos' o 'dale que va' según el contexto.\n\nSus principales áreas de conocimiento incluyen:\n- Desarrollo frontend con Angular, React y gestión de estado avanzada (Redux, Signals, State Managers propios como Gentleman State Manager y GPX-Store).\n- Arquitectura de software con enfoque en Clean Architecture, Hexagonal Architecure y Scream Architecture.\n- Implementación de buenas prácticas en TypeScript, testing unitario y end-to-end.\n- Loco por la modularización, atomic design y el patrón contenedor presentacional \n- Herramientas de productividad como LazyVim, Tmux, OBS y Stream Deck.\n- Mentoría y enseñanza de conceptos avanzados de forma clara y efectiva.\n- Liderazgo de comunidades y creación de contenido en YouTube, Twitch y Discord.\n\nA la hora de explicar un concepto técnico:\n1. Explica el problema que el usuario enfrenta.\n2. Propone una solución clara y directa, con ejemplos si aplica.\n3. Menciona herramientas o recursos que pueden ayudar.\n\nSi el tema es complejo, usa analogías prácticas, especialmente relacionadas con construcción y arquitectura. Si menciona una herramienta o concepto, explica su utilidad y cómo aplicarlo sin redundancias.\n\nAdemás, tiene experiencia en charlas técnicas y generación de contenido. Puede hablar sobre la importancia de la introspección, có...",
+       }
+     end,
+     dependencies = {
+@@ -230,8 +223,6 @@ return {
+             drag_and_drop = {
+               insert_mode = true,
+             },
+-            -- required for Windows users
+-            use_absolute_path = true,
+           },
+         },
+       },
+diff --git a/lua/plugins/code-companion.lua b/lua/plugins/code-companion.lua
+index d184165..35be519 100644
+--- a/lua/plugins/code-companion.lua
++++ b/lua/plugins/code-companion.lua
+@@ -140,7 +140,7 @@ return {
+             },
+             ["gentleman"] = {
+               description = "The Gentleman",
+-              system_prompt = "Este GPT es un clon del usuario, un arquitecto líder frontend especializado en Angular y React, con experiencia en arquitectura limpia, arquitectura hexagonal y separación de lógica en aplicaciones escalables. Tiene un enfoque técnico pero práctico, con explicaciones claras y aplicables, siempre con ejemplos útiles para desarrolladores con conocimientos intermedios y avanzados.\n\nHabla con un tono profesional pero cercano, relajado y con un toque de humor inteligente. Evita formalidades excesivas y usa un lenguaje directo, técnico cuando es necesario, pero accesible. Su estilo es argentino, sin caer en clichés, y utiliza expresiones como 'buenas acá estamos' o 'dale que va' según el contexto.\n\nSus principales áreas de conocimiento incluyen:\n- Desarrollo frontend con Angular, React y gestión de estado avanzada (Redux, Signals, State Managers propios como Gentleman State Manager y GPX-Store).\n- Arquitectura de software con enfoque en Clean Architecture, Hexagonal Architecure y Scream Architecture.\n- Implementación de buenas prácticas en TypeScript, testing unitario y end-to-end.\n- Loco por la modularización, atomic design y el patrón contenedor presentacional \n- Herramientas de productividad como LazyVim, Tmux, Zellij, OBS y Stream Deck.\n- Mentoría y enseñanza de conceptos avanzados de forma clara y efectiva.\n- Liderazgo de comunidades y creación de contenido en YouTube, Twitch y Discord.\n\nA la hora de explicar un concepto técnico:\n1. Explica el problema que el usuario enfrenta.\n2. Propone una solución clara y directa, con ejemplos si aplica.\n3. Menciona herramientas o recursos que pueden ayudar.\n\nSi el tema es complejo, usa analogías prácticas, especialmente relacionadas con construcción y arquitectura. Si menciona una herramienta o concepto, explica su utilidad y cómo aplicarlo sin redundancias.\n\nAdemás, tiene experiencia en charlas técnicas y generación de contenido. Puede hablar sobre la importancia de la introspección, cómo balancear liderazgo y comunidad, y cómo mantenerse actualizado en tecnología mientras se experimenta con nuevas herramientas. Su estilo de comunicación es directo, pragmático y sin rodeos, pero siempre accesible y ameno.\n\nEsta es una transcripción de uno de sus vídeos para que veas como habla:\n\nLe estaba contando la otra vez que tenía una condición Que es de adulto altamente calificado no sé si lo conocen pero no es bueno el oto lo está hablando con mi mujer y y a mí cuando yo era chico mi mamá me lo dijo en su momento que a mí me habían encontrado una condición Que ti un iq muy elevado cuando era muy chico eh pero muy elevado a nivel de que estaba 5 años o 6 años por delante de un niño",
++              system_prompt = "Este GPT es un clon del usuario, un arquitecto líder frontend especializado en Angular y React, con experiencia en arquitectura limpia, arquitectura hexagonal y separación de lógica en aplicaciones escalables. Tiene un enfoque técnico pero práctico, con explicaciones claras y aplicables, siempre con ejemplos útiles para desarrolladores con conocimientos intermedios y avanzados.\n\nHabla con un tono profesional pero cercano, relajado y con un toque de humor inteligente. Evita formalidades excesivas y usa un lenguaje directo, técnico cuando es necesario, pero accesible. Su estilo es argentino, sin caer en clichés, y utiliza expresiones como 'buenas acá estamos' o 'dale que va' según el contexto.\n\nSus principales áreas de conocimiento incluyen:\n- Desarrollo frontend con Angular, React y gestión de estado avanzada (Redux, Signals, State Managers propios como Gentleman State Manager y GPX-Store).\n- Arquitectura de software con enfoque en Clean Architecture, Hexagonal Architecure y Scream Architecture.\n- Implementación de buenas prácticas en TypeScript, testing unitario y end-to-end.\n- Loco por la modularización, atomic design y el patrón contenedor presentacional \n- Herramientas de productividad como LazyVim, Tmux, OBS y Stream Deck.\n- Mentoría y enseñanza de conceptos avanzados de forma clara y efectiva.\n- Liderazgo de comunidades y creación de contenido en YouTube, Twitch y Discord.\n\nA la hora de explicar un concepto técnico:\n1. Explica el problema que el usuario enfrenta.\n2. Propone una solución clara y directa, con ejemplos si aplica.\n3. Menciona herramientas o recursos que pueden ayudar.\n\nSi el tema es complejo, usa analogías prácticas, especialmente relacionadas con construcción y arquitectura. Si menciona una herramienta o concepto, explica su utilidad y cómo aplicarlo sin redundancias.\n\nAdemás, tiene experiencia en charlas técnicas y generación de contenido. Puede hablar sobre la importancia de la introspección, cómo balancear liderazgo y comunidad, y cómo mantenerse actualizado en tecnología mientras se experimenta con nuevas herramientas. Su estilo de comunicación es directo, pragmático y sin rodeos, pero siempre accesible y ameno.\n\nEsta es una transcripción de uno de sus vídeos para que veas como habla:\n\nLe estaba contando la otra vez que tenía una condición Que es de adulto altamente calificado no sé si lo conocen pero no es bueno el oto lo está hablando con mi mujer y y a mí cuando yo era chico mi mamá me lo dijo en su momento que a mí me habían encontrado una condición Que ti un iq muy elevado cuando era muy chico eh pero muy elevado a nivel de que estaba 5 años o 6 años por delante de un niño",
+               tools = {
+                 "cmd_runner",
+                 "editor",
+diff --git a/lua/plugins/colorscheme.lua b/lua/plugins/colorscheme.lua
+deleted file mode 100644
+index 1769529..0000000
+--- a/lua/plugins/colorscheme.lua
++++ /dev/null
+@@ -1,113 +0,0 @@
+-return {
+-  {
+-    -- {
+-    --   "xiyaowong/transparent.nvim",
+-    --   config = function()
+-    --     require("transparent").setup({
+-    --       extra_groups = { -- table/string: additional groups that should be cleared
+-    --         "Normal",
+-    --         "NormalNC",
+-    --         "Comment",
+-    --         "Constant",
+-    --         "Special",
+-    --         "Identifier",
+-    --         "Statement",
+-    --         "PreProc",
+-    --         "Type",
+-    --         "Underlined",
+-    --         "Todo",
+-    --         "String",
+-    --         "Function",
+-    --         "Conditional",
+-    --         "Repeat",
+-    --         "Operator",
+-    --         "Structure",
+-    --         "LineNr",
+-    --         "NonText",
+-    --         "SignColumn",
+-    --         "CursorLineNr",
+-    --         "EndOfBuffer",
+-    --       },
+-    --       exclude_groups = {}, -- table: groups you don't want to clear
+-    --     })
+-    --   end,
+-    -- },
+-    {
+-      "catppuccin/nvim",
+-      name = "catppuccin",
+-      priority = 1000,
+-      opts = {
+-        flavour = "mocha", -- latte, frappe, macchiato, mocha
+-        transparent_background = true, -- disables setting the background color.
+-        term_colors = true, -- sets terminal colors (e.g. `g:terminal_color_0`)
+-      },
+-    },
+-    {
+-      "Gentleman-Programming/gentleman-kanagawa-blur",
+-      name = "gentleman-kanagawa-blur",
+-      priority = 1000,
+-    },
+-    {
+-      "Alan-TheGentleman/oldworld.nvim",
+-      lazy = false,
+-      priority = 1000,
+-      opts = {},
+-    },
+-    {
+-      "rebelot/kanagawa.nvim",
+-      priority = 1000,
+-      lazy = true,
+-      config = function()
+-        require("kanagawa").setup({
+-          compile = false, -- enable compiling the colorscheme
+-          undercurl = true, -- enable undercurls
+-          commentStyle = { italic = true },
+-          functionStyle = {},
+-          keywordStyle = { italic = true },
+-          statementStyle = { bold = true },
+-          typeStyle = {},
+-          transparent = true, -- do not set background color
+-          dimInactive = false, -- dim inactive window `:h hl-NormalNC`
+-          terminalColors = true, -- define vim.g.terminal_color_{0,17}
+-          colors = { -- add/modify theme and palette colors
+-            palette = {},
+-            theme = {
+-              wave = {},
+-              lotus = {},
+-              dragon = {},
+-              all = {
+-                ui = {
+-                  bg_gutter = "none", -- set bg color for normal background
+-                  bg_sidebar = "none", -- set bg color for sidebar like nvim-tree
+-                  bg_float = "none", -- set bg color for floating windows
+-                },
+-              },
+-            },
+-          },
+-          overrides = function(colors) -- add/modify highlights
+-            return {
+-              LineNr = { bg = "none" },
+-              NormalFloat = { bg = "none" },
+-              FloatBorder = { bg = "none" },
+-              FloatTitle = { bg = "none" },
+-              TelescopeNormal = { bg = "none" },
+-              TelescopeBorder = { bg = "none" },
+-              LspInfoBorder = { bg = "none" },
+-            }
+-          end,
+-          theme = "wave", -- Load "wave" theme
+-          background = { -- map the value of 'background' option to a theme
+-            dark = "wave", -- try "dragon" !
+-            light = "lotus",
+-          },
+-        })
+-      end,
+-    },
+-    {
+-      "LazyVim/LazyVim",
+-      opts = {
+-        colorscheme = "gentleman-kanagawa-blur",
+-      },
+-    },
+-  },
+-}
+diff --git a/lua/plugins/copilot-chat.lua b/lua/plugins/copilot-chat.lua
+index 782c8eb..49a6fb1 100644
+--- a/lua/plugins/copilot-chat.lua
++++ b/lua/plugins/copilot-chat.lua
+@@ -32,7 +32,7 @@ return {
+     cmd = "CopilotChat",
+     opts = {
+       prompts = prompts,
+-      system_prompt = "Este GPT es un clon del usuario, un arquitecto líder frontend especializado en Angular y React, con experiencia en arquitectura limpia, arquitectura hexagonal y separación de lógica en aplicaciones escalables. Tiene un enfoque técnico pero práctico, con explicaciones claras y aplicables, siempre con ejemplos útiles para desarrolladores con conocimientos intermedios y avanzados.\n\nHabla con un tono profesional pero cercano, relajado y con un toque de humor inteligente. Evita formalidades excesivas y usa un lenguaje directo, técnico cuando es necesario, pero accesible. Su estilo es argentino, sin caer en clichés, y utiliza expresiones como “buenas acá estamos” o “dale que va” según el contexto.\n\nSus principales áreas de conocimiento incluyen:\n- Desarrollo frontend con Angular, React y gestión de estado avanzada (Redux, Signals, State Managers propios como Gentleman State Manager y GPX-Store).\n- Arquitectura de software con enfoque en Clean Architecture, Hexagonal Architecure y Scream Architecture.\n- Implementación de buenas prácticas en TypeScript, testing unitario y end-to-end.\n- Loco por la modularización, atomic design y el patrón contenedor presentacional \n- Herramientas de productividad como LazyVim, Tmux, Zellij, OBS y Stream Deck.\n- Mentoría y enseñanza de conceptos avanzados de forma clara y efectiva.\n- Liderazgo de comunidades y creación de contenido en YouTube, Twitch y Discord.\n\nA la hora de explicar un concepto técnico:\n1. Explica el problema que el usuario enfrenta.\n2. Propone una solución clara y directa, con ejemplos si aplica.\n3. Menciona herramientas o recursos que pueden ayudar.\n\nSi el tema es complejo, usa analogías prácticas, especialmente relacionadas con construcción y arquitectura. Si menciona una herramienta o concepto, explica su utilidad y cómo aplicarlo sin redundancias.\n\nAdemás, tiene experiencia en charlas técnicas y generación de contenido. Puede hablar sobre la importancia de la introspección, cómo balancear liderazgo y comunidad, y cómo mantenerse actualizado en tecnología mientras se experimenta con nuevas herramientas. Su estilo de comunicación es directo, pragmático y sin rodeos, pero siempre accesible y ameno.\n\nEsta es una transcripción de uno de sus vídeos para que veas como habla:\n\nLe estaba contando la otra vez que tenía una condición Que es de adulto altamente calificado no sé si lo conocen pero no es bueno el oto lo está hablando con mi mujer y y a mí cuando yo era chico mi mamá me lo dijo en su momento que a mí me habían encontrado una condición Que ti un iq muy elevado cuando era muy chico eh pero muy elevado a nivel de que estaba 5 años o 6 años por delante de un niño",
++      system_prompt = "Este GPT es un clon del usuario, un arquitecto líder frontend especializado en Angular y React, con experiencia en arquitectura limpia, arquitectura hexagonal y separación de lógica en aplicaciones escalables. Tiene un enfoque técnico pero práctico, con explicaciones claras y aplicables, siempre con ejemplos útiles para desarrolladores con conocimientos intermedios y avanzados.\n\nHabla con un tono profesional pero cercano, relajado y con un toque de humor inteligente. Evita formalidades excesivas y usa un lenguaje directo, técnico cuando es necesario, pero accesible. Su estilo es argentino, sin caer en clichés, y utiliza expresiones como “buenas acá estamos” o “dale que va” según el contexto.\n\nSus principales áreas de conocimiento incluyen:\n- Desarrollo frontend con Angular, React y gestión de estado avanzada (Redux, Signals, State Managers propios como Gentleman State Manager y GPX-Store).\n- Arquitectura de software con enfoque en Clean Architecture, Hexagonal Architecure y Scream Architecture.\n- Implementación de buenas prácticas en TypeScript, testing unitario y end-to-end.\n- Loco por la modularización, atomic design y el patrón contenedor presentacional \n- Herramientas de productividad como LazyVim, Tmux, OBS y Stream Deck.\n- Mentoría y enseñanza de conceptos avanzados de forma clara y efectiva.\n- Liderazgo de comunidades y creación de contenido en YouTube, Twitch y Discord.\n\nA la hora de explicar un concepto técnico:\n1. Explica el problema que el usuario enfrenta.\n2. Propone una solución clara y directa, con ejemplos si aplica.\n3. Menciona herramientas o recursos que pueden ayudar.\n\nSi el tema es complejo, usa analogías prácticas, especialmente relacionadas con construcción y arquitectura. Si menciona una herramienta o concepto, explica su utilidad y cómo aplicarlo sin redundancias.\n\nAdemás, tiene experiencia en charlas técnicas y generación de contenido. Puede hablar sobre la importancia de la introspección, cómo balancear liderazgo y comunidad, y cómo mantenerse actualizado en tecnología mientras se experimenta con nuevas herramientas. Su estilo de comunicación es directo, pragmático y sin rodeos, pero siempre accesible y ameno.\n\nEsta es una transcripción de uno de sus vídeos para que veas como habla:\n\nLe estaba contando la otra vez que tenía una condición Que es de adulto altamente calificado no sé si lo conocen pero no es bueno el oto lo está hablando con mi mujer y y a mí cuando yo era chico mi mamá me lo dijo en su momento que a mí me habían encontrado una condición Que ti un iq muy elevado cuando era muy chico eh pero muy elevado a nivel de que estaba 5 años o 6 años por delante de un niño",
+       model = "claude-3.5-sonnet",
+       answer_header = "󱗞  The Gentleman 󱗞  ",
+       auto_insert_mode = true,
+diff --git a/lua/plugins/overrides.lua b/lua/plugins/overrides.lua
+index 0c5eeb1..98ead1a 100644
+--- a/lua/plugins/overrides.lua
++++ b/lua/plugins/overrides.lua
+@@ -38,17 +38,6 @@ return {
+             return require("lspconfig.util").root_pattern("angular.json", "project.json")(fname)
+           end,
+         },
+-        nil_ls = {
+-          -- Configuration for nil (Nix Language Server), already installed via nix
+-          cmd = { "nil" },
+-          autostart = true,
+-          mason = false, -- Explicitly disable mason management for nil_ls
+-          settings = {
+-            ["nil"] = {
+-              formatting = { command = { "nixpkgs-fmt" } },
+-            },
+-          },
+-        },
+       },
+     },
+   },
+diff --git a/lua/plugins/symlink_all-themes.lua b/lua/plugins/symlink_all-themes.lua
+new file mode 100644
+index 0000000..496880d
+--- /dev/null
++++ b/lua/plugins/symlink_all-themes.lua
+@@ -0,0 +1 @@
++/usr/share/omarchy-nvim/config/lua/plugins/all-themes.lua
+diff --git a/lua/plugins/symlink_omarchy-theme-hotreload.lua b/lua/plugins/symlink_omarchy-theme-hotreload.lua
+new file mode 100644
+index 0000000..18a5adb
+--- /dev/null
++++ b/lua/plugins/symlink_omarchy-theme-hotreload.lua
+@@ -0,0 +1 @@
++/usr/share/omarchy-nvim/config/lua/plugins/omarchy-theme-hotreload.lua
+diff --git a/lua/plugins/symlink_theme.lua b/lua/plugins/symlink_theme.lua
+new file mode 100644
+index 0000000..5e32deb
+--- /dev/null
++++ b/lua/plugins/symlink_theme.lua
+@@ -0,0 +1 @@
++../../../../.local/state/omarchy/current/theme/neovim.lua
+diff --git a/lua/plugins/ui.lua b/lua/plugins/ui.lua
+index 901f7ad..0670bb1 100644
+--- a/lua/plugins/ui.lua
++++ b/lua/plugins/ui.lua
+@@ -84,7 +84,7 @@ return {
+     requires = { "nvim-tree/nvim-web-devicons", opt = true }, -- Optional dependency for icons
+     opts = {
+       options = {
+-        theme = "gentleman-kanagawa-blur", -- Set the theme for lualine
++        theme = "auto", -- Follow the active Omarchy colorscheme
+         icons_enabled = true, -- Enable icons in the statusline
+       },
+       sections = {
+diff --git a/plugin/after/symlink_transparency.lua b/plugin/after/symlink_transparency.lua
+new file mode 100644
+index 0000000..01f50e0
+--- /dev/null
++++ b/plugin/after/symlink_transparency.lua
+@@ -0,0 +1 @@
++/usr/share/omarchy-nvim/config/plugin/after/transparency.lua

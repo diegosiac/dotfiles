@@ -1,0 +1,16 @@
+# Gentleman.Dots Neovim adapter preimages, format 1.
+sha256	88c8c5adea658c6e72fa932b415ee4fbefeb36e16df92f46ec3d2389c1a09ec2	lazy-lock.json
+sha256	9f0b77b0993eb76f302cf3a8d5e3cc7ff48540c3a6695e17aedda3d2ef851cba	lua/config/lazy.lua
+sha256	5e1840f6691055352f75af4c7507a1ce73518eb074426946223dfeafceb04995	lua/config/nodejs.lua
+sha256	30d51b75969f1f8c16964e4495c6477234bc031a713ffd24ffdf6e5a33cd1ef9	lua/config/options.lua
+absent	-	lua/config/symlink_remote_clipboard.lua
+sha256	7878d73e6c71978bb4ecd12a31302f46f6586be42c0c58a3c7fbd0d2be421804	lua/plugins/avante.lua
+sha256	86171621ac5de953e992ad386f4c0fe0b2d26e54a3408f3bee60d5974c67a008	lua/plugins/code-companion.lua
+sha256	0d5d6070d33b90bab64ed39ab214f6ef643e44208655fb22b604e3aee5cb021d	lua/plugins/colorscheme.lua
+sha256	7c88b8366ac5f375f594c259f7976263bdb90fc89163342e4e830bc6d425c8c7	lua/plugins/copilot-chat.lua
+sha256	a83eb93303bf2af890e9e4131b09f6466c6f34fb9d32123c096398a88e053f25	lua/plugins/overrides.lua
+absent	-	lua/plugins/symlink_all-themes.lua
+absent	-	lua/plugins/symlink_omarchy-theme-hotreload.lua
+absent	-	lua/plugins/symlink_theme.lua
+sha256	5ab6447bc6853f8ba3983370977877987aea8bff019ef7dc0e59cb57164dff48	lua/plugins/ui.lua
+absent	-	plugin/after/symlink_transparency.lua

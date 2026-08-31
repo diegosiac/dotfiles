@@ -1,241 +1,224 @@
--- Node.js configuration for Neovim
--- This ensures Neovim uses the SYSTEM Node.js, not project-specific versions
--- This prevents issues when working with old projects that use Node < 18
+-- Resolve Neovim's Node.js runtime and provider from the global Mise configuration.
 
 local M = {}
 
--- Function to get system Node.js path (avoiding project-specific versions)
-local function get_system_node()
-  -- Priority order for system Node.js (avoiding project overrides)
-  local system_paths = {
-    "/opt/homebrew/bin/node", -- Homebrew on Apple Silicon
-    "/usr/local/bin/node", -- Homebrew on Intel Mac or standard install
-    vim.fn.expand("~/.volta/bin/node"), -- Volta's global Node
-    vim.fn.expand("~/.nvm/versions/node/*/bin/node"), -- NVM default version
-    vim.fn.expand("~/.nix-profile/bin/node"), -- Nix
-    "/usr/bin/node", -- System default
+local state = {
+  source = "unconfigured",
+  node = nil,
+  npm = nil,
+  provider = nil,
+  mise_bin = nil,
+  detail = nil,
+}
+
+local function run(command, options)
+  options = vim.tbl_extend("force", { text = true }, options or {})
+  local result = vim.system(command, options):wait()
+  return result.code, vim.trim(result.stdout or ""), vim.trim(result.stderr or "")
+end
+
+local function prepend_path_once(directory)
+  local updated = { directory }
+  for _, entry in ipairs(vim.split(vim.env.PATH or "", ":", { plain = true, trimempty = true })) do
+    if entry ~= directory then
+      updated[#updated + 1] = entry
+    end
+  end
+  vim.env.PATH = table.concat(updated, ":")
+end
+
+local function global_mise_install()
+  if vim.fn.executable("mise") ~= 1 then
+    return nil, "Mise is not executable"
+  end
+
+  local home = vim.env.HOME or vim.uv.os_homedir()
+  local code, stdout, stderr = run(
+    { "mise", "ls", "--global", "--installed", "--json", "node" },
+    { cwd = home }
+  )
+  if code ~= 0 then
+    return nil, stderr ~= "" and stderr or "Mise could not list the global Node.js runtime"
+  end
+
+  local ok, entries = pcall(vim.json.decode, stdout)
+  if not ok or type(entries) ~= "table" then
+    return nil, "Mise returned invalid JSON for the global Node.js runtime"
+  end
+
+  local selected = nil
+  for _, entry in ipairs(entries) do
+    if
+      entry.active == true
+      and entry.installed == true
+      and type(entry.install_path) == "string"
+      and entry.install_path ~= ""
+    then
+      if selected then
+        return nil, "Mise reported multiple active global Node.js runtimes"
+      end
+      selected = entry.install_path
+    end
+  end
+
+  if not selected then
+    return nil, "Mise has no active installed global Node.js runtime"
+  end
+
+  return selected, nil
+end
+
+local function select_node()
+  local install_path, mise_detail = global_mise_install()
+  if install_path then
+    local bin = install_path .. "/bin"
+    local node = bin .. "/node"
+    if vim.fn.executable(node) == 1 then
+      prepend_path_once(bin)
+      return node, bin, "Mise global", nil
+    end
+    mise_detail = "The active global Mise Node.js runtime has no executable bin/node"
+  end
+
+  for _, node in ipairs({ "/usr/bin/node", "/usr/local/bin/node" }) do
+    if vim.fn.executable(node) == 1 then
+      return node, vim.fn.fnamemodify(node, ":h"), "Linux system fallback", mise_detail
+    end
+  end
+
+  return nil, nil, "unavailable", mise_detail
+end
+
+local function executable_or_nil(path)
+  return path and vim.fn.executable(path) == 1 and path or nil
+end
+
+local function node_version(node)
+  local code, stdout = run({ node, "--version" })
+  if code ~= 0 then
+    return nil
+  end
+  return stdout:gsub("^v", ""):match("(%d+%.%d+%.%d+)")
+end
+
+local function provider_guidance(bin)
+  return "Neovim's Node.js provider is unavailable because "
+    .. bin
+    .. "/neovim-node-host is not executable. Install it under the global Mise Node.js runtime with:\n"
+    .. "  mise use --global node@lts\n"
+    .. "  npm install --global neovim"
+end
+
+local function setup_nodejs()
+  vim.g.node_host_prog = nil
+  state = {
+    source = "unconfigured",
+    node = nil,
+    npm = nil,
+    provider = nil,
+    mise_bin = nil,
+    detail = nil,
   }
 
-  -- First try to find a system Node.js directly
-  for _, path in ipairs(system_paths) do
-    -- Handle glob patterns (for nvm)
-    if path:match("%*") then
-      local expanded = vim.fn.glob(path, false, true)
-      if #expanded > 0 then
-        -- Get the latest version from nvm
-        table.sort(expanded, function(a, b)
-          return a > b
-        end)
-        path = expanded[1]
-      else
-        goto continue
-      end
-    end
-
-    if vim.fn.executable(path) == 1 then
-      return path
-    end
-
-    ::continue::
+  local node, bin, source, detail = select_node()
+  state.source = source
+  state.detail = detail
+  if not node then
+    vim.notify(
+      "Node.js was not found. Install the global Mise runtime with:\n  mise use --global node@lts",
+      vim.log.levels.ERROR
+    )
+    return false, nil
   end
 
-  -- Fallback to whatever is in PATH (but warn if it might be project-specific)
-  return vim.fn.exepath("node")
+  state.node = node
+  state.npm = executable_or_nil(bin .. "/npm")
+  state.mise_bin = source == "Mise global" and bin or nil
+  state.provider = executable_or_nil(bin .. "/neovim-node-host")
+  if state.provider then
+    vim.g.node_host_prog = state.provider
+  else
+    vim.notify(provider_guidance(bin), vim.log.levels.WARN)
+  end
+
+  local version = node_version(node)
+  if not version then
+    vim.notify("Could not read the Node.js version from the selected runtime.", vim.log.levels.ERROR)
+    return false, nil
+  end
+
+  local major = tonumber(version:match("^(%d+)"))
+  if major and major < 18 then
+    vim.notify(
+      "Node.js v"
+        .. version
+        .. " is too old. Neovim requires v18+ (v22+ recommended).\n\nUpgrade with:\n  mise use --global node@lts",
+      vim.log.levels.WARN
+    )
+  elseif vim.g.debug_nodejs or vim.env.DEBUG_NODEJS then
+    print("Node.js runtime: " .. node .. " (v" .. version .. ")")
+    print("Source: " .. source)
+  end
+
+  return true, version
 end
 
--- Function to setup Node.js for Neovim
-local function setup_nodejs()
-  -- Get system Node.js, avoiding project-specific versions
-  local node_path = get_system_node()
-
-  if node_path ~= "" then
-    local version_output = vim.fn.system(node_path .. " --version 2>/dev/null")
-    if vim.v.shell_error == 0 then
-      -- Clean version string: remove newlines, ANSI escape codes, and 'v' prefix
-      local version = version_output
-        :gsub("\r", "") -- Remove carriage returns
-        :gsub("\n", "") -- Remove newlines
-        :gsub("\27%[[%d;]*%a", "") -- Remove ANSI escape sequences
-        :gsub("^v", "") -- Remove 'v' prefix
-        :match("(%d+%.%d+%.%d+)") -- Extract version number pattern
-
-      if version then
-        local major_version = tonumber(version:match("^(%d+)"))
-
-        if major_version and major_version >= 18 then
-          -- Set the Node.js host program
-          vim.g.node_host_prog = node_path
-
-          -- Set npm path
-          local npm_path = vim.fn.exepath("npm")
-          if npm_path ~= "" then
-            vim.g.npm_host_prog = npm_path
-          end
-
-          if vim.g.debug_nodejs or vim.env.DEBUG_NODEJS then
-            print("✓ Node.js for Neovim: " .. node_path .. " (v" .. version .. ")")
-
-            -- Detect which manager is being used
-            if node_path:match("%.volta/") then
-              print("  Using Volta-managed Node.js")
-            elseif node_path:match("%.nvm/") then
-              print("  Using NVM-managed Node.js")
-            elseif node_path:match("%.nix%-profile/") then
-              print("  Using Nix-managed Node.js")
-            elseif node_path:match("/homebrew/") then
-              print("  Using Homebrew-managed Node.js")
-            else
-              print("  Using system Node.js")
-            end
-          end
-
-          return true, version
-        else
-          -- Provide specific upgrade instructions based on the detected manager
-          local upgrade_msg = "⚠️  Node.js version "
-            .. version
-            .. " is too old. Neovim requires v18+ (v22+ recommended).\n\n"
-
-          if node_path:match("/homebrew/") then
-            upgrade_msg = upgrade_msg .. "To upgrade with Homebrew:\n  brew upgrade node"
-          elseif node_path:match("%.volta/") then
-            upgrade_msg = upgrade_msg .. "To upgrade with Volta:\n  volta install node@latest"
-          elseif node_path:match("%.nvm/") then
-            upgrade_msg = upgrade_msg .. "To upgrade with NVM:\n  nvm install --lts\n  nvm alias default lts/*"
-          elseif node_path:match("%.nix%-profile/") then
-            upgrade_msg = upgrade_msg .. "To upgrade with Nix:\n  nix profile upgrade nixpkgs#nodejs"
-          else
-            upgrade_msg = upgrade_msg .. "Please upgrade Node.js to v18 or higher using your package manager."
-          end
-
-          upgrade_msg = upgrade_msg .. "\n\nNote: Neovim uses the SYSTEM Node.js, not project-specific versions."
-
-          vim.notify(upgrade_msg, vim.log.levels.WARN)
-          vim.g.node_host_prog = node_path
-          return true, version
-        end
-      else
-        -- Handle case where version parsing failed
-        vim.notify(
-          "⚠️  Could not parse Node.js version from: "
-            .. version_output
-            .. "\nPlease ensure Node.js is properly installed.",
-          vim.log.levels.ERROR
-        )
-        return false, nil
-      end
-    end
-  end
-
-  vim.notify(
-    "⚠️  Node.js not found! Some plugins may not work correctly.\nInstall Node.js with:\n  brew install node",
-    vim.log.levels.ERROR
-  )
-  return false, nil
-end
-
--- Function to check if we're using a recent Node.js version
-local function check_node_version()
-  if not vim.g.node_host_prog then
-    return
-  end
-
-  local version_output = vim.fn.system(vim.g.node_host_prog .. " --version 2>/dev/null")
-  if vim.v.shell_error ~= 0 then
-    return
-  end
-
-  local version = version_output:gsub("\n", ""):gsub("v", "")
-  local major_version = tonumber(version:match("^(%d+)"))
-
-  if major_version then
-    if major_version >= 18 and major_version < 22 then
-      if vim.g.debug_nodejs then
-        vim.notify(
-          "ℹ️  Node.js v" .. version .. " works but v22+ is recommended for optimal performance.",
-          vim.log.levels.INFO
-        )
-      end
-    elseif major_version < 18 then
-      vim.notify(
-        "⚠️  Node.js version " .. version .. " is too old. Neovim requires v18+ (v22+ recommended).",
-        vim.log.levels.WARN
-      )
-    end
+local function check_node_version(version)
+  local major = version and tonumber(version:match("^(%d+)"))
+  if major and major >= 18 and major < 22 and vim.g.debug_nodejs then
+    vim.notify("Node.js v" .. version .. " works, but v22+ is recommended.", vim.log.levels.INFO)
   end
 end
 
--- Main setup function
 function M.setup(opts)
   opts = opts or {}
-
-  -- Setup Node.js
   local success, version = setup_nodejs()
-
   if success and not opts.silent then
-    check_node_version()
+    check_node_version(version)
   end
-
   return success
 end
 
--- Function to get current Node.js info
 function M.info()
-  if not vim.g.node_host_prog then
-    print("Node.js: Not configured")
-    return
+  print("Node.js runtime: " .. (state.node or "Not configured"))
+  print("Source: " .. state.source)
+  print("npm: " .. (state.npm or "Not found adjacent to the selected Node.js runtime"))
+  print("Neovim Node.js host: " .. (state.provider or "Not installed"))
+  if state.mise_bin then
+    print("Global Mise bin: " .. state.mise_bin)
   end
-
-  local version_output = vim.fn.system(vim.g.node_host_prog .. " --version 2>/dev/null")
-  if vim.v.shell_error ~= 0 then
-    print("Node.js: Error getting version")
-    return
+  if state.detail then
+    print("Mise detail: " .. state.detail)
   end
-
-  local version = version_output:gsub("\n", ""):gsub("v", "")
-  print("Node.js for Neovim: " .. vim.g.node_host_prog .. " (v" .. version .. ")")
-
-  -- Detect source
-  if vim.g.node_host_prog:match("%.volta/") then
-    print("Source: Volta-managed")
-  elseif vim.g.node_host_prog:match("%.nvm/") then
-    print("Source: NVM-managed")
-  elseif vim.g.node_host_prog:match("%.nix%-profile/") then
-    print("Source: Nix-managed")
-  elseif vim.g.node_host_prog:match("/homebrew/") then
-    print("Source: Homebrew-managed")
-  else
-    print("Source: System")
-  end
-
-  if vim.g.npm_host_prog then
-    print("npm: " .. vim.g.npm_host_prog)
+  if not state.node then
+    print("Guidance: mise use --global node@lts")
+  elseif not state.provider then
+    print("Provider guidance: npm install --global neovim")
   end
 
   if vim.g.debug_nodejs then
-    print("\nPATH: " .. (vim.env.PATH or "not set"))
+    print("Mise executable: " .. (vim.fn.exepath("mise") ~= "" and vim.fn.exepath("mise") or "Not found"))
+    print("HOME: " .. (vim.env.HOME or "Not set"))
+    print("PATH: " .. (vim.env.PATH or "Not set"))
   end
 end
 
--- Command to manually refresh Node.js configuration
 vim.api.nvim_create_user_command("NodeRefresh", function()
   M.setup({ silent = false })
   M.info()
-end, { desc = "Refresh Node.js configuration" })
+end, { desc = "Refresh global Mise Node.js configuration" })
 
--- Command to show Node.js info
 vim.api.nvim_create_user_command("NodeInfo", function()
   M.info()
-end, { desc = "Show Node.js configuration info" })
+end, { desc = "Show global Mise Node.js configuration" })
 
--- Command to debug Node.js PATH issues
 vim.api.nvim_create_user_command("NodeDebug", function()
   vim.g.debug_nodejs = true
-  print("=== Node.js Debug Mode Enabled ===")
+  print("=== Global Mise Node.js Debug Mode ===")
   M.setup({ silent = false })
   M.info()
   print("=== End Debug Info ===")
   vim.g.debug_nodejs = false
-end, { desc = "Debug Node.js configuration and PATH" })
+end, { desc = "Debug global Mise Node.js resolution" })
 
 return M

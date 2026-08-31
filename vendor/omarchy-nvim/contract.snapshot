@@ -1,0 +1,8 @@
+# Installed Omarchy Neovim integration contract, format 1.
+version	4.0.0.alpha	/usr/share/omarchy/version
+sha256	9d1aaeb0c16104d678742c04d6a8700fed365e7eb65a8eaef5fb3845ddf634e3	/usr/share/omarchy/version
+sha256	f8693f2607088055adef508221e288b378a8df97411e0d726cbdb672d963a8ca	/usr/share/omarchy-nvim/config/lazy-lock.json
+sha256	7d438de29c987a97494c9c27e835d5587b9c05f0eab4f7ddab3c1d2ed1a0d8f1	/usr/share/omarchy-nvim/config/lua/plugins/all-themes.lua
+sha256	d4f74ba06eec038006daf7ac509ac4102270c634c6b5a80babce037503a8e2a1	/usr/share/omarchy-nvim/config/lua/plugins/omarchy-theme-hotreload.lua
+sha256	6e31b917f13e16514ac94ff9270d47f24e76509a3e559ca85116a5aa2d61306a	/usr/share/omarchy-nvim/config/plugin/after/transparency.lua
+sha256	bac8268c3dde4e747772467d6671e626aa4982478551d8fc8ebe1259a4854f2c	/usr/share/omarchy-nvim/config/lua/config/remote_clipboard.lua

@@ -17,7 +17,7 @@ This repository is intentionally being rebuilt from zero. Configuration will be 
 
 On the `omarchy` branch, stock Omarchy exclusively owns Hyprland, Quickshell, GTK, Qt integration, desktop portals, icon and cursor theme selection, wallpapers, and desktop theming. Chezmoi does not install or overwrite configuration for those layers.
 
-Chezmoi continues to own personal tool configuration, including shells, Git, Neovim, terminals, and other explicitly selected applications. Repository-only `bootstrap.sh`, `scripts/`, `tests/`, and `.codegraph/` stay in the source checkout and are excluded from destination targets. The optional greetd flow is preserved pending a separate display-manager ownership decision.
+Chezmoi continues to own personal tool configuration, including shells, Git, Neovim, terminals, and other explicitly selected applications. Gentleman.Dots remains Neovim's reviewed baseline, while Omarchy owns dynamic theme selection, theme hot reload, transparency, and remote clipboard behavior through package/runtime symlink contracts. Repository-only `bootstrap.sh`, `scripts/`, `tests/`, and `.codegraph/` stay in the source checkout and are excluded from destination targets. The optional greetd flow is preserved pending a separate display-manager ownership decision.
 
 ## Principles
 
@@ -412,10 +412,12 @@ Current external source:
 
 - `https://github.com/Gentleman-Programming/Gentleman.Dots`
 
-These configurations are not auto-updated during bootstrap or `chezmoi apply`. Updates must be pulled manually with the scripts under `vendor/gentleman-dots/`, reviewed with `git diff`, tested in the VM, and then committed.
+These configurations are not auto-updated during bootstrap or `chezmoi apply`. The Neovim sync automatically applies its tracked Omarchy adapter, but fails closed before replacing the snapshot if upstream preimages, installed Omarchy contracts, patch applicability, or focused tests drift. Review `git diff`, run `bash tests/vendor-nvim-omarchy.sh`, test in a VM, and only then commit.
 
 Vendored configs currently planned or used:
 
 | Tool   | Source path               | Local path                     |
 | ------ | ------------------------- | ------------------------------ |
 | Neovim | `GentlemanNvim/nvim`      | `dot_config/nvim`              |
+
+Omarchy refreshes, reinstalls, and migrations may replace or patch live Neovim files. The Chezmoi-managed tree is the recovery truth; restore it through the normal reviewed Chezmoi workflow rather than editing package files under `/usr/share`.

@@ -13,13 +13,6 @@ They are copied as reviewed snapshots, not auto-updated during bootstrap or `che
 3. Test the updated config in the VM.
 4. Commit only after the snapshot is validated.
 
-## Tmux
-
-- Source path: `GentlemanTmux/tmux.conf`
-- Destination path: `dot_tmux.conf`
-- Sync script: `vendor/gentleman-dots/sync-tmux.sh`
-- Plugin install: `run_once_after_20-install-tmux-plugins.sh`
-
 ## Herdr
 
 - Source path: `herdr/config.toml`

@@ -17,7 +17,7 @@ This repository is intentionally being rebuilt from zero. Configuration will be 
 
 On the `omarchy` branch, stock Omarchy exclusively owns Hyprland, Quickshell, GTK, Qt integration, desktop portals, icon and cursor theme selection, wallpapers, and desktop theming. Chezmoi does not install or overwrite configuration for those layers.
 
-Chezmoi continues to own personal tool configuration, including shells, Git, Tmux, Neovim, terminals, and other explicitly selected applications. Repository-only `bootstrap.sh`, `scripts/`, `tests/`, and `.codegraph/` stay in the source checkout and are excluded from destination targets. The optional greetd flow is preserved pending a separate display-manager ownership decision.
+Chezmoi continues to own personal tool configuration, including shells, Git, Neovim, terminals, and other explicitly selected applications. Repository-only `bootstrap.sh`, `scripts/`, `tests/`, and `.codegraph/` stay in the source checkout and are excluded from destination targets. The optional greetd flow is preserved pending a separate display-manager ownership decision.
 
 ## Principles
 
@@ -55,7 +55,7 @@ Install the bootstrap tools first if the fresh image does not have them yet. Run
 sudo pacman -Syu --needed git chezmoi curl sudo
 ```
 
-Clone the Omarchy branch as the dotfiles source without applying it yet. Package-dependent chezmoi scripts, such as the Tmux plugin installer, need the package manifests to be installed first.
+Clone the Omarchy branch as the dotfiles source without applying it yet.
 
 ```sh
 chezmoi init --branch omarchy https://github.com/diegosiac/dotfiles.git
@@ -281,9 +281,7 @@ If either picker does not appear, run `scripts/doctor.sh` and review the `Screen
 
 ## Terminal multiplexer
 
-Herdr and Tmux are explicit manual choices; shell startup never launches either multiplexer. Start Herdr with `herdr` or Tmux with `tmux` only when one is wanted.
-
-After package installation, Chezmoi's `run_once_after_20-install-tmux-plugins.sh` provisions TPM and the configured Tmux plugins. The script intentionally remains unchanged, but its Git clones resolve mutable upstream refs rather than repository-pinned commits; treat that as a supply-chain and reproducibility boundary.
+Herdr and Tmux are explicit manual choices; shell startup never launches either multiplexer. Start Herdr with `herdr` or stock Tmux with `tmux` only when one is wanted. Stock Omarchy owns the Tmux configuration.
 
 ## Runtime managers
 
@@ -420,8 +418,5 @@ Vendored configs currently planned or used:
 
 | Tool   | Source path               | Local path                     |
 | ------ | ------------------------- | ------------------------------ |
-| Tmux   | `GentlemanTmux/tmux.conf` | `dot_tmux.conf`                |
 | Neovim | `GentlemanNvim/nvim`      | `dot_config/nvim`              |
 | Herdr  | `herdr/config.toml`       | `dot_config/herdr/config.toml` |
-
-Tmux plugins are installed through TPM by the Chezmoi script `run_once_after_20-install-tmux-plugins.sh`, subject to the mutable-upstream caveat above.

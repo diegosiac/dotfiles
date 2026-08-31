@@ -307,7 +307,7 @@ for command_name in \
     ghostty \
     wezterm \
     alacritty \
-    fnm \
+    mise \
     node \
     pnpm
 do
@@ -374,13 +374,13 @@ fi
 section "Node"
 if node_path="$(command -v node 2>/dev/null)"; then
     ok "node path: $node_path"
-    if [[ "$node_path" == *fnm* ]]; then
-        ok "node appears to come from fnm"
+    if [[ "$node_path" == *mise* ]]; then
+        ok "node appears to come from mise"
     else
-        warn "node does not appear to come from fnm: $node_path"
+        warn "node does not appear to come from mise: $node_path"
     fi
 else
-    warn "node is unavailable; skipping fnm path check"
+    warn "node is unavailable; skipping mise path check"
 fi
 
 section "Theme"

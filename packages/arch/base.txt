@@ -27,7 +27,6 @@ ast-grep
 zoxide
 atuin
 tmux
-zellij
 btop
 fastfetch
 lazygit
@@ -55,7 +54,7 @@ yq
 unzip
 gzip
 tar
-fnm
+mise-bin
 bun
 typescript-language-server
 python

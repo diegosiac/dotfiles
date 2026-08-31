@@ -130,26 +130,25 @@ configure_docker() {
     fi
 }
 
-load_fnm_env() {
-    command -v fnm >/dev/null 2>&1 || return 1
-    eval "$(fnm env --shell bash)"
+load_mise_env() {
+    command -v mise >/dev/null 2>&1 || return 1
+    eval "$(mise activate bash)"
 }
 
 initialize_node_runtime() {
-    if ! command -v fnm >/dev/null 2>&1; then
-        warn "fnm is missing. Install packages/arch/base.txt first, then rerun this phase manually."
+    if ! command -v mise >/dev/null 2>&1; then
+        warn "mise is missing. Install packages/arch/base.txt first, then rerun this phase manually."
         return 0
     fi
 
-    load_fnm_env || warn "Could not load fnm shell environment. Continuing with current PATH."
+    load_mise_env || warn "Could not load mise shell environment. Continuing with current PATH."
 
-    fnm install --lts
-    fnm default lts-latest
+    mise use --global node@lts
 
-    load_fnm_env || warn "Could not reload fnm shell environment after setting the default Node.js version."
+    load_mise_env || warn "Could not reload mise shell environment after setting the global Node.js version."
 
     if ! command -v corepack >/dev/null 2>&1; then
-        warn "corepack is missing after Node.js initialization. Restart your shell or run 'eval \"\$(fnm env --shell bash)\"', then retry."
+        warn "corepack is missing after Node.js initialization. Restart Bash or run 'eval \"\$(mise activate bash)\"', then retry."
         return 0
     fi
 
@@ -419,11 +418,11 @@ else
 fi
 
 section "Runtimes"
-if confirm "Initialize Node.js runtime with fnm and activate pnpm through Corepack?"; then
+if confirm "Initialize the global Node.js LTS runtime with mise and activate pnpm through Corepack?"; then
     initialize_node_runtime
     ok "Runtime phase finished."
 else
-    warn "Skipped Node.js runtime initialization. Run 'fnm install --lts' and Corepack setup later."
+    warn "Skipped Node.js runtime initialization. Run 'mise use --global node@lts' and Corepack setup later."
 fi
 
 section "AI stack"

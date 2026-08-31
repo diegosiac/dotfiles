@@ -56,6 +56,27 @@ test_unavailable_trim_timer_is_skipped() {
     assert_equals "$expected" "$trace" "unavailable fstrim timer is skipped without sudo"
 }
 
+test_node_runtime_uses_mise_with_bash_activation() {
+    local trace=""
+    local expected=""
+
+    trace="$(
+        mise() {
+            if [[ "$1" == "activate" ]]; then
+                printf '%s\n' "printf 'mise:activate %s\\n' '$2'"
+            else
+                printf 'mise:%s\n' "$*"
+            fi
+        }
+        corepack() { printf 'corepack:%s\n' "$*"; }
+
+        initialize_node_runtime
+    )"
+
+    expected=$'mise:activate bash\nmise:use --global node@lts\nmise:activate bash\ncorepack:enable\ncorepack:prepare pnpm@latest --activate'
+    assert_equals "$expected" "$trace" "Node.js runtime uses mise with native Bash activation"
+}
+
 run_test() {
     local name="$1"
     local test_function="$2"
@@ -70,6 +91,7 @@ run_test() {
 
 run_test "basic services include weekly TRIM" test_basic_services_include_weekly_trim
 run_test "unavailable TRIM timer is skipped" test_unavailable_trim_timer_is_skipped
+run_test "Node.js runtime uses mise with Bash activation" test_node_runtime_uses_mise_with_bash_activation
 
 if ((failures > 0)); then
     printf '%s of %s Arch bootstrap behavior tests failed.\n' "$failures" "$tests_run" >&2

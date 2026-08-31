@@ -3,6 +3,15 @@ typeset -U path PATH
 path=("$HOME/.local/bin" "$HOME/go/bin" $path)
 export PATH
 
+# Load Omarchy's base environment without sourcing its Bash startup files.
+typeset omarchy_environment_file="$HOME/.config/zsh/omarchy-environment.zsh"
+if [[ -r "$omarchy_environment_file" ]]; then
+    source "$omarchy_environment_file"
+    initialize_omarchy_environment
+    unfunction initialize_omarchy_environment
+fi
+unset omarchy_environment_file
+
 # Default editor tools.
 export EDITOR="nvim"
 export VISUAL="nvim"

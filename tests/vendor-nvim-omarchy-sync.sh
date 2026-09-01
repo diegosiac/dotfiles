@@ -53,6 +53,8 @@ create_fixture() {
   cp -a -- "$repo_root/vendor/omarchy-nvim/contract.snapshot" "$root/vendor/omarchy-nvim/"
   cp -a -- \
     "$repo_root/tests/vendor-nvim-omarchy.sh" \
+    "$repo_root/tests/nvim-gemini.sh" \
+    "$repo_root/tests/nvim-lazy-lock.sh" \
     "$repo_root/tests/nvim-nodejs.sh" \
     "$repo_root/tests/nvim-nodejs.lua" \
     "$root/tests/"

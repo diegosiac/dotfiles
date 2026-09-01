@@ -1,4 +1,6 @@
 # Gentleman.Dots Neovim adapter preimages, format 1.
+sha256	1819a5b64b71521f214b374bdb3b4dd7531a2b91b881c0803e0029811da7f3e4	.neoconf.json
+absent	-	dot_neoconf.json
 sha256	88c8c5adea658c6e72fa932b415ee4fbefeb36e16df92f46ec3d2389c1a09ec2	lazy-lock.json
 sha256	9f0b77b0993eb76f302cf3a8d5e3cc7ff48540c3a6695e17aedda3d2ef851cba	lua/config/lazy.lua
 sha256	5e1840f6691055352f75af4c7507a1ce73518eb074426946223dfeafceb04995	lua/config/nodejs.lua
@@ -8,6 +10,7 @@ sha256	7878d73e6c71978bb4ecd12a31302f46f6586be42c0c58a3c7fbd0d2be421804	lua/plug
 sha256	86171621ac5de953e992ad386f4c0fe0b2d26e54a3408f3bee60d5974c67a008	lua/plugins/code-companion.lua
 sha256	0d5d6070d33b90bab64ed39ab214f6ef643e44208655fb22b604e3aee5cb021d	lua/plugins/colorscheme.lua
 sha256	7c88b8366ac5f375f594c259f7976263bdb90fc89163342e4e830bc6d425c8c7	lua/plugins/copilot-chat.lua
+sha256	1df954a906120df2b8c0d5534df612801ef1dc627b4c0185ad2b97edb237b634	lua/plugins/gemini.lua
 sha256	a83eb93303bf2af890e9e4131b09f6466c6f34fb9d32123c096398a88e053f25	lua/plugins/overrides.lua
 absent	-	lua/plugins/symlink_all-themes.lua
 absent	-	lua/plugins/symlink_omarchy-theme-hotreload.lua

@@ -185,6 +185,10 @@ done
 verify_contract
 verify_manifest_coverage
 
+[[ -f "$tree/dot_neoconf.json" && ! -L "$tree/dot_neoconf.json" ]] \
+  || fail "Chezmoi-encoded Neoconf source is missing"
+[[ ! -e "$tree/.neoconf.json" && ! -L "$tree/.neoconf.json" ]] \
+  || fail "unmanaged literal .neoconf.json source remains"
 assert_source_link "lua/plugins/symlink_theme.lua" "../../../../.local/state/omarchy/current/theme/neovim.lua"
 assert_source_link "lua/plugins/symlink_all-themes.lua" "/usr/share/omarchy-nvim/config/lua/plugins/all-themes.lua"
 assert_source_link "lua/plugins/symlink_omarchy-theme-hotreload.lua" "/usr/share/omarchy-nvim/config/lua/plugins/omarchy-theme-hotreload.lua"
@@ -203,6 +207,36 @@ assert_contains 'mise use --global node@lts' "lua/config/nodejs.lua"
 assert_contains '"/usr/bin/node", "/usr/local/bin/node"' "lua/config/nodejs.lua"
 assert_contains '<cmd>Obsidian quick_switch<CR>' "lua/config/keymaps.lua"
 
+if ! python3 - "$tree/lua/plugins/gemini.lua" <<'PY'
+from pathlib import Path
+import sys
+
+source = Path(sys.argv[1]).read_text(encoding="utf-8")
+guard = '''  init = function()
+    if vim.fn.executable("gemini") ~= 1 then
+      vim.g.gemini_loaded = 1
+    end
+  end,
+  config = function()
+    if vim.fn.executable("gemini") ~= 1 then
+      return
+    end
+
+    if vim.g.gemini_loaded == 1 then
+      return
+    end
+
+    require("gemini").setup()
+    vim.g.gemini_loaded = 1
+  end,
+'''
+if source.count(guard) != 1:
+    raise SystemExit(1)
+PY
+then
+  fail "Gemini setup lacks the bootstrap sentinel or duplicate-setup guard"
+fi
+
 if grep -Eq 'npm_host_prog|mise", "which", "node|node_host_prog = (node|state\.node)' "$tree/lua/config/nodejs.lua"; then
   fail "Node.js provider configuration uses an invalid API or resolver"
 fi
@@ -220,6 +254,18 @@ verify_lua_and_json
 if ! bash "$repo_root/tests/nvim-nodejs.sh" "$tree/lua/config/nodejs.lua" >/dev/null 2>&1; then
   fail "global Mise Node.js provider harness failed"
 fi
+if ! bash "$repo_root/tests/nvim-gemini.sh" "$tree/lua/plugins/gemini.lua" >/dev/null 2>&1; then
+  fail "Gemini CLI availability harness failed"
+fi
+if ! bash \
+  "$repo_root/tests/nvim-lazy-lock.sh" \
+  "$tree/lazy-lock.json" \
+  "$tree/lua/config/lazy.lua" \
+  >/dev/null 2>&1; then
+  fail "clean-data Neovim lock contract failed"
+fi
 
 printf 'PASS: global Mise Node.js provider harnesses\n'
+printf 'PASS: Gemini CLI availability harness\n'
+printf 'PASS: clean-data Neovim lock contract\n'
 printf 'PASS: Omarchy Neovim adapter contract\n'

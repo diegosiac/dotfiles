@@ -1,20 +1,65 @@
+diff --git a/.neoconf.json b/.neoconf.json
+deleted file mode 100644
+index 7c48087..0000000
+--- a/.neoconf.json
++++ /dev/null
+@@ -1,15 +0,0 @@
+-{
+-  "neodev": {
+-    "library": {
+-      "enabled": true,
+-      "plugins": true
+-    }
+-  },
+-  "neoconf": {
+-    "plugins": {
+-      "lua_ls": {
+-        "enabled": true
+-      }
+-    }
+-  }
+-}
+diff --git a/dot_neoconf.json b/dot_neoconf.json
+new file mode 100644
+index 0000000..7c48087
+--- /dev/null
++++ b/dot_neoconf.json
+@@ -0,0 +1,15 @@
++{
++  "neodev": {
++    "library": {
++      "enabled": true,
++      "plugins": true
++    }
++  },
++  "neoconf": {
++    "plugins": {
++      "lua_ls": {
++        "enabled": true
++      }
++    }
++  }
++}
 diff --git a/lazy-lock.json b/lazy-lock.json
-index d1fd455..7d404e2 100644
+index d1fd455..b608992 100644
 --- a/lazy-lock.json
 +++ b/lazy-lock.json
-@@ -1,30 +1,40 @@
+@@ -1,47 +1,61 @@
  {
-   "LazyVim": { "branch": "main", "commit": "9e58f05aae1bf521ce1ff5b6b3bd8c5bf88a6488" },
+-  "LazyVim": { "branch": "main", "commit": "9e58f05aae1bf521ce1ff5b6b3bd8c5bf88a6488" },
++  "LazyVim": { "branch": "main", "commit": "242f0983de9fdb70f0d82057a8039e32bc171764" },
    "SchemaStore.nvim": { "branch": "main", "commit": "0fccf9234acfd981867cbd42c4101829e6808790" },
+-  "blink-cmp-copilot": { "branch": "main", "commit": "439cff78780c033aa23cf061d7315314b347e3c1" },
 +  "aether": { "branch": "v3", "commit": "02af9ba1ef9d6f136a6b20404d39f2a4e3857e16" },
 +  "ashen.nvim": { "branch": "main", "commit": "bfb04bd50b69d863469b2deb9fb361cf0d945ba7" },
 +  "bamboo.nvim": { "branch": "master", "commit": "1309bc88bffcf1bedc3e84e7fa9004de93da774a" },
-   "blink-cmp-copilot": { "branch": "main", "commit": "439cff78780c033aa23cf061d7315314b347e3c1" },
++  "blink-copilot": { "branch": "main", "commit": "7ad8209b2f880a2840c94cdcd80ab4dc511d4f39" },
    "blink.cmp": { "branch": "main", "commit": "327fff91fe6af358e990be7be1ec8b78037d2138" },
    "blink.compat": { "branch": "main", "commit": "2ed6d9a28b07fa6f3bface818470605f8896408c" },
 -  "catppuccin": { "branch": "main", "commit": "30fa4d122d9b22ad8b2e0ab1b533c8c26c4dde86" },
+-  "claude-code.nvim": { "branch": "main", "commit": "c9a31e51069977edaad9560473b5d031fcc5d38b" },
 +  "catppuccin": { "branch": "main", "commit": "edefef779ab08ce1a4a404713e3012b0d202bd35" },
-   "claude-code.nvim": { "branch": "main", "commit": "c9a31e51069977edaad9560473b5d031fcc5d38b" },
++  "claudecode.nvim": { "branch": "main", "commit": "2390c6e45c4789072c293ac69de051d169668b29" },
    "conform.nvim": { "branch": "master", "commit": "b4aab989db276993ea5dcb78872be494ce546521" },
    "copilot.lua": { "branch": "master", "commit": "f7732213e41995439171f35bdd2bf1c809f8e8e7" },
 +  "ethereal.nvim": { "branch": "main", "commit": "a0ec73332e537228981b6a4f465cef82bb3e1d36" },
@@ -40,14 +85,16 @@ index d1fd455..7d404e2 100644
 +  "lumon.nvim": { "branch": "master", "commit": "f8ce95213e57b379089da23abc36a1fc39936b63" },
    "markdown-preview.nvim": { "branch": "master", "commit": "a923f5fc5ba36a3b17e289dc35dc17f66d0548ee" },
    "mason-lspconfig.nvim": { "branch": "main", "commit": "7f9a39fcd2ac6e979001f857727d606888f5909c" },
++  "mason-nvim-dap.nvim": { "branch": "main", "commit": "9a10e096703966335bd5c46c8c875d5b0690dade" },
    "mason.nvim": { "branch": "main", "commit": "7dc4facca9702f95353d5a1f87daf23d78e31c2a" },
 +  "matteblack.nvim": { "branch": "main", "commit": "a8a039f5d6189b28d76fa0221e64965efec7e996" },
 +  "miasma.nvim": { "branch": "main", "commit": "466456f08d1a114c983c0d24e8fc01339e3b0a27" },
    "mini.ai": { "branch": "main", "commit": "45a26d032d8703f280c69c2ed9fb4e1bfc8f24f9" },
    "mini.diff": { "branch": "main", "commit": "7077b636d642fcd5cd48554e187a251883239660" },
    "mini.files": { "branch": "main", "commit": "2db6db37c37ee5955fe72907e33fa31cd2dd0fd4" },
-@@ -32,7 +42,9 @@
+   "mini.hipatterns": { "branch": "main", "commit": "96d07d32a0db0d8d8a10c83a964ec557cca005e7" },
    "mini.icons": { "branch": "main", "commit": "f9a177c11daa7829389b7b6eaaec8b8a5c47052d" },
++  "mini.nvim": { "branch": "main", "commit": "a311ed247d527db9592bb434356badc705363746" },
    "mini.pairs": { "branch": "main", "commit": "3738ea30ff33e0cbf2983dc67319a5468d25b0a9" },
    "mini.surround": { "branch": "main", "commit": "e170a2dde4b0a8905c9bb218ed428be94ec0b255" },
 +  "monokai-pro.nvim": { "branch": "master", "commit": "5b06ae0736813b1c65d76a4be9edbe92be0b9c74" },
@@ -56,7 +103,17 @@ index d1fd455..7d404e2 100644
    "noice.nvim": { "branch": "main", "commit": "0427460c2d7f673ad60eb02b35f5e9926cf67c59" },
    "nui.nvim": { "branch": "main", "commit": "de740991c12411b663994b2860f1a4fd0937c130" },
    "nvim-dap": { "branch": "master", "commit": "7523676a4be17644587aa47e4d42f6f7646d4727" },
-@@ -50,21 +62,24 @@
+-  "nvim-dap-go": { "branch": "main", "commit": "b4421153ead5d726603b02743ea40cf26a51ed5f" },
+   "nvim-dap-ui": { "branch": "master", "commit": "cf91d5e2d07c72903d052f5207511bf7ecdb7122" },
+   "nvim-dap-virtual-text": { "branch": "master", "commit": "fbdb48c2ed45f4a8293d0d483f7730d24467ccb6" },
+   "nvim-docs-view": { "branch": "master", "commit": "a5256fd30417f58804691df174bc76a8c8f8163a" },
+   "nvim-lint": { "branch": "master", "commit": "0864f81c681e15d9bdc1156fe3a17bd07db5a3ed" },
+   "nvim-lspconfig": { "branch": "master", "commit": "d9879110d0422a566fa01d732556f4d5515e1738" },
++  "nvim-nio": { "branch": "master", "commit": "edcc181a875301dd21840189aa2f2f9ad69fc172" },
+   "nvim-rip-substitute": { "branch": "main", "commit": "42c4494386ed33af84424c9a249ab7a20f8a2a51" },
+   "nvim-tmux-navigation": { "branch": "main", "commit": "4898c98702954439233fdaf764c39636681e2861" },
+   "nvim-treesitter": { "branch": "main", "commit": "1c760c1888f5e7474d1ae222f0638cb3b731629b" },
+@@ -50,21 +64,25 @@
    "nvim-web-devicons": { "branch": "master", "commit": "6e51ca170563330e063720449c21f43e27ca0bc1" },
    "obsidian.nvim": { "branch": "main", "commit": "705cc9b4f66eca1e54040ac819102e80a32896d3" },
    "oil.nvim": { "branch": "master", "commit": "07f80ad645895af849a597d1cac897059d89b686" },
@@ -68,7 +125,8 @@ index d1fd455..7d404e2 100644
 +  "rose-pine": { "branch": "main", "commit": "ff483051a47e27d84bdef47703538df1ed9f4a47" },
    "screenkey.nvim": { "branch": "main", "commit": "16390931d847b1d5d77098daccac4e55654ac9e2" },
    "smear-cursor.nvim": { "branch": "main", "commit": "4b86df8a0c5f46e708616b21a02493bb0e47ecbd" },
-   "snacks.nvim": { "branch": "main", "commit": "72a6316d2421942cb81f2d5276a0e607629cd1c6" },
+-  "snacks.nvim": { "branch": "main", "commit": "72a6316d2421942cb81f2d5276a0e607629cd1c6" },
++  "snacks.nvim": { "branch": "main", "commit": "b0f21fa745953ac6bb096a4811cb32e42d7ca714" },
    "symbols-outline.nvim": { "branch": "master", "commit": "564ee65dfc9024bdde73a6621820866987cbb256" },
    "todo-comments.nvim": { "branch": "main", "commit": "ae0a2afb47cf7395dc400e5dc4e05274bf4fb9e0" },
 -  "tokyonight.nvim": { "branch": "main", "commit": "057ef5d260c1931f1dffd0f052c685dcd14100a3" },
@@ -77,6 +135,7 @@ index d1fd455..7d404e2 100644
    "ts-comments.nvim": { "branch": "main", "commit": "1bd9d0ba1d8b336c3db50692ffd0955fe1bb9f0c" },
    "twilight.nvim": { "branch": "main", "commit": "1584c0b0a979b71fd86b18d302ba84e9aba85b1b" },
 +  "vantablack.nvim": { "branch": "main", "commit": "8a05ea96343914f1001e937b4fa7d9d44b51d221" },
++  "veil.nvim": { "branch": "main", "commit": "c838a0e17540764ec644a6ecf9b7d8b78966b263" },
    "vim-be-good": { "branch": "master", "commit": "0ae3de14eb8efc6effe7704b5e46495e91931cc5" },
    "vim-multiple-cursors": { "branch": "master", "commit": "6456718e1d30b42c04b920c5413ca44f68f08759" },
    "which-key.nvim": { "branch": "main", "commit": "370ec46f710e058c9c1646273e6b225acf47cbed" },
@@ -746,6 +805,31 @@ index 782c8eb..49a6fb1 100644
        model = "claude-3.5-sonnet",
        answer_header = "󱗞  The Gentleman 󱗞  ",
        auto_insert_mode = true,
+diff --git a/lua/plugins/gemini.lua b/lua/plugins/gemini.lua
+index d348665..45f9491 100644
+--- a/lua/plugins/gemini.lua
++++ b/lua/plugins/gemini.lua
+@@ -1,6 +1,20 @@
+ return {
+   "jonroosevelt/gemini-cli.nvim",
++  init = function()
++    if vim.fn.executable("gemini") ~= 1 then
++      vim.g.gemini_loaded = 1
++    end
++  end,
+   config = function()
++    if vim.fn.executable("gemini") ~= 1 then
++      return
++    end
++
++    if vim.g.gemini_loaded == 1 then
++      return
++    end
++
+     require("gemini").setup()
++    vim.g.gemini_loaded = 1
+   end,
+ }
 diff --git a/lua/plugins/overrides.lua b/lua/plugins/overrides.lua
 index 0c5eeb1..98ead1a 100644
 --- a/lua/plugins/overrides.lua

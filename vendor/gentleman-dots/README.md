@@ -22,12 +22,15 @@ Snapshots are not updated during bootstrap or `chezmoi apply`.
 
 ### Verification
 
-Run all three focused checks before accepting an update:
+Run all six focused checks before accepting an update:
 
 ```bash
 bash tests/vendor-nvim-omarchy.sh
 bash tests/vendor-nvim-omarchy-sync.sh
 bash tests/nvim-nodejs.sh
+bash tests/nvim-gemini.sh
+bash tests/nvim-lazy-lock.sh
+bash tests/nvim-materialization.sh
 ```
 
 The sync clones upstream into staging, verifies every adapted preimage and Omarchy integration hash, applies the adapter with `git apply --check`, runs the contract test, and only then atomically replaces the reviewed snapshot. Any drift fails closed and leaves both the destination and metadata unchanged.

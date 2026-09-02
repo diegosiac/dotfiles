@@ -117,7 +117,7 @@ engram setup opencode
 engram setup pi
 gentle-ai
 secrets-load
-test -n "$ENGRAM_CLOUD_TOKEN" && echo "Engram Cloud token loaded"
+test -n "$ENGRAM_CLOUD_TOKEN" && test -n "$ENGRAM_CLOUD_SERVER" && echo "Engram Cloud settings loaded"
 ```
 
 ### Reproducible Moshi access
@@ -326,7 +326,18 @@ Secrets used by the AI stack are loaded from 1Password on demand:
 secrets-load
 ```
 
-The helper currently exports `ENGRAM_CLOUD_TOKEN` from `op://Secrets/Engram Cloud/password`. Clear it from the current shell with:
+1Password manages these Engram Cloud values:
+
+- `ENGRAM_CLOUD_TOKEN`
+- `ENGRAM_CLOUD_SERVER`
+
+For background autosync, run the helper that writes encrypted systemd user credentials for `engram.service` and only enables the service after both credentials exist:
+
+```sh
+scripts/configure-engram-cloud.sh
+```
+
+Clear the Engram Cloud values from the current shell with:
 
 ```sh
 secrets-clear
@@ -403,11 +414,11 @@ These configurations are not auto-updated during bootstrap or `chezmoi apply`. U
 
 Vendored configs currently planned or used:
 
-| Tool   | Source path               | Local path                   |
-| ------ | ------------------------- | ---------------------------- |
-| Zellij | `GentlemanZellij/zellij`  | `dot_config/zellij`          |
-| Tmux   | `GentlemanTmux/tmux.conf` | `dot_tmux.conf`              |
-| Neovim | `GentlemanNvim/nvim`      | `dot_config/nvim`            |
-| Herdr  | `herdr/config.toml`       | `dot_config/herdr/config.toml` |
+| Tool | Source path | Local path |
+| --- | --- | --- |
+| Zellij | `GentlemanZellij/zellij` | `dot_config/zellij` |
+| Tmux | `GentlemanTmux/tmux.conf` | `dot_tmux.conf` |
+| Neovim | `GentlemanNvim/nvim` | `dot_config/nvim` |
+| Herdr | `herdr/config.toml` | `dot_config/herdr/config.toml` |
 
 Tmux plugins are installed through TPM by the chezmoi script `run_once_after_20-install-tmux-plugins.sh`.

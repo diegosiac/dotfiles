@@ -1,0 +1,18 @@
+[Unit]
+Description=Engram daemon with Cloud autosync
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h
+Environment=ENGRAM_DATA_DIR=%h/.engram
+Environment=ENGRAM_CLOUD_AUTOSYNC=1
+LoadCredentialEncrypted=engram-cloud-token:%h/.config/credstore.encrypted/engram-cloud-token
+LoadCredentialEncrypted=engram-cloud-server:%h/.config/credstore.encrypted/engram-cloud-server
+ExecStart=%h/.local/bin/engram-cloud-serve
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=default.target

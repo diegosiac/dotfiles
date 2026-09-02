@@ -1,0 +1,23 @@
+#!/bin/sh
+set -eu
+
+credential_directory=${CREDENTIALS_DIRECTORY:-}
+[ -n "$credential_directory" ] || exit 1
+
+read_credential() {
+    credential_name=$1
+    credential_file=$credential_directory/$credential_name
+    credential_value=
+
+    [ -r "$credential_file" ] || exit 1
+    IFS= read -r credential_value < "$credential_file" || [ -n "$credential_value" ]
+    [ -n "$credential_value" ] || exit 1
+
+    printf '%s' "$credential_value"
+}
+
+ENGRAM_CLOUD_TOKEN=$(read_credential engram-cloud-token)
+ENGRAM_CLOUD_SERVER=$(read_credential engram-cloud-server)
+export ENGRAM_CLOUD_TOKEN ENGRAM_CLOUD_SERVER
+
+exec "$HOME/.local/bin/engram" serve

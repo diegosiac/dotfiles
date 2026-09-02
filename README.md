@@ -136,7 +136,7 @@ engram setup opencode
 engram setup pi
 gentle-ai
 secrets-load
-test -n "$ENGRAM_CLOUD_TOKEN" && echo "Engram Cloud token loaded"
+test -n "$ENGRAM_CLOUD_TOKEN" && test -n "$ENGRAM_CLOUD_SERVER" && echo "Engram Cloud settings loaded"
 ```
 
 ### Reproducible Moshi access
@@ -336,7 +336,18 @@ Secrets used by the AI stack are loaded from 1Password on demand:
 secrets-load
 ```
 
-The helper currently exports `ENGRAM_CLOUD_TOKEN` from `op://Secrets/Engram Cloud/password`. Clear it from the current shell with:
+1Password manages these Engram Cloud values:
+
+- `ENGRAM_CLOUD_TOKEN`
+- `ENGRAM_CLOUD_SERVER`
+
+For background autosync, run the helper that writes encrypted systemd user credentials for `engram.service` and only enables the service after both credentials exist:
+
+```sh
+scripts/configure-engram-cloud.sh
+```
+
+Clear the Engram Cloud values from the current shell with:
 
 ```sh
 secrets-clear
@@ -415,8 +426,8 @@ These configurations are not auto-updated during bootstrap or `chezmoi apply`. T
 
 Vendored configs currently planned or used:
 
-| Tool   | Source path               | Local path                     |
-| ------ | ------------------------- | ------------------------------ |
-| Neovim | `GentlemanNvim/nvim`      | `dot_config/nvim`              |
+| Tool | Source path | Local path |
+| --- | --- | --- |
+| Neovim | `GentlemanNvim/nvim` | `dot_config/nvim` |
 
 Omarchy refreshes, reinstalls, and migrations may replace or patch live Neovim files. The Chezmoi-managed tree is the recovery truth; restore it through the normal reviewed Chezmoi workflow rather than editing package files under `/usr/share`.

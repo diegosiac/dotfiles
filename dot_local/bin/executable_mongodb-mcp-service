@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+credential_directory=${CREDENTIALS_DIRECTORY:-}
+credential_file=$credential_directory/mongodb-mcp-connection-string
+[ -n "$credential_directory" ] && [ -r "$credential_file" ] || exit 1
+MDB_MCP_CONNECTION_STRING=$(cat -- "$credential_file")
+[ -n "$MDB_MCP_CONNECTION_STRING" ] || exit 1
+export MDB_MCP_CONNECTION_STRING
+export MDB_MCP_READ_ONLY=true
+
+exec npx -y mongodb-mcp-server@latest --readOnly

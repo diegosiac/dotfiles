@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+
+exec systemd-run --user --pipe --wait --collect \
+  --property="LoadCredentialEncrypted=mongodb-mcp-connection-string:$HOME/.config/credstore.encrypted/mongodb-mcp-connection-string" \
+  "$HOME/.local/bin/mongodb-mcp-service"

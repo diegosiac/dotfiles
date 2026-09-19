@@ -337,6 +337,14 @@ For background autosync, run the helper that writes encrypted systemd user crede
 scripts/configure-engram-cloud.sh
 ```
 
+MongoDB and PAUL MCP launchers use a transient user-systemd service so stdio is preserved while systemd decrypts machine-bound credentials. Provision them once after authenticating 1Password; normal MCP startup does not run `op`:
+
+```sh
+scripts/configure-mcp-credentials.sh
+```
+
+The helper reads the existing local 1Password reference files, writes only encrypted blobs under `~/.config/credstore.encrypted`, and keeps those reference files for rollback. It preserves MongoDB's `MDB_MCP_READ_ONLY=true` and `--readOnly` controls; database-level least-privilege permissions remain a separate requirement.
+
 Clear the Engram Cloud values from the current shell with:
 
 ```sh

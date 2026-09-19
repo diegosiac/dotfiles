@@ -1,0 +1,18 @@
+#!/bin/sh
+set -eu
+
+credential_directory=${CREDENTIALS_DIRECTORY:-}
+[ -n "$credential_directory" ] || exit 1
+read_credential() {
+  credential_file=$credential_directory/$1
+  [ -r "$credential_file" ] || exit 1
+  cat -- "$credential_file"
+}
+
+PAUL_EMAIL=$(read_credential paul-mcp-email)
+PAUL_PASSWORD=$(read_credential paul-mcp-password)
+[ -n "$PAUL_EMAIL" ] && [ -n "$PAUL_PASSWORD" ] || exit 1
+export PAUL_EMAIL PAUL_PASSWORD
+export PAUL_URL=https://iventas.cc/iventas-coach
+
+exec npx -y github:iVentas-Plus/iventas-paul

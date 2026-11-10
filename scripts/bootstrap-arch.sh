@@ -97,19 +97,56 @@ enable_basic_services() {
     enable_system_service systemd-timesyncd.service
     enable_system_service paccache.timer
     enable_system_service fstrim.timer
-    ok "Tailscale service is ready; authenticate separately through your approved flow before Moshi setup."
+    ok "Tailscale service is ready; authenticate separately through your approved flow before enabling Tailscale SSH."
 }
 
-configure_moshi() {
-    if [[ ! -x "$repo_root/scripts/configure-moshi.sh" ]]; then
-        warn "scripts/configure-moshi.sh is unavailable or not executable. Skipping optional Moshi setup."
-        return 0
+herdr_core_installer_url="https://releases.herdr.dev/core/install.sh"
+# Trust boundary: review upstream installer changes before consciously updating this digest.
+herdr_core_installer_sha256="ac94d641e3ddb7cd1e8ec9b61babafe77a0a8f741a4eafea0844a00d0e14dd59"
+
+herdr_core_installed() {
+    [[ -x "${HC_INSTALL_DIR:-$HOME/.local/bin}/herdr-core" ]] || command -v herdr-core >/dev/null 2>&1
+}
+
+install_herdr_core() {
+    local installer=""
+    local status=0
+
+    installer="$(mktemp)" || {
+        warn "Could not create a temporary file for the herdr-core installer."
+        return 1
+    }
+
+    if ! curl -fsSL "$herdr_core_installer_url" -o "$installer"; then
+        rm -f -- "$installer"
+        warn "Could not download the herdr-core installer from $herdr_core_installer_url."
+        return 1
     fi
 
-    if bash "$repo_root/scripts/configure-moshi.sh"; then
-        ok "Optional Moshi setup finished."
+    if [[ "$(sha256sum "$installer" | cut -d' ' -f1)" != "$herdr_core_installer_sha256" ]]; then
+        rm -f -- "$installer"
+        warn "The herdr-core installer digest changed. Review $herdr_core_installer_url and consciously update herdr_core_installer_sha256."
+        return 1
+    fi
+
+    sh "$installer" || status=$?
+    rm -f -- "$installer"
+    return "$status"
+}
+
+configure_herdr_mobile() {
+    if herdr_core_installed; then
+        ok "herdr-core is already installed; update it with 'herdr-core update'."
+    elif install_herdr_core; then
+        ok "herdr-core installed for the Herdr phone app."
     else
-        warn "Moshi setup was skipped or stopped. Bootstrap will continue; authenticate Tailscale and rerun 'scripts/configure-moshi.sh' when ready."
+        warn "herdr-core was not installed. Review the warning above and rerun this bootstrap phase."
+    fi
+
+    if sudo tailscale set --ssh; then
+        ok "Tailscale SSH enabled; the Herdr phone app connects through the tailnet."
+    else
+        warn "Could not enable Tailscale SSH. Authenticate Tailscale, then run 'sudo tailscale set --ssh'."
     fi
 }
 
@@ -376,11 +413,11 @@ else
     warn "Skipped power-profiles-daemon.service enablement."
 fi
 
-section "Moshi (optional)"
-if confirm "Configure Moshi, Mosh, hardened OpenSSH, and agent hooks now? This requires op, MOSHI_SSH_PUBLIC_KEY_REF, authenticated Tailscale, and interactive login tests."; then
-    configure_moshi
+section "Herdr mobile (optional)"
+if confirm "Install herdr-core and enable Tailscale SSH for the Herdr phone app now? Tailscale should already be authenticated."; then
+    configure_herdr_mobile
 else
-    warn "Skipped optional Moshi setup. Run 'scripts/configure-moshi.sh' later when Tailscale is authenticated."
+    warn "Skipped Herdr mobile setup. Rerun the bootstrap later to install herdr-core and enable Tailscale SSH."
 fi
 
 section "Docker"
@@ -465,7 +502,8 @@ Run these checks after the bootstrap finishes:
   engram --version
   gentle-ai --help
   chezmoi doctor
-  scripts/configure-moshi.sh --check
+  herdr-core server status
+  tailscale debug prefs | jq .RunSSH
   gsettings get org.gnome.desktop.interface color-scheme
   gsettings get org.gnome.desktop.interface gtk-theme
   gsettings get org.gnome.desktop.interface cursor-theme

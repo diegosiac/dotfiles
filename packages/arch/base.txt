@@ -45,7 +45,6 @@ reflector
 curl
 wget
 openssh
-mosh
 tailscale
 ufw
 sed

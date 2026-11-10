@@ -622,12 +622,12 @@ else
     warn "systemctl is unavailable; skipping greetd service checks"
 fi
 
-section "Moshi, OpenSSH, and Tailscale"
-for command_name in ssh sshd ssh-keygen mosh; do
+section "OpenSSH, Tailscale, and Herdr mobile"
+for command_name in ssh sshd ssh-keygen; do
     if command -v "$command_name" >/dev/null 2>&1; then
         ok "$command_name is available"
     else
-        fail "Missing Moshi access prerequisite: $command_name"
+        fail "Missing OpenSSH prerequisite: $command_name"
     fi
 done
 
@@ -646,8 +646,10 @@ if command -v tailscale >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
     fi
 
     tailscale_run_ssh="$(tailscale debug prefs 2>/dev/null | jq -r 'if (.RunSSH | type) == "boolean" then (.RunSSH | tostring) else "unknown" end' 2>/dev/null || printf 'unknown')"
-    if [[ "$tailscale_run_ssh" == "true" || "$tailscale_run_ssh" == "false" ]]; then
-        ok "Tailscale RunSSH: $tailscale_run_ssh"
+    if [[ "$tailscale_run_ssh" == "true" ]]; then
+        ok "Tailscale SSH is enabled for the Herdr phone app"
+    elif [[ "$tailscale_run_ssh" == "false" ]]; then
+        warn "Tailscale SSH is disabled; the Herdr phone app needs 'sudo tailscale set --ssh'"
     else
         warn "Tailscale RunSSH could not be read from structured preferences"
     fi
@@ -676,51 +678,19 @@ if command -v sshd >/dev/null 2>&1; then
                     exit !(permit_root_login && pubkey_authentication && password_authentication && keyboard_authentication && authentication_methods && allowed_user)
                 }
             ' <<<"$effective_sshd_config"; then
-            ok "Effective sshd configuration enforces the Moshi hardening policy"
+            ok "Effective sshd configuration enforces the hardened OpenSSH policy"
         else
-            warn "Effective sshd configuration could not be verified or does not enforce the complete Moshi hardening policy"
+            warn "Effective sshd configuration could not be verified or does not enforce the complete hardened OpenSSH policy"
         fi
     else
         warn "Could not validate sshd non-interactively; run 'sudo sshd -t' and inspect 'sudo sshd -T'"
     fi
 fi
 
-if command -v moshi-hook >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
-    ok "moshi-hook is available"
-    moshi_status="$(moshi-hook status --json 2>/dev/null | jq -c '{paired: (.paired == true), hooks: [.hooks[]? | select(.target == "pi" or .target == "claude" or .target == "codex" or .target == "opencode" or .target == "grok") | {target, status}]}' 2>/dev/null || true)"
-    if [[ -n "$moshi_status" ]] && [[ "$(jq -r '.paired' <<<"$moshi_status" 2>/dev/null)" == "true" ]]; then
-        ok "moshi-hook reports agent-hook paired state"
-    else
-        warn "moshi-hook does not report agent-hook paired state"
-    fi
-
-    for hook_target in pi claude codex opencode grok; do
-        hook_status="$(jq -r --arg target "$hook_target" '[.hooks[]? | select(.target == $target) | .status] | first // "missing"' <<<"$moshi_status" 2>/dev/null || printf 'unknown')"
-        if [[ "$hook_status" == "installed" || "$hook_status" == "ok" || "$hook_status" == "current" ]]; then
-            ok "moshi-hook target $hook_target status: $hook_status"
-        else
-            warn "moshi-hook target $hook_target status: $hook_status"
-        fi
-    done
-    unset moshi_status hook_status
-
-    if moshi-hook probe --json 2>/dev/null | jq -e '.installed == true and .running == true' >/dev/null; then
-        ok "moshi-hook daemon probe reports installed and running"
-    else
-        warn "moshi-hook daemon probe did not report installed and running"
-    fi
-
-    if command -v systemctl >/dev/null 2>&1; then
-        check_user_unit_status moshi-hook.service
-    fi
+if command -v herdr-core >/dev/null 2>&1 || [[ -x "${HC_INSTALL_DIR:-$HOME/.local/bin}/herdr-core" ]]; then
+    ok "herdr-core is available for the Herdr phone app"
 else
-    warn "moshi-hook or jq is unavailable; skipping structured Moshi checks"
-fi
-
-if command -v herdr >/dev/null 2>&1; then
-    ok "Herdr is available for Moshi terminal context detection"
-else
-    warn "Herdr is unavailable; Moshi can still use another supported terminal context"
+    warn "herdr-core is unavailable; the Herdr phone app cannot list agents on this machine"
 fi
 
 if command -v loginctl >/dev/null 2>&1; then
@@ -728,7 +698,7 @@ if command -v loginctl >/dev/null 2>&1; then
     if [[ "$linger_state" == "yes" ]]; then
         ok "User lingering is enabled"
     else
-        warn "User lingering is disabled; moshi-hook may stop after logout"
+        warn "User lingering is disabled; user services may stop after logout"
     fi
 else
     warn "loginctl is unavailable; skipping linger check"

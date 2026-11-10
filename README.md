@@ -139,61 +139,42 @@ secrets-load
 test -n "$ENGRAM_CLOUD_TOKEN" && test -n "$ENGRAM_CLOUD_SERVER" && echo "Engram Cloud settings loaded"
 ```
 
-### Reproducible Moshi access
+### Herdr phone app
 
-The repository reproduces Moshi prerequisites and the setup procedure, but not machine identity or credentials. `packages/arch/base.txt` installs `openssh` and `mosh`; `scripts/configure-moshi.sh` configures the local machine interactively. Run it only from a regular user account with sudo access and KEEP THE CURRENT SESSION OPEN while testing new logins. Tailscale must already be authenticated and online; the script never runs `tailscale up`.
+The official Herdr app ([iOS](https://apps.apple.com/app/id6828898364), [Android](https://play.google.com/store/apps/details?id=dev.herdr.app)) drives agents that run under **herdr-core** (`hc`), not the Herdr TUI. It connects over plain SSH with no relay, so this machine only needs herdr-core and a reachable SSH server on the tailnet. See [herdr.dev/mobile](https://herdr.dev/mobile/) and [herdr.dev/core](https://herdr.dev/core/).
 
-Run the setup with the Moshi mobile app ready:
+The optional `Herdr mobile` bootstrap phase:
 
-```sh
-scripts/configure-moshi.sh
+- downloads `https://releases.herdr.dev/core/install.sh`, verifies its repository-pinned SHA-256 (`herdr_core_installer_sha256` in `scripts/bootstrap-arch.sh`), and runs it. The installer is user-local (`~/.local/bin/herdr-core`, plus an `hc` symlink when no other `hc` exists) and checks the release tarball digest itself. Any upstream installer change fails closed until the new script is reviewed and the pin is updated consciously;
+- skips the install when herdr-core already exists; update it with `herdr-core update`;
+- enables Tailscale SSH with `sudo tailscale set --ssh`, so the phone authenticates with its Tailscale identity instead of an SSH key.
+
+Tailscale SSH answers port 22 on the tailnet address and ignores `authorized_keys` and `sshd_config` there. With UFW allowing inbound traffic only on `tailscale0`, OpenSSH is no longer the tailnet entry point. Access is governed by the `ssh` rules of the tailnet policy. The default policy uses `check` mode, which periodically asks for browser re-authentication. To skip it for your own devices, set this rule in the Tailscale admin console:
+
+```json
+"ssh": [{
+  "action": "accept",
+  "src": ["autogroup:member"],
+  "dst": ["autogroup:self"],
+  "users": ["autogroup:nonroot"]
+}]
 ```
 
-The script uses the current Moshi Easy Pair flow through `moshi-hook host setup`. It first requires explicit confirmation, then waits until hardened OpenSSH is validated and available before displaying the QR. That QR is a temporary access token: scan it only with the intended Moshi mobile device, and do not share, record, or capture it. The mobile device generates and retains the private key; only the public key is sent to the host and installed in `authorized_keys`.
+Roll back with `sudo tailscale set --ssh=false`.
 
-Every rerun asks again before starting a new Easy Pair authorization. Declining at the initial gate exits before the installer or any OpenSSH, Tailscale, or host-credential state is changed. Accept only when another host authorization is intentional; the script never changes host authorization without that confirmation.
-
-Tailscale must already be authenticated and online. The script reads structured Tailscale status and preferences but never runs `tailscale up` or prints identity fields. Migration depends on the actual `RunSSH` preference:
-
-- **`RunSSH=false`:** Tailscale SSH is already off. The script hardens OpenSSH on port 22 only, requires the operator to confirm a successful new login, and continues. It does not create port 2222 or call `tailscale set --ssh=false`.
-- **`RunSSH=true`:** Tailscale SSH stays active while hardened OpenSSH is prepared on ports 22 and 2222. Because Tailscale SSH intercepts port 22 and prevents Easy Pair, the operator must use an existing OpenSSH credential to confirm a new port-2222 login before the script disables only Tailscale SSH. Easy Pair then runs against normal OpenSSH. The operator must explicitly confirm a new port-22 login before the temporary port 2222 is removed. Success is never inferred.
-
-OpenSSH is configured with generated host keys, root login disabled, public-key-only authentication, password and keyboard-interactive authentication disabled, and the current user allowlisted. OpenSSH uses the first obtained value for most directives, so the repository owns `/etc/ssh/sshd_config.d/00-moshi.conf`; it refuses to replace an unowned file there, leaves all unowned configuration untouched, and removes only marker-owned legacy `10-moshi.conf` or `90-moshi.conf` files. Every managed replacement is backed up and checked with both `sshd -t` and effective `sshd -T` policy before sshd is started or reloaded. Existing sessions are not closed. If a test fails, keep the current session open, use the reported rollback backup (or remove the newly generated `00-moshi.conf` on a first install), run `sudo sshd -t`, and reload sshd. During the `RunSSH=true` migration, port 2222 remains available until port 22 is explicitly confirmed; Tailscale SSH can be restored with `sudo tailscale set --ssh=true` if needed.
-
-The setup downloads the official `https://getmoshi.app/install.sh` installer and verifies its exact repository-pinned SHA-256 before execution. That pin is an explicit trust boundary, not a signature: any upstream installer change or download failure stops before execution and requires consciously reviewing the new script before updating the digest. The reviewed installer retains its upstream checksum behavior for versioned CDN assets and may run its own interactive first-run configuration.
-
-Leaving `MOSHI_HOOK_VERSION` unset is the default and installs the latest release. For a reproducible pin, pass an explicit release:
+Diagnostics:
 
 ```sh
-MOSHI_HOOK_VERSION=vX.Y.Z scripts/configure-moshi.sh
-```
-
-Easy Pair authorizes SSH host access; agent-hook pairing is a separate flow. After host access and the SSH migration succeed, routine reruns preserve an existing agent-hook pairing and still install exactly the `pi`, `claude`, `codex`, `opencode`, and `grok` hooks plus the moshi-hook systemd user service. If no agent-hook pairing exists, the script requests its pairing token through hidden input so the token does not enter shell history. Replace agent-hook pairing credentials only through the explicit `scripts/configure-moshi.sh --rotate-pairing` action. Setup optionally enables user lingering after explaining that it keeps user services available beyond an interactive login.
-
-Official references: [install](https://getmoshi.app/docs/install), [hooks](https://getmoshi.app/docs/hooks), [Tailscale](https://getmoshi.app/docs/tailscale), [Tailscale guide](https://getmoshi.app/guides/tailscale), [connections](https://getmoshi.app/docs/connections), and [security and sync](https://getmoshi.app/docs/security-sync).
-
-Safe diagnostics are read-only and sanitize Tailscale and Moshi output to booleans and hook states instead of IDs, names, paths, or secrets:
-
-```sh
-scripts/configure-moshi.sh --check
 scripts/doctor.sh
-sudo sshd -t
-systemctl is-active sshd.service tailscaled.service
-moshi-hook probe --json | jq '{installed, running}'
-moshi-hook status --json | jq '{paired, hooks: [.hooks[] | select(.target == "pi" or .target == "claude" or .target == "codex" or .target == "opencode" or .target == "grok") | {target, status}]}'
+herdr-core server status
+tailscale debug prefs | jq .RunSSH
 ```
 
-Run the deterministic Easy Pair confirmation, installer trust-boundary, SSH/Tailscale migration, and rollback contract tests without root, network, or host changes:
-
-```sh
-bash tests/configure-moshi.sh
-```
-
-The following are generated local state and MUST NOT enter Git: `authorized_keys`, OpenSSH host keys, Easy Pair QR data, moshi-hook pairing state, the generated user service, generated agent hook files, Tailscale state, linger state, phone settings, logs, tokens, host IDs, secrets, license keys, machine names, and machine addresses. The script and manifests are the reproducible boundary; operator confirmations and generated state remain local.
+Tailscale state, the tailnet policy, phone settings, and herdr-core runtime state are local and MUST NOT enter Git.
 
 ### Controlled UFW activation
 
-UFW covers IPv4 and IPv6 with a default-deny incoming and default-allow outgoing policy. All inbound traffic is allowed only on `tailscale0`; UDP 41641 and SSH, Mosh, Moshi, or Zen ports are not opened globally.
+UFW covers IPv4 and IPv6 with a default-deny incoming and default-allow outgoing policy. All inbound traffic is allowed only on `tailscale0`; UDP 41641 and SSH or Zen ports are not opened globally.
 
 Perform activation only with independent console or recovery access available, Tailscale connected, and the current remote session kept open. Install UFW and verify that IPv6 support is enabled before continuing:
 
@@ -219,14 +200,13 @@ sudo systemctl enable ufw.service
 sudo ufw status verbose
 ```
 
-Before closing the original session, use a separate client to establish and validate NEW SSH and Mosh sessions through Tailscale, replacing `user@tailscale-host` with the tailnet destination:
+Before closing the original session, use a separate client to establish and validate a NEW SSH session through Tailscale, replacing `user@tailscale-host` with the tailnet destination:
 
 ```sh
 ssh user@tailscale-host
-mosh user@tailscale-host
 ```
 
-If either connection fails, keep the original session open and disable UFW from the independent recovery console:
+If the connection fails, keep the original session open and disable UFW from the independent recovery console:
 
 ```sh
 sudo ufw disable
